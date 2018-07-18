@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Assets.Actions;
-using Assets.Random;
 using Utils;
+using Utils.Enums;
+using Utils.Random;
 using Xunit;
 
 namespace AssetsTests
@@ -100,18 +100,18 @@ namespace AssetsTests
         [Fact]
         public void ARandomEnum_ShouldHaveAGoodDistribution()
         {
-            var enumItems = EnumHelpers.Values<BlockDirection>().ToList();
+            var enumItems = EnumHelpers.Values<Compass4Points>().ToList();
             var enumCount = enumItems.Count;
 
             int numRolls = enumCount * 1000;
 
-            var rolls = new BlockDirection[numRolls];
+            var rolls = new Compass4Points[numRolls];
 
             var generator = new RandomNumberGenerator();
 
             for (int i = 1; i < numRolls; i++)
             {
-                rolls[i] = generator.Enum<BlockDirection>();
+                rolls[i] = generator.Enum<Compass4Points>();
             }
 
             var samples = enumItems.Select(enumItem =>

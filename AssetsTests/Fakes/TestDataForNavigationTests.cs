@@ -1,6 +1,6 @@
 ﻿using System;
-using Assets.Actions;
-using Assets.Random;
+using Utils.Enums;
+using Utils.Random;
 
 namespace AssetsTests.Fakes
 {
@@ -65,23 +65,23 @@ namespace AssetsTests.Fakes
             switch (test)
             {
                 case BlockNavigationTests.Test.TopLeft:
-                    generator.PopulateEnum(BlockDirection.Left, BlockDirection.Up, BlockDirection.Right, BlockDirection.Right, BlockDirection.Right);
+                    generator.PopulateEnum(Compass4Points.West, Compass4Points.North, Compass4Points.East, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(0, 0);
                     break;
                 case BlockNavigationTests.Test.TopRight:
-                    generator.PopulateEnum(BlockDirection.Up, BlockDirection.Right, BlockDirection.Down, BlockDirection.Right, BlockDirection.Right);
+                    generator.PopulateEnum(Compass4Points.North, Compass4Points.East, Compass4Points.South, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(1, 0);
                     break;
                 case BlockNavigationTests.Test.BottomRight:
-                    generator.PopulateEnum(BlockDirection.Right, BlockDirection.Down, BlockDirection.Left, BlockDirection.Right, BlockDirection.Right);
+                    generator.PopulateEnum(Compass4Points.East, Compass4Points.South, Compass4Points.West, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(1, 1);
                     break;
                 case BlockNavigationTests.Test.BottomLeft:
-                    generator.PopulateEnum(BlockDirection.Down, BlockDirection.Left, BlockDirection.Up, BlockDirection.Right, BlockDirection.Right);
+                    generator.PopulateEnum(Compass4Points.South, Compass4Points.West, Compass4Points.North, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(0, 1);
                     break;
                 case BlockNavigationTests.Test.Cornered:
-                    generator.PopulateEnum(BlockDirection.Left, BlockDirection.Down, BlockDirection.Right, BlockDirection.Right, BlockDirection.Right);
+                    generator.PopulateEnum(Compass4Points.West, Compass4Points.South, Compass4Points.East, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(4, 3, 0, 0, 1, 1, 2, 4);
                     break;
 

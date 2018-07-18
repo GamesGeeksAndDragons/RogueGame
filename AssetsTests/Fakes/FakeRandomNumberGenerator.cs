@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Random;
 using Utils;
+using Utils.Random;
 
 namespace AssetsTests.Fakes
 {

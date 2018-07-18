@@ -26,16 +26,16 @@ namespace Assets.Rooms
         {
             if (this[point]) return true;
 
-            var north = point.North();
+            var north = point.GoNorth();
             if (IsInsideBounds(north) && this[north]) return true;
 
-            var south = point.South();
+            var south = point.GoSouth();
             if (IsInsideBounds(south) && this[south]) return true;
 
-            var east = point.East();
+            var east = point.GoEast();
             if (IsInsideBounds(east) && this[east]) return true;
 
-            var west = point.West();
+            var west = point.GoWest();
             if (IsInsideBounds(west) && this[west]) return true;
 
             return false;
@@ -48,16 +48,16 @@ namespace Assets.Rooms
 
         public bool IsCornered(Coordinate point)
         {
-            var canMove = CanMoveTo(point.North());
+            var canMove = CanMoveTo(point.GoNorth());
             if (canMove) return false;
 
-            canMove = CanMoveTo(point.South());
+            canMove = CanMoveTo(point.GoSouth());
             if (canMove) return false;
 
-            canMove = CanMoveTo(point.East());
+            canMove = CanMoveTo(point.GoEast());
             if (canMove) return false;
 
-            canMove = CanMoveTo(point.West());
+            canMove = CanMoveTo(point.GoWest());
 
             return !canMove;
         }

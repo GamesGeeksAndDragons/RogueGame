@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Assets.Actions;
-using Assets.Coordinates;
-using Assets.Random;
-using Assets.Tiles;
 using log4net;
+using Assets.Coordinates;
+using Assets.Tiles;
+using Utils.Random;
+using Utils.Enums;
 
 namespace Assets.Rooms
 {
@@ -54,19 +53,19 @@ namespace Assets.Rooms
             int max = --numBlocks;
             while (numBlocks > 0)
             {
-                var randomBlock = _randomNumberGenerator.Enum<BlockDirection>();
+                var randomBlock = _randomNumberGenerator.Enum<Compass4Points>();
                 switch (randomBlock)
                 {
-                    case BlockDirection.Up:
+                    case Compass4Points.North:
                         y++;
                         break;
-                    case BlockDirection.Down:
+                    case Compass4Points.South:
                         y--;
                         break;
-                    case BlockDirection.Right:
+                    case Compass4Points.East:
                         x++;
                         break;
-                    case BlockDirection.Left:
+                    case Compass4Points.West:
                         x--;
                         break;
                 }
@@ -114,23 +113,23 @@ namespace Assets.Rooms
         {
             var nextPoint = point;
 
-            BlockDirection randomDirection;
+            Compass4Points randomDirection;
             do
             {
-                randomDirection = _randomNumberGenerator.Enum<BlockDirection>();
+                randomDirection = _randomNumberGenerator.Enum<Compass4Points>();
                 switch (randomDirection)
                 {
-                    case BlockDirection.Up:
-                        nextPoint = point.North();
+                    case Compass4Points.North:
+                        nextPoint = point.GoNorth();
                         break;
-                    case BlockDirection.Down:
-                        nextPoint = point.South();
+                    case Compass4Points.South:
+                        nextPoint = point.GoSouth();
                         break;
-                    case BlockDirection.Right:
-                        nextPoint = point.East();
+                    case Compass4Points.East:
+                        nextPoint = point.GoEast();
                         break;
-                    case BlockDirection.Left:
-                        nextPoint = point.West();
+                    case Compass4Points.West:
+                        nextPoint = point.GoWest();
                         break;
                     default:
                         var message = $"Unrecognised direction [{randomDirection}]";

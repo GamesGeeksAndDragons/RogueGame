@@ -1,4 +1,4 @@
-﻿namespace Assets.Random
+﻿namespace Utils.Random
 {
     public interface IRandomNumberGenerator
     {

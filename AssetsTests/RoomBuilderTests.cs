@@ -1,8 +1,8 @@
 ﻿using System;
-using Assets.Actions;
-using Assets.Random;
 using Assets.Rooms;
 using AssetsTests.Fakes;
+using Utils.Random;
+using Utils.Enums;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,17 +14,17 @@ namespace AssetsTests
         {
             var random = new FakeRandomNumberGenerator();
             random.PopulateEnum(
-                BlockDirection.Right,
-                BlockDirection.Right,
-                BlockDirection.Down,
-                BlockDirection.Up,
-                BlockDirection.Right,
-                BlockDirection.Up,
-                BlockDirection.Left,
-                BlockDirection.Down,
-                BlockDirection.Down,
-                BlockDirection.Left,
-                BlockDirection.Left
+                Compass4Points.East,
+                Compass4Points.East,
+                Compass4Points.South,
+                Compass4Points.North,
+                Compass4Points.East,
+                Compass4Points.North,
+                Compass4Points.West,
+                Compass4Points.South,
+                Compass4Points.South,
+                Compass4Points.West,
+                Compass4Points.West
             );
 
             var start = 1;

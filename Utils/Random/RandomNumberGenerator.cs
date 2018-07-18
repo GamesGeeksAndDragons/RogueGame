@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Utils;
 
-namespace Assets.Random
+namespace Utils.Random
 {
-    internal class RandomNumberGenerator : IRandomNumberGenerator
+    public class RandomNumberGenerator : IRandomNumberGenerator
     {
         private static readonly System.Random Genarator = new System.Random();
 
