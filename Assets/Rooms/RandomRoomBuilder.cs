@@ -1,44 +1,30 @@
 ﻿using System;
-using log4net;
 using Assets.Coordinates;
 using Assets.Tiles;
-using Utils.Random;
+using log4net;
 using Utils.Enums;
+using Utils.Random;
 
 namespace Assets.Rooms
 {
-    /*
-     * Basic Room unit
-     *  ****
-     *  ****
-     *  ****
-     *  Four verticies
-     * 
-     * Complicated rooms are multiples of the basic unit
-     *  
-     * */
     public class RandomRoomBuilder
     {
-        private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
+        private readonly Func<int, Coordinate> _coordinateGeneration;
 
-        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger)
+        public RandomRoomBuilder(Func<int, Coordinate> generation, ILog logger)
         {
-            _randomNumberGenerator = randomNumberGenerator;
+            _coordinateGeneration = generation;
             _logger = logger;
         }
 
         internal ITile[,] BuildBlock(int x, int y)
         {
-            ITile[,] tiles = new ITile[4, 4];
+            var tiles = new ITile[4, 4];
 
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    tiles[i, j] = Tile.Create(i + x, j + y);
-                }
-            }
+            for (var i = 0; i < 4; i++)
+            for (var j = 0; j < 4; j++)
+                tiles[i, j] = Tile.Create(i + x, j + y);
 
             return tiles;
         }
@@ -50,10 +36,10 @@ namespace Assets.Rooms
 
             int x = 1, y = 1;
 
-            int max = --numBlocks;
+            var max = --numBlocks;
             while (numBlocks > 0)
             {
-                var randomBlock = _randomNumberGenerator.Enum<Compass4Points>();
+                var randomBlock = RandomNumberGenerator.Enum<Compass4Points>();
                 switch (randomBlock)
                 {
                     case Compass4Points.North:
@@ -80,7 +66,8 @@ namespace Assets.Rooms
 
         internal RoomBlocks DecideLayout(int numBlocks)
         {
-            if(numBlocks < 2) throw new ArgumentException($"Expect more than 3 blocks, got [{numBlocks}]", nameof(numBlocks));
+            if (numBlocks < 2)
+                throw new ArgumentException($"Expect more than 3 blocks, got [{numBlocks}]", nameof(numBlocks));
 
             var blocks = new RoomBlocks(numBlocks);
 
@@ -90,20 +77,16 @@ namespace Assets.Rooms
 
             while (numBlocks > 0)
             {
-                if (! blocks[point] && blocks.IsTouchingAnyBlock(point))
+                if (!blocks[point] && blocks.IsTouchingAnyBlock(point))
                 {
                     blocks[point] = true;
-                    if(--numBlocks == 0) continue;
+                    if (--numBlocks == 0) continue;
                 }
 
-                if (blocks.IsCornered(point) || ! blocks.IsTouchingAnyBlock(point))
-                {
+                if (blocks.IsCornered(point) || !blocks.IsTouchingAnyBlock(point))
                     point = RandomCoordinates(blocks);
-                }
                 else
-                {
                     point = RandomWalkCoordinates(blocks, point);
-                }
             }
 
             return blocks;
@@ -116,7 +99,7 @@ namespace Assets.Rooms
             Compass4Points randomDirection;
             do
             {
-                randomDirection = _randomNumberGenerator.Enum<Compass4Points>();
+                randomDirection = RandomNumberGenerator.Enum<Compass4Points>();
                 switch (randomDirection)
                 {
                     case Compass4Points.North:
@@ -149,13 +132,18 @@ namespace Assets.Rooms
 
             do
             {
-                point = new Coordinate(
-                    _randomNumberGenerator.Dice(blocks.UpperBound),
-                    _randomNumberGenerator.Dice(blocks.UpperBound)
-                );
+                point = _coordinateGeneration.Invoke(blocks.UpperBound);
             } while (!blocks.IsInsideBounds(point));
 
             return point;
         }
     }
+}
+
+public static class CoordinateGenerationStrategies
+{
+    public static readonly Func<int, Coordinate> RandomStrategy = upperBound => 
+        new Coordinate(
+            RandomNumberGenerator.Dice(upperBound),
+            RandomNumberGenerator.Dice(upperBound));
 }

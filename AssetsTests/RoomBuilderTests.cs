@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Coordinates;
 using Assets.Rooms;
 using AssetsTests.Fakes;
 using Utils.Random;
@@ -8,7 +9,8 @@ using Xunit.Abstractions;
 
 namespace AssetsTests
 {
-    static class FakeRandomNumberTestFactory
+    //TODO is this really needed?
+    /*static class FakeRandomNumberTestFactory
     {
         internal static IRandomNumberGenerator CreateGenerator(int numBlocks)
         {
@@ -33,7 +35,7 @@ namespace AssetsTests
             random.PopulateDice(start, start, posOfNonConnected, posOfNonConnected, - 1, 0, 1, 3, 0, 0, 2);
             return random;
         }
-    }
+    }*/
 
     public class RandomRoomBuilderTests
     {
@@ -92,8 +94,7 @@ namespace AssetsTests
         [InlineData(7)]
         public void DecideLayout_ShouldHaveConnectedBlocks(int numBlocks)
         {
-            var fakeRandomNumbers = FakeRandomNumberTestFactory.CreateGenerator(numBlocks);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+            var builder = new RandomRoomBuilder(_fakeCoordinate, new FakeLogger(_output));
             var blocks = builder.DecideLayout(numBlocks);
 
             var expected = GetExpectedLayout(numBlocks);
@@ -104,5 +105,8 @@ namespace AssetsTests
 
             Assert.Equal(expected, actual);
         }
+
+        private RandomRoomBuilder.CoordinateGeneration CoordinateGenerationStrategies => new Coordinate(1,2);
+
     }
 }

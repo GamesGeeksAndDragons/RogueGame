@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Coordinates;
 using Assets.Rooms;
 using AssetsTests.Fakes;
 using Xunit;
@@ -27,8 +28,7 @@ namespace AssetsTests
         [InlineData(Test.Cornered)]
         public void DecideLayout_ShouldHaveConnectedBlocks(Test test)
         {
-            var fakeRandomNumbers = TestDataForNavigationTests.GetGenerator(test);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+            var builder = new RandomRoomBuilder(_fakeCoordinate, new FakeLogger(_output));
             var numBlocks = TestDataForNavigationTests.GetNumBlocks(test);
             var blocks = builder.DecideLayout(numBlocks);
 
@@ -41,5 +41,8 @@ namespace AssetsTests
 
             Assert.Equal(expected, actual);
         }
+
+        private readonly Func<int, Coordinate> _fakeCoordinate = i => new Coordinate(10, 2);
+
     }
 }

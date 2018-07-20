@@ -58,7 +58,8 @@ namespace AssetsTests.Fakes
             throw new ArgumentException($"Didn't have Expected Layout for [{test}]");
         }
 
-        internal static IRandomNumberGenerator GetGenerator(BlockNavigationTests.Test test)
+        //TODO reconsider
+        /*internal static IRandomNumberGenerator GetGenerator(BlockNavigationTests.Test test)
         {
             var generator = new FakeRandomNumberGenerator();
 
@@ -89,6 +90,6 @@ namespace AssetsTests.Fakes
             }
 
             return generator;
-        }
+        }*/
     }
 }

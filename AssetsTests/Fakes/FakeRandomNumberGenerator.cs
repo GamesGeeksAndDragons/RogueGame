@@ -5,7 +5,7 @@ using Utils.Random;
 
 namespace AssetsTests.Fakes
 {
-    internal class FakeRandomNumberGenerator : IRandomNumberGenerator
+    internal class FakeRandomNumberGenerator 
     {
         private readonly Queue<bool> _fakeBools = new Queue<bool>();
         public void PopulateBooleans(params bool[] rolls)
