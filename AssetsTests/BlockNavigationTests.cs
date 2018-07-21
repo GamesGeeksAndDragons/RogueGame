@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Rooms;
+﻿using Assets.Rooms;
 using AssetsTests.Fakes;
 using Utils;
 using Xunit;
