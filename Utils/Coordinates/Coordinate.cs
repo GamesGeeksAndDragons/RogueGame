@@ -1,19 +1,19 @@
-﻿namespace Assets.Coordinates
+﻿namespace Utils.Coordinates
 {
     public struct Coordinate
     {
-        public Coordinate(int x, int y)
+        public Coordinate(int row, int column)
         {
-            X = x;
-            Y = y;
+            Row = row;
+            Column = column;
         }
 
-        public int X { get; }
-        public int Y { get; }
+        public int Row { get; }
+        public int Column { get; }
 
         public override int GetHashCode()
         {
-            return X ^ Y;
+            return Row ^ Column;
         }
 
         public override bool Equals(object obj)
@@ -26,7 +26,7 @@
 
         public bool Equals(Coordinate other)
         {
-            return X == other.X && Y == other.Y;
+            return Row == other.Row && Column == other.Column;
         }
 
         public static bool operator==(Coordinate point1, Coordinate point2)
@@ -41,7 +41,7 @@
 
         public override string ToString()
         {
-            return $"X: {X}, Y: {Y}";
+            return $"({Row},{Column})";
         }
     }
 }

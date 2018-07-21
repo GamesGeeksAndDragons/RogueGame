@@ -55,7 +55,7 @@ namespace AssetsTests
         [InlineData(20)]
         public void ARandomDice_ShouldHaveAGoodDistribution(int points)
         {
-            int numRolls = points * 1000;
+            int numRolls = points * 10000;
 
             var rolls = new int[numRolls];
 

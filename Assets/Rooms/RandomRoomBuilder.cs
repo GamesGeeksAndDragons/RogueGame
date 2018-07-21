@@ -1,7 +1,8 @@
 ﻿using System;
 using log4net;
-using Assets.Coordinates;
 using Assets.Tiles;
+using Utils;
+using Utils.Coordinates;
 using Utils.Random;
 using Utils.Enums;
 
@@ -80,7 +81,7 @@ namespace Assets.Rooms
 
         internal RoomBlocks DecideLayout(int numBlocks)
         {
-            if(numBlocks < 2) throw new ArgumentException($"Expect more than 3 blocks, got [{numBlocks}]", nameof(numBlocks));
+            numBlocks.ThrowIfBelow(2, nameof(numBlocks));
 
             var blocks = new RoomBlocks(numBlocks);
 
@@ -120,16 +121,16 @@ namespace Assets.Rooms
                 switch (randomDirection)
                 {
                     case Compass4Points.North:
-                        nextPoint = point.GoNorth();
+                        nextPoint = point.Up();
                         break;
                     case Compass4Points.South:
-                        nextPoint = point.GoSouth();
+                        nextPoint = point.Down();
                         break;
                     case Compass4Points.East:
-                        nextPoint = point.GoEast();
+                        nextPoint = point.Right();
                         break;
                     case Compass4Points.West:
-                        nextPoint = point.GoWest();
+                        nextPoint = point.Left();
                         break;
                     default:
                         var message = $"Unrecognised direction [{randomDirection}]";
@@ -150,8 +151,8 @@ namespace Assets.Rooms
             do
             {
                 point = new Coordinate(
-                    _randomNumberGenerator.Dice(blocks.UpperBound),
-                    _randomNumberGenerator.Dice(blocks.UpperBound)
+                    _randomNumberGenerator.Dice(blocks.RowCount),
+                    _randomNumberGenerator.Dice(blocks.ColumnCount)
                 );
             } while (!blocks.IsInsideBounds(point));
 

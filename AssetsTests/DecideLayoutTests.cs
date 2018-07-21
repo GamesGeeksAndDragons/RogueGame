@@ -35,11 +35,11 @@ namespace AssetsTests
         }
     }
 
-    public class RandomRoomBuilderTests
+    public class DecideLayoutTests
     {
         private readonly ITestOutputHelper _output;
 
-        public RandomRoomBuilderTests(ITestOutputHelper output)
+        public DecideLayoutTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -50,35 +50,49 @@ namespace AssetsTests
             {
                 case 3:
                     return
-                        "...|" + Environment.NewLine +
-                        ".**|" + Environment.NewLine +
-                        "..*|" + Environment.NewLine;
+                        " |012" + Environment.NewLine +
+                        "-----" + Environment.NewLine +
+                        "0|..." + Environment.NewLine +
+                        "1|.**" + Environment.NewLine +
+                        "2|..*";
                 case 4:
-                    return "....|" + Environment.NewLine +
-                           ".***|" + Environment.NewLine +
-                           "...*|" + Environment.NewLine +
-                           "....|" + Environment.NewLine;
+                    return
+                        " |0123" + Environment.NewLine +
+                        "------" + Environment.NewLine +
+                        "0|...." + Environment.NewLine +
+                        "1|.***" + Environment.NewLine +
+                        "2|...*" + Environment.NewLine +
+                        "3|....";
                 case 5:
-                    return ".....|" + Environment.NewLine +
-                           ".****|" + Environment.NewLine +
-                           "...*.|" + Environment.NewLine +
-                           ".....|" + Environment.NewLine +
-                           ".....|" + Environment.NewLine;
+                    return
+                        " |01234" + Environment.NewLine +
+                        "-------" + Environment.NewLine +
+                        "0|....." + Environment.NewLine +
+                        "1|.****" + Environment.NewLine +
+                        "2|...*." + Environment.NewLine +
+                        "3|....." + Environment.NewLine +
+                        "4|.....";
                 case 6:
-                    return "....*.|" + Environment.NewLine +
-                           ".****.|" + Environment.NewLine +
-                           "...*..|" + Environment.NewLine +
-                           "......|" + Environment.NewLine +
-                           "......|" + Environment.NewLine +
-                           "......|" + Environment.NewLine;
+                    return
+                        " |012345" + Environment.NewLine +
+                        "--------" + Environment.NewLine +
+                        "0|....*." + Environment.NewLine +
+                        "1|.****." + Environment.NewLine +
+                        "2|...*.." + Environment.NewLine +
+                        "3|......" + Environment.NewLine +
+                        "4|......" + Environment.NewLine +
+                        "5|......";
                 case 7:
-                    return "...**..|" + Environment.NewLine +
-                           ".****..|" + Environment.NewLine +
-                           "...*...|" + Environment.NewLine +
-                           ".......|" + Environment.NewLine +
-                           ".......|" + Environment.NewLine +
-                           ".......|" + Environment.NewLine +
-                           ".......|" + Environment.NewLine;
+                    return
+                        " |0123456" + Environment.NewLine +
+                        "---------" + Environment.NewLine +
+                        "0|...**.." + Environment.NewLine +
+                        "1|.****.." + Environment.NewLine +
+                        "2|...*..." + Environment.NewLine +
+                        "3|......." + Environment.NewLine +
+                        "4|......." + Environment.NewLine +
+                        "5|......." + Environment.NewLine +
+                        "6|.......";
             }
 
             throw new ArgumentException($"Didn't have Expected Layout for [{numBlocks}] blocks");
