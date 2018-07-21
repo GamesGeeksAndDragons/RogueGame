@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Utils
 {
@@ -18,7 +16,7 @@ namespace Utils
         {
             if (lhs == rhs)
             {
-                throw new ArgumentException(name, $"[{name}] should not have a value of [{lhs}]");
+                throw new ArgumentException(name, $"[{name}:{lhs}] should not have a value of [{rhs}]");
             }
         }
 
@@ -26,7 +24,7 @@ namespace Utils
         {
             if (lhs > rhs)
             {
-                throw new ArgumentNullException(name, $"Unexpected null for [{name}]");
+                throw new ArgumentException(name, $"[{name}:{lhs}] should not be above [{rhs}]");
             }
 
             if (alsoCheckEquality)
@@ -39,7 +37,7 @@ namespace Utils
         {
             if (lhs < rhs)
             {
-                throw new ArgumentNullException(name, $"Unexpected null for [{name}]");
+                throw new ArgumentException(name, $"[{name}:{lhs}] should not be below [{rhs}]");
             }
 
             if (alsoCheckEquality)
