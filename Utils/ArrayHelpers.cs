@@ -17,7 +17,6 @@ namespace Utils
 
         public static IEnumerable<T> SliceRow<T>(this T[,] array, int row)
         {
-            //To take a row, Row remains constant and Column varies
             for (var column = 0; column <= array.ColumnUpperBound(); column++)
             {
                 yield return array[row, column];
@@ -26,7 +25,6 @@ namespace Utils
 
         public static IEnumerable<T> SliceColumn<T>(this T[,] array, int column)
         {
-            //To take a column, Row remains constant and column varies
             for (var row = 0; row <= array.RowUpperBound(); row++)
             {
                 yield return array[row, column];
