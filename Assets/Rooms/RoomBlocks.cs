@@ -124,11 +124,11 @@ namespace Assets.Rooms
 
         private int MinColumn()
         {
-            for (var y = 0; y < ColumnCount; y++)
+            for (var column = 0; column < ColumnCount; column++)
             {
-                if (HasColumnAnyBlocks(y))
+                if (HasColumnAnyBlocks(column))
                 {
-                    return y;
+                    return column;
                 }
             }
 
@@ -137,11 +137,11 @@ namespace Assets.Rooms
 
         private int MaxColumn()
         {
-            for (var y = ColumnCount; y >= 0; y--)
+            for (var column = ColumnCount; column >= 0; column--)
             {
-                if (HasColumnAnyBlocks(y))
+                if (HasColumnAnyBlocks(column))
                 {
-                    return y;
+                    return column;
                 }
             }
 
@@ -152,11 +152,13 @@ namespace Assets.Rooms
         {
             var minRow = MinRow();
             var maxRow = MaxRow();
+
             var minColumn = MinColumn();
             var maxColumn = MaxColumn();
 
             var newRow = maxRow - minRow + 1;
             var newCol = maxColumn - minColumn + 1;
+
             var newBlocks = new bool[newRow, newCol];
 
             for (var x = minRow; x <= maxRow; x++)

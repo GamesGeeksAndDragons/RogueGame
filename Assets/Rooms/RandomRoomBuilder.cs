@@ -112,31 +112,13 @@ namespace Assets.Rooms
 
         private Coordinate RandomWalkCoordinates(RoomBlocks blocks, Coordinate point)
         {
-            var nextPoint = point;
+            Coordinate nextPoint;
 
             Compass4Points randomDirection;
             do
             {
                 randomDirection = _randomNumberGenerator.Enum<Compass4Points>();
-                switch (randomDirection)
-                {
-                    case Compass4Points.North:
-                        nextPoint = point.Up();
-                        break;
-                    case Compass4Points.South:
-                        nextPoint = point.Down();
-                        break;
-                    case Compass4Points.East:
-                        nextPoint = point.Right();
-                        break;
-                    case Compass4Points.West:
-                        nextPoint = point.Left();
-                        break;
-                    default:
-                        var message = $"Unrecognised direction [{randomDirection}]";
-                        _logger.Fatal(message);
-                        throw new ArgumentException(message);
-                }
+                nextPoint = point.Move(randomDirection);
             } while (!blocks.IsInsideBounds(nextPoint));
 
             _logger.Debug($"From Point [{point}] go [{randomDirection.ToString()}] to [{nextPoint}]");
