@@ -1,30 +1,26 @@
-﻿using System.Collections.Generic;
-using Assets.Actors;
+﻿using Assets.Actors;
+using Utils.Coordinates;
 
 namespace Assets.Tiles
 {
-    class Tile : ITile
+    public class Tile : Actor
     {
-        internal Tile(int x, int y)
+        public override string Name => "TILE";
+        public override Actor Clone()
         {
-            _x = x;
-            _y = y;
-            _style = TyleStyle.Undefined;
+            var actorClones = Actors.CloneActors();
+            return new Tile(Coordinates, actorClones);
         }
 
-        private readonly IActor _actor;
-        private readonly int _x;
-        private readonly int _y;
-        private readonly TyleStyle _style;
-
-        public static Tile Create(int x, int y)
+        public Tile(Coordinate coordinates, Actor[] actors = null)
         {
-            return new Tile(x, y);
+            Coordinates = coordinates;
+
+            Actors = actors?.CloneActors();
         }
 
+        public Coordinate Coordinates { get; }
 
-        public (int x, int y) Corrdinates => (_x, _y);
-        public bool IsEmpty => _actor == null;
-        public bool HasFloor { get; internal set; }
+        public Actor[] Actors;
     }
 }

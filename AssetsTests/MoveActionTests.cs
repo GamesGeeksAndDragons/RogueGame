@@ -9,9 +9,6 @@ namespace AssetsTests
         [Fact]
         public void CanMoveMe_EastFromTileToAnother()
         {
-            var me = new Me();
-            var from = new Tile(1, 1);
- 
         }
     }
 }

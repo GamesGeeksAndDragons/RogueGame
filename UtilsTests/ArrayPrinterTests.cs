@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utils;
 using Xunit;
 using Xunit.Abstractions;
-using Utils;
 
-namespace AssetsTests
+namespace UtilsTests
 {
     public class ArrayPrinterTests
     {

@@ -148,7 +148,7 @@ namespace Assets.Rooms
             return ColumnCount;
         }
 
-        public void ReduceLayout()
+        public RoomBlocks ReduceLayout()
         {
             var minRow = MinRow();
             var maxRow = MaxRow();
@@ -172,7 +172,7 @@ namespace Assets.Rooms
                 }
             }
 
-            Blocks = newBlocks;
+            return new RoomBlocks(newBlocks);
         }
     }
 }

@@ -4,8 +4,13 @@ using System.Text;
 
 namespace Assets.Actors
 {
-    internal class Me : IActor
+    internal class Me : Actor
     {
-        public string Name => "Me";
+        public override string Name => "Me";
+
+        public override Actor Clone()
+        {
+            return new Me();
+        }
     }
 }

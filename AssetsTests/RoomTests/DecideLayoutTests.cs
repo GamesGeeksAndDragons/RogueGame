@@ -1,12 +1,12 @@
 ﻿using System;
 using Assets.Rooms;
 using AssetsTests.Fakes;
-using Utils.Random;
 using Utils.Enums;
+using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests
+namespace AssetsTests.RoomTests
 {
     static class FakeRandomNumberTestFactory
     {

@@ -22,6 +22,7 @@ namespace Assets.Rooms
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
+        private const int TilesPerBlock = 4;
 
         public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger)
         {
@@ -29,15 +30,14 @@ namespace Assets.Rooms
             _logger = logger;
         }
 
-        internal ITile[,] BuildBlock(int x, int y)
+        internal Tile[,] PopulateBlock(Tile[,] tiles, int rowOffset, int colOffset)
         {
-            ITile[,] tiles = new ITile[4, 4];
-
-            for (int i = 0; i < 4; i++)
+            for (var row = 0; row < TilesPerBlock; row++)
             {
-                for (int j = 0; j < 4; j++)
+                for (var column = 0; column < TilesPerBlock; column++)
                 {
-                    tiles[i, j] = Tile.Create(i + x, j + y);
+                    var coordindates = new Coordinate(row + rowOffset, column + colOffset);
+                    tiles[row, column] = new Tile(coordindates);
                 }
             }
 
@@ -46,35 +46,22 @@ namespace Assets.Rooms
 
         internal void BuildRoom(int numBlocks)
         {
-            var blocks = new bool[numBlocks + 1, numBlocks + 1];
-            blocks[1, 1] = true;
+            var blocks = new RoomBlocks(numBlocks);
+            blocks = blocks.ReduceLayout();
 
-            int x = 1, y = 1;
+            var maxRows = blocks.RowCount + 2;
+            var maxCols = blocks.ColumnCount + 2;
 
-            int max = --numBlocks;
-            while (numBlocks > 0)
+            var room = new Room(maxRows, maxCols);
+
+            for (var row = 0; row <= maxRows; row++)
             {
-                var randomBlock = _randomNumberGenerator.Enum<Compass4Points>();
-                switch (randomBlock)
+                for (var column = 0; column <= maxCols; column++)
                 {
-                    case Compass4Points.North:
-                        y++;
-                        break;
-                    case Compass4Points.South:
-                        y--;
-                        break;
-                    case Compass4Points.East:
-                        x++;
-                        break;
-                    case Compass4Points.West:
-                        x--;
-                        break;
-                }
+                    var rowOffset = row * TilesPerBlock + 1;
+                    var colOffset = column * TilesPerBlock + 1;
 
-                if (blocks[x, y] == false)
-                {
-                    blocks[x, y] = true;
-                    numBlocks--;
+                    PopulateBlock(room.Tiles, rowOffset, colOffset);
                 }
             }
         }

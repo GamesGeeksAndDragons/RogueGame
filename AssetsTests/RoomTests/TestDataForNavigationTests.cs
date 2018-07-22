@@ -1,8 +1,9 @@
 ﻿using System;
+using AssetsTests.Fakes;
 using Utils.Enums;
 using Utils.Random;
 
-namespace AssetsTests.Fakes
+namespace AssetsTests.RoomTests
 {
     public static class TestDataForNavigationTests
     {

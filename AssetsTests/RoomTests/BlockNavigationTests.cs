@@ -1,10 +1,11 @@
 ﻿using Assets.Rooms;
 using AssetsTests.Fakes;
+using AssetsTests.RoomTests;
 using Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests
+namespace AssetsTests.RoomTests
 {
     public class BlockNavigationTests
     {

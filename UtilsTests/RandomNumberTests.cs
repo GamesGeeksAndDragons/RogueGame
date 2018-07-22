@@ -7,7 +7,7 @@ using Utils.Enums;
 using Utils.Random;
 using Xunit;
 
-namespace AssetsTests
+namespace UtilsTests
 {
     public class RandomNumberTests
     {

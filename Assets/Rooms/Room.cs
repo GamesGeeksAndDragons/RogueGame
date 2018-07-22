@@ -1,12 +1,33 @@
-﻿namespace Assets.Rooms
-{
-    public class Room
-    {
-        private Room() {}
+﻿using Assets.Actors;
+using Assets.Tiles;
+using Utils;
 
-        public static Room Create(int blocks)
+namespace Assets.Rooms
+{
+    public class Room : Actor
+    {
+        public Room(int rows, int columns)
         {
-            return new Room();
+            Tiles = new Tile[rows,columns];
+        }
+
+        private Room(Tile[,] tiles)
+        {
+            Tiles = tiles;
+        }
+
+        public override string Name => "ROOM";
+
+        public override Actor Clone()
+        {
+            return new Room(Tiles.CloneActors());
+        }
+
+        public Tile[,] Tiles;
+
+        public override string ToString()
+        {
+            return Tiles.Print(tile => tile.Actors == null ? "." : tile.Actors.Length.ToString());
         }
     }
 }
