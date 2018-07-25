@@ -6,9 +6,9 @@ namespace Assets.Rooms
 {
     internal class RoomBlocks
     {
-        public bool[,] Blocks { get; internal set; }
-        public int RowCount => Blocks.RowUpperBound();
-        public int ColumnCount => Blocks.ColumnUpperBound();
+        private bool[,] Blocks { get; set; }
+        public int RowUpperBound => Blocks.RowUpperBound();
+        public int ColumnUpperBound => Blocks.ColumnUpperBound();
 
         internal RoomBlocks(bool[,] blocks)
         {
@@ -20,34 +20,28 @@ namespace Assets.Rooms
             Blocks = new bool[numBlocks, numBlocks];
         }
 
-        public bool IsInsideBounds(Coordinate point)
-        {
-            return point.Row >= 0 && point.Column >= 0 && 
-                   point.Row <= RowCount && point.Column <= ColumnCount;
-        }
-
         public bool IsTouchingAnyBlock(Coordinate point)
         {
             if (this[point]) return true;
 
             var north = point.Up();
-            if (IsInsideBounds(north) && this[north]) return true;
+            if (north.IsInside(RowUpperBound, ColumnUpperBound) && this[north]) return true;
 
             var south = point.Down();
-            if (IsInsideBounds(south) && this[south]) return true;
+            if (south.IsInside(RowUpperBound, ColumnUpperBound) && this[south]) return true;
 
             var east = point.Right();
-            if (IsInsideBounds(east) && this[east]) return true;
+            if (east.IsInside(RowUpperBound, ColumnUpperBound) && this[east]) return true;
 
             var west = point.Left();
-            if (IsInsideBounds(west) && this[west]) return true;
+            if (west.IsInside(RowUpperBound, ColumnUpperBound) && this[west]) return true;
 
             return false;
         }
 
         public bool CanMoveTo(Coordinate point)
         {
-            return IsInsideBounds(point) && ! this[point];
+            return point.IsInside(RowUpperBound, ColumnUpperBound) && ! this[point];
         }
 
         public bool IsCornered(Coordinate point)
@@ -90,6 +84,11 @@ namespace Assets.Rooms
             return slice.Any(hasBlock => hasBlock);
         }
 
+        public bool IsInside(Coordinate coordinate)
+        {
+            return Blocks.IsInside(coordinate);
+        }
+
         private bool HasColumnAnyBlocks(int column)
         {
             var slice = Blocks.SliceColumn(column).ToList();
@@ -98,7 +97,7 @@ namespace Assets.Rooms
 
         private int MinRow()
         {
-            for (var row = 0; row < RowCount; row++)
+            for (var row = 0; row < RowUpperBound; row++)
             {
                 if (HasRowAnyBlocks(row))
                 {
@@ -111,7 +110,7 @@ namespace Assets.Rooms
 
         private int MaxRow()
         {
-            for (var row = RowCount; row >= 0; row--)
+            for (var row = RowUpperBound; row >= 0; row--)
             {
                 if (HasRowAnyBlocks(row))
                 {
@@ -119,12 +118,12 @@ namespace Assets.Rooms
                 }
             }
 
-            return RowCount;
+            return RowUpperBound;
         }
 
         private int MinColumn()
         {
-            for (var column = 0; column < ColumnCount; column++)
+            for (var column = 0; column < ColumnUpperBound; column++)
             {
                 if (HasColumnAnyBlocks(column))
                 {
@@ -137,7 +136,7 @@ namespace Assets.Rooms
 
         private int MaxColumn()
         {
-            for (var column = ColumnCount; column >= 0; column--)
+            for (var column = ColumnUpperBound; column >= 0; column--)
             {
                 if (HasColumnAnyBlocks(column))
                 {
@@ -145,7 +144,7 @@ namespace Assets.Rooms
                 }
             }
 
-            return ColumnCount;
+            return ColumnUpperBound;
         }
 
         public RoomBlocks ReduceLayout()

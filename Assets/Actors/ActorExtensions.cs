@@ -25,8 +25,10 @@ namespace Assets.Actors
 
             for (var row = 0; row <= maxRow; row++)
             {
-                for (int col = 0; col <= maxCol; col++)
+                for (var col = 0; col <= maxCol; col++)
                 {
+                    if (array[row, col] == null) continue;
+
                     T t = (T)array[row, col].Clone();
                     clone[row, col] = t;
                 }

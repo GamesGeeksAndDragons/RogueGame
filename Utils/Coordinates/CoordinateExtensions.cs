@@ -10,6 +10,12 @@ namespace Utils.Coordinates
         public static Coordinate Up(this Coordinate coordinate, int up = 1) => new Coordinate(coordinate.Row - up, coordinate.Column);
         public static Coordinate Down(this Coordinate coordinate, int down=1) => new Coordinate(coordinate.Row + down, coordinate.Column);
 
+        public static bool IsInside(this Coordinate point, int maxRow, int maxColumn)
+        {
+            return point.Row >= 0 && point.Column >= 0 &&
+                   point.Row <= maxRow && point.Column <= maxColumn;
+        }
+
         public static Coordinate Move(this Coordinate coordinate, Compass4Points direction)
         {
             switch (direction)

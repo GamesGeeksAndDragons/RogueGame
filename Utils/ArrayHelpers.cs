@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Utils.Coordinates;
 
 namespace Utils
 {
@@ -28,6 +29,17 @@ namespace Utils
             {
                 yield return array[row, column];
             }
+        }
+
+        public static bool IsInside<T>(this T[,] array, int row, int column)
+        {
+            return row    >= 0 && row    <= array.RowUpperBound() && 
+                   column >= 0 && column <= array.ColumnUpperBound();
+        }
+
+        public static bool IsInside<T>(this T[,] array, Coordinate coordinates)
+        {
+            return array.IsInside(coordinates.Row, coordinates.Column);
         }
     }
 }

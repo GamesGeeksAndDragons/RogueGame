@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Actors;
 using log4net;
 using Assets.Tiles;
 using Utils;
@@ -22,7 +23,6 @@ namespace Assets.Rooms
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
-        private const int TilesPerBlock = 4;
 
         public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger)
         {
@@ -30,40 +30,20 @@ namespace Assets.Rooms
             _logger = logger;
         }
 
-        internal Tile[,] PopulateBlock(Tile[,] tiles, int rowOffset, int colOffset)
+        internal Room BuildRoom(int numBlocks)
         {
-            for (var row = 0; row < TilesPerBlock; row++)
-            {
-                for (var column = 0; column < TilesPerBlock; column++)
-                {
-                    var coordindates = new Coordinate(row + rowOffset, column + colOffset);
-                    tiles[row, column] = new Tile(coordindates);
-                }
-            }
-
-            return tiles;
-        }
-
-        internal void BuildRoom(int numBlocks)
-        {
-            var blocks = new RoomBlocks(numBlocks);
+            var blocks = DecideLayout(numBlocks);
             blocks = blocks.ReduceLayout();
 
-            var maxRows = blocks.RowCount + 2;
-            var maxCols = blocks.ColumnCount + 2;
+            var maxBlockRows = blocks.RowUpperBound;
+            var maxBlockCols = blocks.ColumnUpperBound;
 
-            var room = new Room(maxRows, maxCols);
+            var room = new Room(maxBlockRows, maxBlockCols);
 
-            for (var row = 0; row <= maxRows; row++)
-            {
-                for (var column = 0; column <= maxCols; column++)
-                {
-                    var rowOffset = row * TilesPerBlock + 1;
-                    var colOffset = column * TilesPerBlock + 1;
+            room = room.PopulateWithTiles(maxBlockRows, maxBlockCols);
+            room = room.PopulateWithWalls();
 
-                    PopulateBlock(room.Tiles, rowOffset, colOffset);
-                }
-            }
+            return room;
         }
 
         internal RoomBlocks DecideLayout(int numBlocks)
@@ -106,7 +86,7 @@ namespace Assets.Rooms
             {
                 randomDirection = _randomNumberGenerator.Enum<Compass4Points>();
                 nextPoint = point.Move(randomDirection);
-            } while (!blocks.IsInsideBounds(nextPoint));
+            } while (! blocks.IsInside(nextPoint));
 
             _logger.Debug($"From Point [{point}] go [{randomDirection.ToString()}] to [{nextPoint}]");
 
@@ -120,10 +100,10 @@ namespace Assets.Rooms
             do
             {
                 point = new Coordinate(
-                    _randomNumberGenerator.Dice(blocks.RowCount),
-                    _randomNumberGenerator.Dice(blocks.ColumnCount)
+                    _randomNumberGenerator.Dice(blocks.RowUpperBound),
+                    _randomNumberGenerator.Dice(blocks.ColumnUpperBound)
                 );
-            } while (!blocks.IsInsideBounds(point));
+            } while (!blocks.IsInside(point));
 
             return point;
         }

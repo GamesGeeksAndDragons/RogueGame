@@ -1,6 +1,5 @@
 ﻿using Assets.Rooms;
 using AssetsTests.Fakes;
-using AssetsTests.RoomTests;
 using Utils;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,7 +25,7 @@ namespace AssetsTests.RoomTests
         [InlineData(Test.BottomRight)]
         [InlineData(Test.BottomLeft)]
         [InlineData(Test.Cornered)]
-        public void DecideLayout_ShouldHaveConnectedBlocks(Test test)
+        public void DecideLayout_ForSimpleNavigation_ShouldMoveAsExpected(Test test)
         {
             var fakeRandomNumbers = TestDataForNavigationTests.GetGenerator(test);
             var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));

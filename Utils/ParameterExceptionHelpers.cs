@@ -12,6 +12,14 @@ namespace Utils
             }
         }
 
+        public static void ThrowIfNotNull<T>(this T t, string name) where T : class
+        {
+            if (t != null)
+            {
+                throw new ArgumentNullException(name, $"Expected [{name}] to be null and it was [{t}]");
+            }
+        }
+
         public static void ThrowIfEqual(this int lhs, int rhs, string name)
         {
             if (lhs == rhs)

@@ -8,19 +8,18 @@ namespace Assets.Tiles
         public override string Name => "TILE";
         public override Actor Clone()
         {
-            var actorClones = Actors.CloneActors();
-            return new Tile(Coordinates, actorClones);
+            return new Tile(Coordinates, Actor?.Clone());
         }
 
-        public Tile(Coordinate coordinates, Actor[] actors = null)
+        public Tile(Coordinate coordinates, Actor actors = null)
         {
             Coordinates = coordinates;
 
-            Actors = actors?.CloneActors();
+            Actor = actors?.Clone();
         }
 
         public Coordinate Coordinates { get; }
 
-        public Actor[] Actors;
+        public Actor Actor;
     }
 }
