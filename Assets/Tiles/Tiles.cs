@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Assets.Actors;
+﻿using Assets.Actors;
 using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
@@ -53,8 +51,9 @@ namespace Assets.Tiles
         private WallDirection? GetWallType(Coordinate coordinate)
         {
             var surroundingTiles = this.ExamineSurroundingTiles(coordinate);
+            if (surroundingTiles == Compass8Points.Undefined) return null;
 
-            if (surroundingTiles.IsCorner()) return surroundingTiles.Single().ToWallDirection();
+            if (surroundingTiles.IsCorner()) return surroundingTiles.ToWallDirection();
             if (surroundingTiles.IsHorizontal()) return WallDirection.Horizontal;
             if (surroundingTiles.IsVertical()) return WallDirection.Vertical;
 

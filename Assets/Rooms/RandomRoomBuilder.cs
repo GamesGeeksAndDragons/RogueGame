@@ -1,7 +1,4 @@
-﻿using System;
-using Assets.Actors;
-using log4net;
-using Assets.Tiles;
+﻿using log4net;
 using Utils;
 using Utils.Coordinates;
 using Utils.Random;
@@ -35,12 +32,9 @@ namespace Assets.Rooms
             var blocks = DecideLayout(numBlocks);
             blocks = blocks.ReduceLayout();
 
-            var maxBlockRows = blocks.RowUpperBound;
-            var maxBlockCols = blocks.ColumnUpperBound;
+            var room = new Room(blocks);
 
-            var room = new Room(maxBlockRows, maxBlockCols);
-
-            room = room.PopulateWithTiles(maxBlockRows, maxBlockCols);
+            room = room.PopulateWithTiles(blocks);
             room = room.PopulateWithWalls();
 
             return room;

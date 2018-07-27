@@ -17,11 +17,10 @@ namespace Utils.Enums
         South = Compass4Points.South,
         East = Compass4Points.East,
         West = Compass4Points.West,
-        NorthEast = Compass4Points.North | Compass4Points.East,
-        NorthWest = Compass4Points.North | Compass4Points.West,
-        SouthEast = Compass4Points.South | Compass4Points.East,
-        SouthWest = Compass4Points.South | Compass4Points.West,
+        NorthEast = 0x10,
+        NorthWest = 0x20,
+        SouthEast = 0x40,
+        SouthWest = 0x80,
     }
-
 
 }

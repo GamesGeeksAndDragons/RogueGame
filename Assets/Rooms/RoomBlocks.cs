@@ -4,9 +4,9 @@ using Utils.Coordinates;
 
 namespace Assets.Rooms
 {
-    internal class RoomBlocks
+    public class RoomBlocks
     {
-        private bool[,] Blocks { get; set; }
+        private bool[,] Blocks { get; }
         public int RowUpperBound => Blocks.RowUpperBound();
         public int ColumnUpperBound => Blocks.ColumnUpperBound();
 
@@ -123,7 +123,7 @@ namespace Assets.Rooms
 
         private int MinColumn()
         {
-            for (var column = 0; column < ColumnUpperBound; column++)
+            for (var column = 0; column <= ColumnUpperBound; column++)
             {
                 if (HasColumnAnyBlocks(column))
                 {

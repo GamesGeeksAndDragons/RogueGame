@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Utils.Coordinates;
 using Utils.Enums;
 using RoomTiles= Assets.Tiles.Tiles;
@@ -8,33 +7,59 @@ namespace Assets.Rooms
 {
     static class WallRecognition
     {
-        private static readonly Dictionary<Compass8Points, WallDirection> CompassPointsToWall = new Dictionary<Compass8Points, WallDirection>
+        static class OutsideCorders
         {
-            {Compass8Points.NorthEast, WallDirection.BottomLeftCorner},
-            {Compass8Points.NorthWest, WallDirection.BottomRightCorner},
-            {Compass8Points.SouthEast, WallDirection.TopLeftCorner},
-            {Compass8Points.SouthWest, WallDirection.TopRightCorner}
+            public const Compass8Points BottomLeft = Compass8Points.NorthEast;
+            public const Compass8Points BottomRight = Compass8Points.NorthWest;
+            public const Compass8Points TopLeft = Compass8Points.SouthEast;
+            public const Compass8Points TopRight = Compass8Points.SouthWest;
+        }
+
+        private static readonly Dictionary<Compass8Points, WallDirection> OutsideCorners = new Dictionary<Compass8Points, WallDirection>
+        {
+            {OutsideCorders.BottomLeft, WallDirection.BottomLeftCorner},
+            {OutsideCorders.BottomRight, WallDirection.BottomRightCorner},
+            {OutsideCorders.TopLeft, WallDirection.TopLeftCorner},
+            {OutsideCorders.TopRight, WallDirection.TopRightCorner}
         };
 
-        private static readonly List<Compass8Points> OnlySouthernTiles = new List<Compass8Points>
+        private static readonly Compass8Points InsideBottomLeft  = Compass8Points.South | Compass8Points.West      | Compass8Points.NorthWest | Compass8Points.SouthWest | Compass8Points.SouthEast;
+        private static readonly Compass8Points InsideTopLeft     = Compass8Points.North | Compass8Points.NorthEast | Compass8Points.NorthWest | Compass8Points.West      | Compass8Points.SouthWest;
+        private static readonly Compass8Points InsideBottomRight = Compass8Points.South | Compass8Points.East      | Compass8Points.SouthEast | Compass8Points.SouthWest | Compass8Points.NorthEast;
+        private static readonly Compass8Points InsideTopRight    = Compass8Points.North | Compass8Points.NorthEast | Compass8Points.NorthWest | Compass8Points.East      | Compass8Points.SouthEast;
+
+        private static readonly Dictionary<Compass8Points, WallDirection> InsideCorners = new Dictionary<Compass8Points, WallDirection>
         {
-            Compass8Points.South, Compass8Points.SouthEast, Compass8Points.SouthWest
+            {InsideBottomLeft, WallDirection.BottomLeftCorner},
+            {InsideTopLeft, WallDirection.TopLeftCorner},
+            {InsideBottomRight, WallDirection.BottomRightCorner},
+            {InsideTopRight, WallDirection.TopRightCorner}
         };
 
-        private static readonly List<Compass8Points> OnlyNorthernTiles = new List<Compass8Points>
-        {
-            Compass8Points.North, Compass8Points.NorthEast, Compass8Points.NorthWest
-        };
+        private static readonly Compass8Points AllDirections =
+            Compass8Points.North | Compass8Points.South | Compass8Points.East | Compass8Points.West |
+            Compass8Points.NorthWest | Compass8Points.SouthWest | Compass8Points.NorthEast | Compass8Points.SouthEast
+            ;
 
-        private static readonly List<Compass8Points> OnlyEasternTiles = new List<Compass8Points>
-        {
-            Compass8Points.East, Compass8Points.NorthEast, Compass8Points.SouthEast
-        };
+        private static readonly Compass8Points SoutherlyDirection =
+            Compass8Points.South | Compass8Points.SouthEast | Compass8Points.SouthWest;
 
-        private static readonly List<Compass8Points> OnlyWesternTiles = new List<Compass8Points>
-        {
-            Compass8Points.West, Compass8Points.NorthWest, Compass8Points.SouthWest
-        };
+        private static readonly Compass8Points ExcludeSoutherly = AllDirections ^ SoutherlyDirection;
+
+        private static readonly Compass8Points NortherlyDirection = 
+            Compass8Points.North | Compass8Points.NorthEast | Compass8Points.NorthWest;
+
+        private static readonly Compass8Points ExcludeNortherly = AllDirections ^ NortherlyDirection;
+
+        private const Compass8Points EasterlyDirection =
+            Compass8Points.East | Compass8Points.NorthEast | Compass8Points.SouthEast;
+
+        private static readonly Compass8Points ExcludeEasterly = AllDirections ^ EasterlyDirection;
+
+        private static readonly Compass8Points WesterlyDirection =
+            Compass8Points.West | Compass8Points.NorthWest | Compass8Points.SouthWest;
+
+        private static readonly Compass8Points ExcludeWesterly = AllDirections ^ WesterlyDirection;
 
         private static bool ShouldBeWall(this RoomTiles tiles, Coordinate coordinate)
         {
@@ -43,73 +68,73 @@ namespace Assets.Rooms
             return tiles.IsTile(coordinate) && ! tiles.HasActor(coordinate);
         }
 
-        public static List<Compass8Points> ExamineSurroundingTiles(this RoomTiles tiles, Coordinate coordinate)
+        public static Compass8Points ExamineSurroundingTiles(this RoomTiles tiles, Coordinate coordinate)
         {
-            var surroundingTiles = new List<Compass8Points>();
+            var surroundingTiles = Compass8Points.Undefined;
 
             var below = tiles.ShouldBeWall(coordinate.Down());
-            if (below) surroundingTiles.Add(Compass8Points.South);
+            if (below) surroundingTiles |= Compass8Points.South;
 
             var above = tiles.ShouldBeWall(coordinate.Up());
-            if (above) surroundingTiles.Add(Compass8Points.North);
+            if (above) surroundingTiles |= Compass8Points.North;
 
             var right = tiles.ShouldBeWall(coordinate.Right());
-            if (right) surroundingTiles.Add(Compass8Points.East);
+            if (right) surroundingTiles |= Compass8Points.East;
 
             var left = tiles.ShouldBeWall(coordinate.Left());
-            if (left) surroundingTiles.Add(Compass8Points.West);
+            if (left) surroundingTiles |= Compass8Points.West;
 
             var topLeft = tiles.ShouldBeWall(coordinate.Up().Left());
-            if (topLeft) surroundingTiles.Add(Compass8Points.NorthWest);
+            if (topLeft) surroundingTiles |= Compass8Points.NorthWest;
 
             var topRight = tiles.ShouldBeWall(coordinate.Up().Right());
-            if (topRight) surroundingTiles.Add(Compass8Points.NorthEast);
+            if (topRight) surroundingTiles |= Compass8Points.NorthEast;
 
             var bottomLeft = tiles.ShouldBeWall(coordinate.Down().Left());
-            if (bottomLeft) surroundingTiles.Add(Compass8Points.SouthWest);
+            if (bottomLeft) surroundingTiles |= Compass8Points.SouthWest;
 
             var bottomRight = tiles.ShouldBeWall(coordinate.Down().Right());
-            if (bottomRight) surroundingTiles.Add(Compass8Points.SouthEast);
+            if (bottomRight) surroundingTiles |= Compass8Points.SouthEast;
 
             return surroundingTiles;
         }
 
-        public static bool IsCorner(this IReadOnlyCollection<Compass8Points> surroundingTiles)
+        public static bool IsCorner(this Compass8Points surroundingTiles)
         {
-            if (surroundingTiles.Count != 1) return false;
+            if (surroundingTiles == Compass8Points.Undefined) return false;
 
-            var compassPoint = surroundingTiles.Single();
-            return CompassPointsToWall.ContainsKey(compassPoint);
+            return OutsideCorners.ContainsKey(surroundingTiles) || 
+                   InsideCorners.ContainsKey(surroundingTiles);
         }
 
-        public static WallDirection ToWallDirection(this Compass8Points compass)
+        public static WallDirection ToWallDirection(this Compass8Points direction)
         {
-            return CompassPointsToWall[compass];
+            if (InsideCorners.ContainsKey(direction)) return InsideCorners[direction];
+
+            return OutsideCorners[direction];
         }
 
-        private static bool OnlyHas(this IReadOnlyCollection<Compass8Points> surroundingTiles, IReadOnlyCollection<Compass8Points> tiles)
+        private static bool DoesNotHaveTheseDirections(this Compass8Points source, Compass8Points compare)
         {
-            var matches = surroundingTiles.Intersect(tiles);
-            return matches.Count() == surroundingTiles.Count;
+            return (source & compare) == Compass8Points.Undefined;
         }
 
-        public static bool IsHorizontal(this IReadOnlyCollection<Compass8Points> surroundingTiles)
+        public static bool IsHorizontal(this Compass8Points surroundingTiles)
         {
-            var onlySouthern = surroundingTiles.OnlyHas(OnlySouthernTiles);
-            if (onlySouthern) return true;
+            var isSoutherly = ExcludeSoutherly.DoesNotHaveTheseDirections(surroundingTiles);
+            if (isSoutherly) return true;
 
-            var onlyNorthern = surroundingTiles.OnlyHas(OnlyNorthernTiles);
-            return onlyNorthern;
+            var isNortherly = ExcludeNortherly.DoesNotHaveTheseDirections(surroundingTiles);
+            return isNortherly;
         }
 
-        public static bool IsVertical(this IReadOnlyCollection<Compass8Points> surroundingTiles)
+        public static bool IsVertical(this Compass8Points surroundingTiles)
         {
-            var onlyEastern = surroundingTiles.OnlyHas(OnlyEasternTiles);
-            if (onlyEastern) return true;
+            var isEasterly = ExcludeEasterly.DoesNotHaveTheseDirections(surroundingTiles);
+            if (isEasterly) return true;
 
-            var onlyWestern = surroundingTiles.OnlyHas(OnlyWesternTiles);
-            return onlyWestern;
-        }
-
+            var isWesterly = ExcludeWesterly.DoesNotHaveTheseDirections(surroundingTiles);
+            return isWesterly;
+      }
     }
 }

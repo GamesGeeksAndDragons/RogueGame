@@ -18,14 +18,45 @@ namespace AssetsTests.RoomTests
             _output = output;
         }
 
+        internal static int GetBlockCount(int testNum)
+        {
+            switch (testNum)
+            {
+                case 1: return 2;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    return 3;
+
+                default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
+            }
+        }
+
         internal static IRandomNumberGenerator GetGenerator(int testNum)
         {
             var generator = new FakeRandomNumberGenerator();
 
             switch (testNum)
             {
+                case 1:
+                    generator.PopulateEnum(Compass4Points.South);
+                    generator.PopulateDice(0, 1);
+                    break;
                 case 2:
-                    generator.PopulateEnum(Compass4Points.West, Compass4Points.North, Compass4Points.East, Compass4Points.East, Compass4Points.East);
+                    generator.PopulateEnum(Compass4Points.South, Compass4Points.East);
+                    generator.PopulateDice(0, 1);
+                    break;
+                case 3:
+                    generator.PopulateEnum(Compass4Points.East, Compass4Points.South);
+                    generator.PopulateDice(0, 1);
+                    break;
+                case 4:
+                    generator.PopulateEnum(Compass4Points.West, Compass4Points.South);
+                    generator.PopulateDice(0, 1);
+                    break;
+                case 5:
+                    generator.PopulateEnum(Compass4Points.South, Compass4Points.West);
                     generator.PopulateDice(0, 1);
                     break;
 
@@ -35,24 +66,95 @@ namespace AssetsTests.RoomTests
             return generator;
         }
 
-        [Fact]
-        public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks()
+        internal static string GetExpectation(int testNum)
         {
-            var fakeRandomNumbers = GetGenerator(2);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
-            var room = builder.BuildRoom(2);
-
-            var expected = " |0123456789" + Environment.NewLine +
+            switch (testNum)
+            {
+                case 1:
+                    return " |012345" + Environment.NewLine +
+                           "--------" + Environment.NewLine +
+                           "0|╔════╗" + Environment.NewLine +
+                           "1|║0000║" + Environment.NewLine +
+                           "2|║0000║" + Environment.NewLine +
+                           "3|║0000║" + Environment.NewLine +
+                           "4|║0000║" + Environment.NewLine +
+                           "5|║0000║" + Environment.NewLine +
+                           "6|║0000║" + Environment.NewLine +
+                           "7|║0000║" + Environment.NewLine +
+                           "8|║0000║" + Environment.NewLine +
+                           "9|╚════╝";
+                case 2:
+                    return " |0123456789" + Environment.NewLine +
+                           "------------" + Environment.NewLine +
+                           "0|╔════╗    " + Environment.NewLine +
+                           "1|║0000║    " + Environment.NewLine +
+                           "2|║0000║    " + Environment.NewLine +
+                           "3|║0000║    " + Environment.NewLine +
+                           "4|║0000╚═══╗" + Environment.NewLine +
+                           "5|║00000000║" + Environment.NewLine +
+                           "6|║00000000║" + Environment.NewLine +
+                           "7|║00000000║" + Environment.NewLine +
+                           "8|║00000000║" + Environment.NewLine +
+                           "9|╚════════╝";
+                case 3:
+                    return " |0123456789" + Environment.NewLine +
                            "------------" + Environment.NewLine +
                            "0|╔════════╗" + Environment.NewLine +
                            "1|║00000000║" + Environment.NewLine +
                            "2|║00000000║" + Environment.NewLine +
                            "3|║00000000║" + Environment.NewLine +
                            "4|║00000000║" + Environment.NewLine +
-                           "5|╚════════╝";
+                           "5|╚═══╗0000║" + Environment.NewLine +
+                           "6|    ║0000║" + Environment.NewLine +
+                           "7|    ║0000║" + Environment.NewLine +
+                           "8|    ║0000║" + Environment.NewLine +
+                           "9|    ╚════╝";
+                case 4:
+                    return " |0123456789" + Environment.NewLine +
+                           "------------" + Environment.NewLine +
+                           "0|╔════════╗" + Environment.NewLine +
+                           "1|║00000000║" + Environment.NewLine +
+                           "2|║00000000║" + Environment.NewLine +
+                           "3|║00000000║" + Environment.NewLine +
+                           "4|║00000000║" + Environment.NewLine +
+                           "5|║0000╔═══╝" + Environment.NewLine +
+                           "6|║0000║    " + Environment.NewLine +
+                           "7|║0000║    " + Environment.NewLine +
+                           "8|║0000║    " + Environment.NewLine +
+                           "9|╚════╝    ";
+                case 5:
+                    return " |0123456789" + Environment.NewLine +
+                           "------------" + Environment.NewLine +
+                           "0|    ╔════╗" + Environment.NewLine +
+                           "1|    ║0000║" + Environment.NewLine +
+                           "2|    ║0000║" + Environment.NewLine +
+                           "3|    ║0000║" + Environment.NewLine +
+                           "4|╔═══╝0000║" + Environment.NewLine +
+                           "5|║00000000║" + Environment.NewLine +
+                           "6|║00000000║" + Environment.NewLine +
+                           "7|║00000000║" + Environment.NewLine +
+                           "8|║00000000║" + Environment.NewLine +
+                           "9|╚════════╝";
 
+                default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
+            }
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks(int testNum)
+        {
+            var fakeRandomNumbers = GetGenerator(testNum);
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+
+            var room = builder.BuildRoom(GetBlockCount(testNum));
             var actual = room.ToString();
 
+            var expected = GetExpectation(testNum);
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(actual);

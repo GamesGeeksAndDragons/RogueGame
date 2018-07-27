@@ -9,9 +9,9 @@ namespace Assets.Rooms
         public override string Name => "ROOM";
         public RoomTiles Tiles;
 
-        public Room(int blockRows, int blockColumns)
+        public Room(RoomBlocks blocks)
         {
-            Tiles = new RoomTiles(blockRows, blockColumns);
+            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound);
         }
 
         private Room(RoomTiles tiles)
@@ -24,15 +24,19 @@ namespace Assets.Rooms
             return new Room(Tiles.Clone());
         }
 
-        public Room PopulateWithTiles(int blocksRowCount, int blocksColumnCount)
+        public Room PopulateWithTiles(RoomBlocks blocks)
         {
             var tiles = new RoomTiles(Tiles);
 
-            for (var blockRow = 0; blockRow <= blocksRowCount; blockRow++)
+            for (var blockRow = 0; blockRow <= blocks.RowUpperBound; blockRow++)
             {
-                for (var blockCol = 0; blockCol <= blocksColumnCount; blockCol++)
+                for (var blockCol = 0; blockCol <= blocks.ColumnUpperBound; blockCol++)
                 {
-                    tiles.PopulateBlock(blockRow, blockCol);
+                    var coordinate = new Coordinate(blockRow, blockCol);
+                    if(blocks[coordinate])
+                    {
+                        tiles.PopulateBlock(blockRow, blockCol);
+                    }
                 }
             }
 
