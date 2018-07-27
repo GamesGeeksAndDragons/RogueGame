@@ -1,4 +1,5 @@
 ﻿using Assets.Actors;
+using Assets.Messaging;
 using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
@@ -8,26 +9,30 @@ namespace Assets.Tiles
 {
     public class Tiles
     {
+        private readonly ActorRegistry _registry;
         private const int TilesPerBlock = 4;
-        private readonly Tile[,] _tiles;
+        private readonly string[,] _tiles;
 
         public int RowUpperBound => _tiles.RowUpperBound();
         public int ColumnUpperBound => _tiles.ColumnUpperBound();
 
-        public Tiles(int blockRows, int blockColumns)
+        public Tiles(int blockRows, int blockColumns, ActorRegistry registry)
         {
+            _registry = registry;
+
             var maxRows = (blockRows + 1) * TilesPerBlock + 2;
             var maxCols = (blockColumns + 1) * TilesPerBlock + 2;
 
-            _tiles = new Tile[maxRows, maxCols];
+            _tiles = new string[maxRows, maxCols];
         }
 
         internal Tiles(Tiles rhs)
         {
-            _tiles = rhs._tiles.CloneActors();
+            _registry = rhs._registry;
+            _tiles = rhs._tiles.CloneStrings();
         }
 
-        public Tile this[Coordinate point]
+        public string this[Coordinate point]
         {
             get => _tiles[point.Row, point.Column];
             set => _tiles[point.Row, point.Column] = value;
@@ -40,11 +45,13 @@ namespace Assets.Tiles
 
         public override string ToString()
         {
-            return _tiles.Print(tile =>
+            return _tiles.Print(uniqueId =>
             {
-                if (tile == null) return "";
+                if (uniqueId == null) return "";
 
-                return tile.Actor == null ? "0" : tile.Actor.ToString();
+                var actor = _registry.GetActor(uniqueId);
+
+                return actor.ToString();
             });
         }
 
@@ -66,8 +73,15 @@ namespace Assets.Tiles
 
             if (wallType.HasValue)
             {
-                this[coordinate] = new Tile(coordinate, new Wall(wallType.Value));
+                AddTile(coordinate, new Wall(coordinate, wallType.Value));
             }
+        }
+
+        private void AddTile(Coordinate coordindates, Actor actor)
+        {
+            this[coordindates].ThrowIfNotNull($"_tiles[{coordindates}]");
+            _registry.Register(actor);
+            this[coordindates] = actor.UniqueId;
         }
 
         public bool IsInside(Coordinate coordinate)
@@ -75,7 +89,7 @@ namespace Assets.Tiles
             return _tiles.IsInside(coordinate);
         }
 
-        public Tile[,] PopulateBlock(int blockRow, int blockCol)
+        public string[,] PopulateBlock(int blockRow, int blockCol)
         {
             var rowOffset = blockRow * TilesPerBlock + 1;
             var colOffset = blockCol * TilesPerBlock + 1;
@@ -86,22 +100,32 @@ namespace Assets.Tiles
                 {
                     var coordindates = new Coordinate(row + rowOffset, column + colOffset);
 
-                    this[coordindates].ThrowIfNotNull($"_tiles[{coordindates}]");
-                    this[coordindates] = new Tile(coordindates);
+                    AddTile(coordindates, new Tile(coordindates));
                 }
             }
 
             return _tiles;
         }
 
-        public bool IsTile(Coordinate coordinate)
+        private string ActorType(Coordinate coordinate)
         {
-            return this[coordinate] != null;
+            var id = this[coordinate];
+            if (id.IsNullOrEmpty()) return string.Empty;
+
+            var actor = _registry.GetActor(id);
+            if (actor == null) return string.Empty;
+
+            return actor.Name;
         }
 
-        public bool HasActor(Coordinate coordinate)
+        public bool IsTile(Coordinate coordinate)
         {
-            return this[coordinate].Actor != null;
+            return ActorType(coordinate) == "TILE";
+        }
+
+        public bool IsWall(Coordinate coordinate)
+        {
+            return ActorType(coordinate) == "WALL";
         }
    }
 }

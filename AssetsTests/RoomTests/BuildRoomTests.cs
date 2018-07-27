@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Messaging;
 using Assets.Rooms;
 using AssetsTests.Fakes;
 using Utils;
@@ -74,66 +75,66 @@ namespace AssetsTests.RoomTests
                     return " |012345" + Environment.NewLine +
                            "--------" + Environment.NewLine +
                            "0|╔════╗" + Environment.NewLine +
-                           "1|║0000║" + Environment.NewLine +
-                           "2|║0000║" + Environment.NewLine +
-                           "3|║0000║" + Environment.NewLine +
-                           "4|║0000║" + Environment.NewLine +
-                           "5|║0000║" + Environment.NewLine +
-                           "6|║0000║" + Environment.NewLine +
-                           "7|║0000║" + Environment.NewLine +
-                           "8|║0000║" + Environment.NewLine +
+                           "1|║....║" + Environment.NewLine +
+                           "2|║....║" + Environment.NewLine +
+                           "3|║....║" + Environment.NewLine +
+                           "4|║....║" + Environment.NewLine +
+                           "5|║....║" + Environment.NewLine +
+                           "6|║....║" + Environment.NewLine +
+                           "7|║....║" + Environment.NewLine +
+                           "8|║....║" + Environment.NewLine +
                            "9|╚════╝";
                 case 2:
                     return " |0123456789" + Environment.NewLine +
                            "------------" + Environment.NewLine +
                            "0|╔════╗    " + Environment.NewLine +
-                           "1|║0000║    " + Environment.NewLine +
-                           "2|║0000║    " + Environment.NewLine +
-                           "3|║0000║    " + Environment.NewLine +
-                           "4|║0000╚═══╗" + Environment.NewLine +
-                           "5|║00000000║" + Environment.NewLine +
-                           "6|║00000000║" + Environment.NewLine +
-                           "7|║00000000║" + Environment.NewLine +
-                           "8|║00000000║" + Environment.NewLine +
+                           "1|║....║    " + Environment.NewLine +
+                           "2|║....║    " + Environment.NewLine +
+                           "3|║....║    " + Environment.NewLine +
+                           "4|║....╚═══╗" + Environment.NewLine +
+                           "5|║........║" + Environment.NewLine +
+                           "6|║........║" + Environment.NewLine +
+                           "7|║........║" + Environment.NewLine +
+                           "8|║........║" + Environment.NewLine +
                            "9|╚════════╝";
                 case 3:
                     return " |0123456789" + Environment.NewLine +
                            "------------" + Environment.NewLine +
                            "0|╔════════╗" + Environment.NewLine +
-                           "1|║00000000║" + Environment.NewLine +
-                           "2|║00000000║" + Environment.NewLine +
-                           "3|║00000000║" + Environment.NewLine +
-                           "4|║00000000║" + Environment.NewLine +
-                           "5|╚═══╗0000║" + Environment.NewLine +
-                           "6|    ║0000║" + Environment.NewLine +
-                           "7|    ║0000║" + Environment.NewLine +
-                           "8|    ║0000║" + Environment.NewLine +
+                           "1|║........║" + Environment.NewLine +
+                           "2|║........║" + Environment.NewLine +
+                           "3|║........║" + Environment.NewLine +
+                           "4|║........║" + Environment.NewLine +
+                           "5|╚═══╗....║" + Environment.NewLine +
+                           "6|    ║....║" + Environment.NewLine +
+                           "7|    ║....║" + Environment.NewLine +
+                           "8|    ║....║" + Environment.NewLine +
                            "9|    ╚════╝";
                 case 4:
                     return " |0123456789" + Environment.NewLine +
                            "------------" + Environment.NewLine +
                            "0|╔════════╗" + Environment.NewLine +
-                           "1|║00000000║" + Environment.NewLine +
-                           "2|║00000000║" + Environment.NewLine +
-                           "3|║00000000║" + Environment.NewLine +
-                           "4|║00000000║" + Environment.NewLine +
-                           "5|║0000╔═══╝" + Environment.NewLine +
-                           "6|║0000║    " + Environment.NewLine +
-                           "7|║0000║    " + Environment.NewLine +
-                           "8|║0000║    " + Environment.NewLine +
+                           "1|║........║" + Environment.NewLine +
+                           "2|║........║" + Environment.NewLine +
+                           "3|║........║" + Environment.NewLine +
+                           "4|║........║" + Environment.NewLine +
+                           "5|║....╔═══╝" + Environment.NewLine +
+                           "6|║....║    " + Environment.NewLine +
+                           "7|║....║    " + Environment.NewLine +
+                           "8|║....║    " + Environment.NewLine +
                            "9|╚════╝    ";
                 case 5:
                     return " |0123456789" + Environment.NewLine +
                            "------------" + Environment.NewLine +
                            "0|    ╔════╗" + Environment.NewLine +
-                           "1|    ║0000║" + Environment.NewLine +
-                           "2|    ║0000║" + Environment.NewLine +
-                           "3|    ║0000║" + Environment.NewLine +
-                           "4|╔═══╝0000║" + Environment.NewLine +
-                           "5|║00000000║" + Environment.NewLine +
-                           "6|║00000000║" + Environment.NewLine +
-                           "7|║00000000║" + Environment.NewLine +
-                           "8|║00000000║" + Environment.NewLine +
+                           "1|    ║....║" + Environment.NewLine +
+                           "2|    ║....║" + Environment.NewLine +
+                           "3|    ║....║" + Environment.NewLine +
+                           "4|╔═══╝....║" + Environment.NewLine +
+                           "5|║........║" + Environment.NewLine +
+                           "6|║........║" + Environment.NewLine +
+                           "7|║........║" + Environment.NewLine +
+                           "8|║........║" + Environment.NewLine +
                            "9|╚════════╝";
 
                 default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
@@ -149,7 +150,7 @@ namespace AssetsTests.RoomTests
         public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks(int testNum)
         {
             var fakeRandomNumbers = GetGenerator(testNum);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
 
             var room = builder.BuildRoom(GetBlockCount(testNum));
             var actual = room.ToString();

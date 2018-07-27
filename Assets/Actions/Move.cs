@@ -1,4 +1,5 @@
 ﻿using Assets.Actors;
+using Assets.Messaging;
 using Assets.Tiles;
 using Utils.Enums;
 
@@ -6,16 +7,15 @@ namespace Assets.Actions
 {
     public class MoveAction : Action
     {
-        public override string Name => "MOVE";
-
-        private (Tile, Tile) Move(Tile from, Tile to)
+        public MoveAction(string actor, string to, ActorRegistry registry)
         {
-            if (to.Actor != null) return (null, null);
+            
+        }
 
-            var newFrom = new Tile(from.Coordinates, to.Actor);
-            var newTo = new Tile(to.Coordinates, null);
-
-            return (newFrom, newTo);
+        public override string Name => "MOVE";
+        public override void Act()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

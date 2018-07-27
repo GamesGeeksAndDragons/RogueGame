@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Assets.Messaging;
+using log4net;
 using Utils;
 using Utils.Coordinates;
 using Utils.Random;
@@ -20,11 +21,13 @@ namespace Assets.Rooms
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
+        private readonly ActorRegistry _registry;
 
-        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger)
+        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, ActorRegistry registry)
         {
             _randomNumberGenerator = randomNumberGenerator;
             _logger = logger;
+            _registry = registry;
         }
 
         internal Room BuildRoom(int numBlocks)
@@ -32,7 +35,7 @@ namespace Assets.Rooms
             var blocks = DecideLayout(numBlocks);
             blocks = blocks.ReduceLayout();
 
-            var room = new Room(blocks);
+            var room = new Room(blocks, _registry);
 
             room = room.PopulateWithTiles(blocks);
             room = room.PopulateWithWalls();

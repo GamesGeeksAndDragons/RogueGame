@@ -1,4 +1,5 @@
-﻿using Assets.Rooms;
+﻿using Assets.Messaging;
+using Assets.Rooms;
 using AssetsTests.Fakes;
 using Utils;
 using Xunit;
@@ -28,7 +29,7 @@ namespace AssetsTests.RoomTests
         public void DecideLayout_ForSimpleNavigation_ShouldMoveAsExpected(Test test)
         {
             var fakeRandomNumbers = TestDataForNavigationTests.GetGenerator(test);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
             var numBlocks = TestDataForNavigationTests.GetNumBlocks(test);
 
             var blocks = builder.DecideLayout(numBlocks);

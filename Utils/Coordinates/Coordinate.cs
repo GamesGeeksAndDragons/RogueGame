@@ -11,6 +11,8 @@
         public int Row { get; }
         public int Column { get; }
 
+        public static readonly Coordinate NotSet = new Coordinate(-1, -1);
+
         public override int GetHashCode()
         {
             return Row ^ Column;

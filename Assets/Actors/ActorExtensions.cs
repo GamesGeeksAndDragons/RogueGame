@@ -36,5 +36,25 @@ namespace Assets.Actors
 
             return clone;
         }
+
+        public static string[,] CloneStrings(this string[,] array)
+        {
+            var maxRow = array.RowUpperBound();
+            var maxCol = array.ColumnUpperBound();
+            var clone = new string[maxRow + 1, maxCol + 1];
+
+            for (var row = 0; row <= maxRow; row++)
+            {
+                for (var col = 0; col <= maxCol; col++)
+                {
+                    var value = array[row, col];
+                    if (value == null) continue;
+
+                    clone[row, col] = value;
+                }
+            }
+
+            return clone;
+        }
     }
 }

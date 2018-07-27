@@ -65,7 +65,7 @@ namespace Assets.Rooms
         {
             if (!tiles.IsInside(coordinate)) return false;
 
-            return tiles.IsTile(coordinate) && ! tiles.HasActor(coordinate);
+            return tiles.IsTile(coordinate) && ! tiles.IsWall(coordinate);
         }
 
         public static Compass8Points ExamineSurroundingTiles(this RoomTiles tiles, Coordinate coordinate)

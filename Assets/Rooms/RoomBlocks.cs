@@ -4,7 +4,7 @@ using Utils.Coordinates;
 
 namespace Assets.Rooms
 {
-    public class RoomBlocks
+    internal class RoomBlocks
     {
         private bool[,] Blocks { get; }
         public int RowUpperBound => Blocks.RowUpperBound();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 using System.Text;
+using Utils.Coordinates;
 using Utils.Enums;
 
 namespace Assets.Actors
@@ -9,16 +11,17 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; }
 
-        public Wall(WallDirection type)
+        public Wall(Coordinate coordinates, WallDirection type) : base(coordinates)
         {
             WallType = type;
         }
 
         public override string Name => "WALL";
+        public override string UniqueId { get; internal set; }
 
         public override Actor Clone()
         {
-            return new Wall(WallType);
+            return new Wall(Coordinates, WallType);
         }
 
         public override string ToString()

@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Messaging;
 using Assets.Rooms;
 using AssetsTests.Fakes;
 using Utils.Enums;
@@ -107,7 +108,7 @@ namespace AssetsTests.RoomTests
         public void DecideLayout_ShouldHaveConnectedBlocks(int numBlocks)
         {
             var fakeRandomNumbers = FakeRandomNumberTestFactory.CreateGenerator(numBlocks);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output));
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
             var blocks = builder.DecideLayout(numBlocks);
 
             var expected = GetExpectedLayout(numBlocks);

@@ -53,5 +53,21 @@ namespace Utils
                 rhs.ThrowIfEqual(lhs, name);
             }
         }
+
+        public static void ThrowIfEmpty(this string lhs, string name)
+        {
+            if(lhs.IsNullOrEmpty())
+            {
+                throw new ArgumentException(name, $"[{name}] was empty when it should not have been");
+            }
+        }
+
+        public static void ThrowIfNotEmpty(this string lhs, string name)
+        {
+            if (! lhs.IsNullOrEmpty())
+            {
+                throw new ArgumentException(name, $"[{name}] was expected to be empty when it was [{lhs}]");
+            }
+        }
     }
 }

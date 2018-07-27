@@ -6,20 +6,20 @@ namespace Assets.Tiles
     public class Tile : Actor
     {
         public override string Name => "TILE";
+        public override string UniqueId { get; internal set; }
+
         public override Actor Clone()
         {
-            return new Tile(Coordinates, Actor?.Clone());
+            return new Tile(Coordinates);
         }
 
-        public Tile(Coordinate coordinates, Actor actors = null)
+        public Tile(Coordinate coordinates) : base(coordinates)
         {
-            Coordinates = coordinates;
-
-            Actor = actors?.Clone();
         }
 
-        public Coordinate Coordinates { get; }
-
-        public Actor Actor;
+        public override string ToString()
+        {
+            return ".";
+        }
     }
 }

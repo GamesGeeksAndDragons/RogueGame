@@ -1,30 +1,41 @@
 ﻿using Assets.Actors;
+using Assets.Messaging;
 using Utils.Coordinates;
 using RoomTiles = Assets.Tiles.Tiles;
 
 namespace Assets.Rooms
 {
-    public class Room : Actor
+    internal class Room : Actor
     {
         public override string Name => "ROOM";
+        public override string UniqueId { get; internal set; }
+
+        private readonly ActorRegistry _registry;
         public RoomTiles Tiles;
 
-        public Room(RoomBlocks blocks)
+        internal Room(RoomBlocks blocks, ActorRegistry registry) : base(Coordinate.NotSet)
         {
-            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound);
+            _registry = registry;
+
+            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, registry);
         }
 
-        private Room(RoomTiles tiles)
+        private Room(Room rhs) : this(rhs, rhs.Tiles)
         {
-            Tiles = tiles;
+        }
+
+        private Room(Room rhs, RoomTiles tiles) : base(rhs.Coordinates)
+        {
+            _registry = rhs._registry;
+            Tiles = tiles.Clone();
         }
 
         public override Actor Clone()
         {
-            return new Room(Tiles.Clone());
+            return new Room(this);
         }
 
-        public Room PopulateWithTiles(RoomBlocks blocks)
+        internal Room PopulateWithTiles(RoomBlocks blocks)
         {
             var tiles = new RoomTiles(Tiles);
 
@@ -40,10 +51,10 @@ namespace Assets.Rooms
                 }
             }
 
-            return new Room(tiles);
+            return new Room(this, tiles);
         }
 
-        public Room PopulateWithWalls()
+        internal Room PopulateWithWalls()
         {
             var tiles = new RoomTiles(Tiles);
 
@@ -59,7 +70,7 @@ namespace Assets.Rooms
                 }
             }
 
-            return new Room(tiles);
+            return new Room(this, tiles);
         }
 
         public override string ToString()

@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Utils.Coordinates;
 
 namespace Assets.Actors
 {
     internal class Me : Actor
     {
-        public override string Name => "Me";
+        public Me(Coordinate coordinates) : base(coordinates)
+        {
+        }
+
+        public override string Name => "ME";
+        public override string UniqueId { get; internal set; }
 
         public override Actor Clone()
         {
-            return new Me();
+            return new Me(Coordinates);
+        }
+
+        public override string ToString()
+        {
+            return "@";
         }
     }
 }
