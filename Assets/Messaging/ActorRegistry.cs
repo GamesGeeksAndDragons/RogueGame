@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Actors;
 using Utils;
 using Utils.Coordinates;
@@ -69,5 +70,7 @@ namespace Assets.Messaging
             var id = _actorCoordindates[coordinates];
             return GetActor(id);
         }
+
+        public IReadOnlyList<IActor> Actors => _namedActors.Values.ToList();
     }
 }

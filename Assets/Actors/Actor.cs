@@ -13,7 +13,7 @@ namespace Assets.Actors
         Coordinate Coordinates { get; }
 
         IActor Clone();
-        IActor Move(Coordinate coordinates);
+        void Dispatch(string actor, string parameters);
     }
 
     internal abstract class Actor<T> where T : Actor<T>, IActor
@@ -34,7 +34,8 @@ namespace Assets.Actors
 
         protected internal readonly ActorRegistry Registry;
 
-        public string Name => typeof(T).Name;
+        public string Name => ActorName;
+        public static string ActorName => typeof(T).Name;
 
         public string UniqueId { get; }
 
@@ -42,11 +43,6 @@ namespace Assets.Actors
 
         public Coordinate Coordinates { get; private set; }
 
-        public IActor Move(Coordinate coordinates)
-        {
-            var clone = (Actor<T>)Clone();
-            clone.Coordinates = coordinates;
-            return (IActor)clone;
-        }
+        public virtual void Dispatch(string actor, string parameters) {}
     }
 }

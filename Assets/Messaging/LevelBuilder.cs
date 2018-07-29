@@ -1,4 +1,4 @@
-﻿using Assets.Actions;
+﻿using Assets.ActionEnqueue;
 using Assets.Actors;
 using Assets.Rooms;
 using log4net;
@@ -29,9 +29,9 @@ namespace Assets.Messaging
             var roomBuilder = new RandomRoomBuilder(_randomNumberGenerator, _logger, _registry);
             var room = roomBuilder.BuildRoom(numBlocks);
             var me = new Me(Coordinate.NotSet, _registry);
-            var teleporter = new Teleporter(me.UniqueId, room.UniqueId, _registry, _dispatcher);
 
-            _dispatcher.Enqueue(teleporter);
+            var teleporter = new Teleport(me.UniqueId, room.UniqueId, _dispatcher);
+            teleporter.Enqueue();
         }
     }
 }

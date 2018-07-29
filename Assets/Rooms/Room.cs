@@ -1,5 +1,7 @@
-﻿using Assets.Actors;
+﻿using Assets.ActionEnqueue;
+using Assets.Actors;
 using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
 using Utils.Random;
 using RoomTiles = Assets.Rooms.Tiles;
@@ -77,12 +79,25 @@ namespace Assets.Rooms
             return Tiles.ToString();
         }
 
-        public Room Place(IActor actor, Coordinate coordinates)
+        public void Teleport(string parameters)
         {
+            var extracted = parameters.ToParameters();
+            var room = extracted.GetParameter<Room>(Name, Registry);
+            var actor = extracted.GetParameter<IActor>("Actor", Registry);
+            var coordinates = room.Tiles.RandomEmptyTile();
+
             var tiles = Tiles.Clone();
             tiles[coordinates] = actor.UniqueId;
 
-            return new Room(this, tiles);
+            var newRoom = new Room(this, tiles);
+
+            Registry.Deregister(room);
+            Registry.Register(newRoom);
+        }
+
+        public override void Dispatch(string action, string parameters)
+        {
+            if(action == ActionEnqueue.Teleport.ActionName) Teleport(parameters);
         }
     }
 }
