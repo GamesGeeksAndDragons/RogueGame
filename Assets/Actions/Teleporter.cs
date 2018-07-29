@@ -23,13 +23,13 @@ namespace Assets.Actions
             _dispatcher = dispatcher;
         }
 
-        public override string Name => "TELEPORTER";
+        public override string Name => typeof(Teleporter).Name;
         public override void Act()
         {
             var room = (Room)_registry.GetActor(_to);
 
             var coordinate = room.Tiles.RandomEmptyTile();
-            var move = new MoveAction(_actor, _to, string.Empty, coordinate.ToString(), _registry);
+            var move = new Move(_actor, _to, string.Empty, coordinate.ToString(), _registry);
 
             _dispatcher.Enqueue(move);
         }

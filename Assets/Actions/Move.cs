@@ -6,7 +6,7 @@ using Utils.Enums;
 
 namespace Assets.Actions
 {
-    public class MoveAction : Action
+    public class Move : Action
     {
         private readonly string _actor;
         private readonly string _room;
@@ -14,7 +14,7 @@ namespace Assets.Actions
         private readonly string _to;
         private readonly ActorRegistry _registry;
 
-        public MoveAction(string actor, string room, string @from, string to, ActorRegistry registry)
+        public Move(string actor, string room, string @from, string to, ActorRegistry registry)
         {
             _actor = actor;
             _room = room;
@@ -23,7 +23,7 @@ namespace Assets.Actions
             _registry = registry;
         }
 
-        public override string Name => "MOVE";
+        public override string Name => typeof(Move).Name;
 
         public override void Act()
         {
