@@ -36,7 +36,7 @@ namespace Assets.Messaging
 
             if (actor.Coordinates != Coordinate.NotSet)
             {
-                _actorCoordindates[actor.Coordinates] = actor.UniqueId;
+                _actorCoordindates[actor.Coordinates] = uniqueId;
             }
 
             return uniqueId;
