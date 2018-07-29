@@ -1,4 +1,5 @@
 ﻿using System;
+using Utils.Coordinates;
 
 namespace Utils
 {
@@ -67,6 +68,15 @@ namespace Utils
             if (! lhs.IsNullOrEmpty())
             {
                 throw new ArgumentException(name, $"[{name}] was expected to be empty when it was [{lhs}]");
+            }
+        }
+
+        public static void ThrowIfOutsideBounds(this string [,] array, Coordinate coordinates, string name)
+        {
+            if (!array.IsInside(coordinates))
+            {
+                var maxBounary = new Coordinate(array.UpperBounds());
+                throw new ArgumentException(name, $"[{name}] expected the indexer [{coordinates}] to be inside [{maxBounary}] and they were outside");
             }
         }
     }

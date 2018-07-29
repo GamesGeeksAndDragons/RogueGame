@@ -1,36 +1,34 @@
 ﻿using Assets.Actors;
 using Assets.Messaging;
 using Utils.Coordinates;
-using RoomTiles = Assets.Tiles.Tiles;
+using Utils.Random;
+using RoomTiles = Assets.Rooms.Tiles;
 
 namespace Assets.Rooms
 {
-    internal class Room : Actor
+    internal class Room : Actor<Room>, IActor
     {
-        public override string Name => "ROOM";
-        public override string UniqueId { get; internal set; }
-
-        private readonly ActorRegistry _registry;
+        private readonly IRandomNumberGenerator _randomNumbers;
         public RoomTiles Tiles;
 
-        internal Room(RoomBlocks blocks, ActorRegistry registry) : base(Coordinate.NotSet)
+        internal Room(RoomBlocks blocks, ActorRegistry registry, IRandomNumberGenerator randomNumbers) 
+            : base(Coordinate.NotSet, registry)
         {
-            _registry = registry;
+            _randomNumbers = randomNumbers;
 
-            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, registry);
+            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, Registry, _randomNumbers);
         }
 
         private Room(Room rhs) : this(rhs, rhs.Tiles)
         {
         }
 
-        private Room(Room rhs, RoomTiles tiles) : base(rhs.Coordinates)
+        private Room(Room rhs, RoomTiles tiles) : base(rhs)
         {
-            _registry = rhs._registry;
             Tiles = tiles.Clone();
         }
 
-        public override Actor Clone()
+        public override IActor Clone()
         {
             return new Room(this);
         }
@@ -58,12 +56,13 @@ namespace Assets.Rooms
         {
             var tiles = new RoomTiles(Tiles);
 
-            for (var row = 0; row <= tiles.RowUpperBound; row++)
+            var (rowMax, colMax) = tiles.UpperBounds;
+            for (var row = 0; row <= rowMax; row++)
             {
-                for (var col = 0; col <= tiles.ColumnUpperBound; col++)
+                for (var col = 0; col <= colMax; col++)
                 {
                     var coordinate = new Coordinate(row, col);
-                    if (tiles[coordinate] == null)
+                    if (tiles[coordinate] != null)
                     {
                         tiles.PopulateWall(coordinate);
                     }
@@ -76,6 +75,14 @@ namespace Assets.Rooms
         public override string ToString()
         {
             return Tiles.ToString();
+        }
+
+        public Room Place(IActor actor, Coordinate coordinates)
+        {
+            var tiles = Tiles.Clone();
+            tiles[coordinates] = actor.UniqueId;
+
+            return new Room(this, tiles);
         }
     }
 }

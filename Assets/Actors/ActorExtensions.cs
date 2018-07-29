@@ -4,7 +4,7 @@ namespace Assets.Actors
 {
     public static class ActorExtensions
     {
-        public static T[] CloneActors<T>(this T[] array) where T : Actor
+        internal static T[] CloneActors<T>(this T[] array) where T : Actor<T>, IActor
         {
             var clone = new T[array.Length];
 
@@ -17,7 +17,7 @@ namespace Assets.Actors
             return clone;
         }
 
-        public static T[,] CloneActors<T>(this T[,] array) where T : Actor
+        internal static T[,] CloneActors<T>(this T[,] array) where T : Actor<T>, IActor
         {
             var maxRow = array.RowUpperBound();
             var maxCol = array.ColumnUpperBound();

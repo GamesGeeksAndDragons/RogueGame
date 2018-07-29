@@ -1,20 +1,52 @@
-﻿using Utils.Coordinates;
+﻿using System.Reflection.PortableExecutable;
+using Assets.Messaging;
+using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    public abstract class Actor
+    public interface IActor
     {
-        protected Actor(Coordinate coordinate)
+        string Name { get; }
+
+        string UniqueId { get; }
+
+        Coordinate Coordinates { get; }
+
+        IActor Clone();
+        IActor Move(Coordinate coordinates);
+    }
+
+    internal abstract class Actor<T> where T : Actor<T>, IActor
+    {
+        protected Actor(Coordinate coordinate, ActorRegistry registry)
         {
             Coordinates = coordinate;
+            Registry = registry;
+            UniqueId = registry.Register((IActor)this);
         }
 
-        public abstract string Name { get; }
+        protected Actor(Actor<T> rhs)
+        {
+            Coordinates = rhs.Coordinates;
+            Registry = rhs.Registry;
+            UniqueId = rhs.UniqueId;
+        }
 
-        public abstract string UniqueId { get; internal set; }
+        protected internal readonly ActorRegistry Registry;
 
-        public abstract Actor Clone();
+        public string Name => typeof(T).Name;
 
-        public Coordinate Coordinates { get; }
+        public string UniqueId { get; }
+
+        public abstract IActor Clone();
+
+        public Coordinate Coordinates { get; private set; }
+
+        public IActor Move(Coordinate coordinates)
+        {
+            var clone = (Actor<T>)Clone();
+            clone.Coordinates = coordinates;
+            return (IActor)clone;
+        }
     }
 }

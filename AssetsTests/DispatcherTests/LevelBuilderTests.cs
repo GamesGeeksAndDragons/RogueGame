@@ -8,13 +8,13 @@ using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.RoomTests
+namespace AssetsTests.DispatcherTests
 {
-    public class BuildRoomTests
+    public class LevelBuilderTests
     {
         private readonly ITestOutputHelper _output;
 
-        public BuildRoomTests(ITestOutputHelper output)
+        public LevelBuilderTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -23,7 +23,7 @@ namespace AssetsTests.RoomTests
         {
             switch (testNum)
             {
-                case 1: return 2;
+                case 1:
                 case 2:
                 case 3:
                 case 4:
@@ -42,11 +42,11 @@ namespace AssetsTests.RoomTests
             {
                 case 1:
                     generator.PopulateEnum(Compass4Points.South);
-                    generator.PopulateDice(0, 1);
+                    generator.PopulateDice(0, 1, 1, 1);
                     break;
                 case 2:
                     generator.PopulateEnum(Compass4Points.South, Compass4Points.East);
-                    generator.PopulateDice(0, 1);
+                    generator.PopulateDice(0, 1, 0, 9, 4, 5, 5, 8);
                     break;
                 case 3:
                     generator.PopulateEnum(Compass4Points.East, Compass4Points.South);
@@ -75,7 +75,7 @@ namespace AssetsTests.RoomTests
                     return " |012345" + Environment.NewLine +
                            "--------" + Environment.NewLine +
                            "0|╔════╗" + Environment.NewLine +
-                           "1|║    ║" + Environment.NewLine +
+                           "1|║@   ║" + Environment.NewLine +
                            "2|║    ║" + Environment.NewLine +
                            "3|║    ║" + Environment.NewLine +
                            "4|║    ║" + Environment.NewLine +
@@ -92,7 +92,7 @@ namespace AssetsTests.RoomTests
                            "2|║    ║■■■■" + Environment.NewLine +
                            "3|║    ║■■■■" + Environment.NewLine +
                            "4|║    ╚═══╗" + Environment.NewLine +
-                           "5|║        ║" + Environment.NewLine +
+                           "5|║       @║" + Environment.NewLine +
                            "6|║        ║" + Environment.NewLine +
                            "7|║        ║" + Environment.NewLine +
                            "8|║        ║" + Environment.NewLine +
@@ -144,17 +144,21 @@ namespace AssetsTests.RoomTests
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
-        [InlineData(3)]
-        [InlineData(4)]
-        [InlineData(5)]
-        public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks(int testNum)
+        public void WhenBuiltDispatcher_ShouldHaveMeInRoom(int testNum)
         {
-            var fakeRandomNumbers = GetGenerator(testNum);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
+            var actorRegistry = new ActorRegistry();
+            var dispatcher = new Dispatcher(actorRegistry);
 
-            var room = builder.BuildRoom(GetBlockCount(testNum));
+            var fakeRandomNumbers = GetGenerator(testNum);
+            var fakeLogger = new FakeLogger(_output);
+
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, actorRegistry);
+            builder.Build(testNum);
+            dispatcher.Dispatch();
+
+            var room = actorRegistry.GetActor("Room1");
             var actual = room.ToString();
-            
+
             var expected = GetExpectation(testNum);
 
             _output.WriteLine(expected);

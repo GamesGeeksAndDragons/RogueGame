@@ -13,9 +13,18 @@ namespace Assets.Messaging
             _registry = registry;
         }
 
-        public void Dispatch(Action action)
+        public void Enqueue(Action action)
         {
             _actionQueue.Enqueue(action);
+        }
+
+        public void Dispatch()
+        {
+            while (_actionQueue.Count != 0)
+            {
+                var action = _actionQueue.Dequeue();
+                action.Act();
+            }
         }
     }
 }

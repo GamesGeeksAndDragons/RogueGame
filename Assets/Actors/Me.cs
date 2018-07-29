@@ -1,19 +1,21 @@
-﻿using Utils.Coordinates;
+﻿using Assets.Messaging;
+using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    internal class Me : Actor
+    internal class Me : Actor<Me>, IActor
     {
-        public Me(Coordinate coordinates) : base(coordinates)
+        public Me(Coordinate coordinates, ActorRegistry registry) : base(coordinates, registry)
         {
         }
 
-        public override string Name => "ME";
-        public override string UniqueId { get; internal set; }
-
-        public override Actor Clone()
+        private Me(Me rhs) : base(rhs)
         {
-            return new Me(Coordinates);
+        }
+
+        public override IActor Clone()
+        {
+            return new Me(this);
         }
 
         public override string ToString()

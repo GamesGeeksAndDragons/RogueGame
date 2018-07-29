@@ -7,37 +7,31 @@ using Utils.Random;
 
 namespace Assets.Messaging
 {
-    public class LevelBuilder
+    internal class LevelBuilder
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
+        private readonly Dispatcher _dispatcher;
         private readonly ActorRegistry _registry;
 
-        public LevelBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, ActorRegistry registry)
+        public LevelBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, Dispatcher dispatcher, ActorRegistry registry)
         {
             _randomNumberGenerator = randomNumberGenerator;
             _logger = logger;
+            _dispatcher = dispatcher;
             _registry = registry;
         }
 
-        internal Dispatcher Build(int level)
+        internal void Build(int level)
         {
             var numBlocks = level + 1;
 
             var roomBuilder = new RandomRoomBuilder(_randomNumberGenerator, _logger, _registry);
             var room = roomBuilder.BuildRoom(numBlocks);
-            _registry.Register(room);
+            var me = new Me(Coordinate.NotSet, _registry);
+            var teleporter = new Teleporter(me.UniqueId, room.UniqueId, _registry, _dispatcher);
 
-            var me = new Me(Coordinate.NotSet);
-            _registry.Register(me);
-
-            var dispatcher = new Dispatcher(_registry);
-
-            var teleporter = new Teleporter(me.UniqueId, room.UniqueId, _registry);
-
-            dispatcher.Dispatch(teleporter);
-
-            return dispatcher;
+            _dispatcher.Enqueue(teleporter);
         }
     }
 }

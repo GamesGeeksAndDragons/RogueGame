@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Assets.Actors;
 using Utils;
 using Utils.Coordinates;
@@ -9,10 +7,11 @@ namespace Assets.Messaging
 {
     public class ActorRegistry
     {
-        private readonly Dictionary<string, Actor> _registry = new Dictionary<string, Actor>();
+        private readonly Dictionary<string, IActor> _namedActors = new Dictionary<string, IActor>();
+        private readonly Dictionary<Coordinate, string> _actorCoordindates = new Dictionary<Coordinate, string>();
         private readonly Dictionary<string, uint> _actorCounts = new Dictionary<string, uint>();
 
-        private string GenerateActorName(Actor actor)
+        private string GenerateActorName(IActor actor)
         {
             uint count = 0;
             if (_actorCounts.ContainsKey(actor.Name))
@@ -25,19 +24,50 @@ namespace Assets.Messaging
             return actor.Name + count;
         }
 
-        public void Register(Actor actor)
+        internal string Register(IActor actor)
         {
             actor.ThrowIfNull(nameof(actor));
-            actor.UniqueId.ThrowIfNotEmpty(nameof(actor.UniqueId));
 
-            actor.UniqueId = GenerateActorName(actor);
+            var uniqueId = actor.UniqueId.IsNullOrEmpty() ? GenerateActorName(actor) : actor.UniqueId;
 
-            _registry[actor.UniqueId] = actor;
+            Deregister(actor.Coordinates);
+
+            _namedActors[uniqueId] = actor;
+
+            if (actor.Coordinates != Coordinate.NotSet)
+            {
+                _actorCoordindates[actor.Coordinates] = actor.UniqueId;
+            }
+
+            return uniqueId;
         }
 
-        public Actor GetActor(string id)
+        internal void Deregister(IActor actor)
         {
-            return _registry[id];
+            actor.ThrowIfNull(nameof(actor));
+            actor.UniqueId.ThrowIfEmpty(nameof(actor.UniqueId));
+
+            _namedActors.Remove(actor.UniqueId);
+            _actorCoordindates[actor.Coordinates] = null;
+        }
+
+        public void Deregister(Coordinate coordinates)
+        {
+            if (!_actorCoordindates.ContainsKey(coordinates) || _actorCoordindates[coordinates] == null) return;
+
+            var actor = GetActor(coordinates);
+            Deregister(actor);
+        }
+
+        public IActor GetActor(string id)
+        {
+            return _namedActors[id];
+        }
+
+        public IActor GetActor(Coordinate coordinates)
+        {
+            var id = _actorCoordindates[coordinates];
+            return GetActor(id);
         }
     }
 }

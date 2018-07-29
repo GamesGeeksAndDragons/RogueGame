@@ -35,10 +35,13 @@ namespace Assets.Rooms
             var blocks = DecideLayout(numBlocks);
             blocks = blocks.ReduceLayout();
 
-            var room = new Room(blocks, _registry);
+            var roomOfRocks = new Room(blocks, _registry, _randomNumberGenerator);
 
-            room = room.PopulateWithTiles(blocks);
+            var room = roomOfRocks.PopulateWithTiles(blocks);
             room = room.PopulateWithWalls();
+
+            _registry.Deregister(roomOfRocks);
+            _registry.Register(room);
 
             return room;
         }

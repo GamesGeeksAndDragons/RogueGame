@@ -8,6 +8,12 @@
             Column = column;
         }
 
+        public Coordinate((int row, int column) bounds)
+        {
+            Row = bounds.row;
+            Column = bounds.column;
+        }
+
         public int Row { get; }
         public int Column { get; }
 

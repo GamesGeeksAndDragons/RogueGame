@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Utils.Coordinates;
 using Utils.Enums;
-using RoomTiles= Assets.Tiles.Tiles;
+using RoomTiles= Assets.Rooms.Tiles;
 
 namespace Assets.Rooms
 {
@@ -61,42 +61,42 @@ namespace Assets.Rooms
 
         private static readonly Compass8Points ExcludeWesterly = AllDirections ^ WesterlyDirection;
 
-        private static bool ShouldBeWall(this RoomTiles tiles, Coordinate coordinate)
+        private static bool CanConvertToWall(this RoomTiles tiles, Coordinate coordinate)
         {
             if (!tiles.IsInside(coordinate)) return false;
 
-            return tiles.IsTile(coordinate) && ! tiles.IsWall(coordinate);
+            return tiles[coordinate] == null;
         }
 
-        public static Compass8Points ExamineSurroundingTiles(this RoomTiles tiles, Coordinate coordinate)
+        public static Compass8Points DiscoverSurroundingSpace(this RoomTiles tiles, Coordinate coordinate)
         {
-            var surroundingTiles = Compass8Points.Undefined;
+            var surroundingSpace = Compass8Points.Undefined;
 
-            var below = tiles.ShouldBeWall(coordinate.Down());
-            if (below) surroundingTiles |= Compass8Points.South;
+            var below = CanConvertToWall(tiles, coordinate.Down());
+            if (below) surroundingSpace |= Compass8Points.South;
 
-            var above = tiles.ShouldBeWall(coordinate.Up());
-            if (above) surroundingTiles |= Compass8Points.North;
+            var above = CanConvertToWall(tiles, coordinate.Up());
+            if (above) surroundingSpace |= Compass8Points.North;
 
-            var right = tiles.ShouldBeWall(coordinate.Right());
-            if (right) surroundingTiles |= Compass8Points.East;
+            var right = CanConvertToWall(tiles, coordinate.Right());
+            if (right) surroundingSpace |= Compass8Points.East;
 
-            var left = tiles.ShouldBeWall(coordinate.Left());
-            if (left) surroundingTiles |= Compass8Points.West;
+            var left = CanConvertToWall(tiles, coordinate.Left());
+            if (left) surroundingSpace |= Compass8Points.West;
 
-            var topLeft = tiles.ShouldBeWall(coordinate.Up().Left());
-            if (topLeft) surroundingTiles |= Compass8Points.NorthWest;
+            var topLeft = CanConvertToWall(tiles, coordinate.Up().Left());
+            if (topLeft) surroundingSpace |= Compass8Points.NorthWest;
 
-            var topRight = tiles.ShouldBeWall(coordinate.Up().Right());
-            if (topRight) surroundingTiles |= Compass8Points.NorthEast;
+            var topRight = CanConvertToWall(tiles, coordinate.Up().Right());
+            if (topRight) surroundingSpace |= Compass8Points.NorthEast;
 
-            var bottomLeft = tiles.ShouldBeWall(coordinate.Down().Left());
-            if (bottomLeft) surroundingTiles |= Compass8Points.SouthWest;
+            var bottomLeft = CanConvertToWall(tiles, coordinate.Down().Left());
+            if (bottomLeft) surroundingSpace |= Compass8Points.SouthWest;
 
-            var bottomRight = tiles.ShouldBeWall(coordinate.Down().Right());
-            if (bottomRight) surroundingTiles |= Compass8Points.SouthEast;
+            var bottomRight = CanConvertToWall(tiles, coordinate.Down().Right());
+            if (bottomRight) surroundingSpace |= Compass8Points.SouthEast;
 
-            return surroundingTiles;
+            return surroundingSpace;
         }
 
         public static bool IsCorner(this Compass8Points surroundingTiles)

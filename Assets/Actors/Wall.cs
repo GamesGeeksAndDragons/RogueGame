@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-using System.Text;
+using Assets.Messaging;
 using Utils.Coordinates;
 using Utils.Enums;
 
 namespace Assets.Actors
 {
-    public class Wall : Actor
+    internal class Wall : Actor<Wall>, IActor
     {
         public WallDirection WallType { get; }
 
-        public Wall(Coordinate coordinates, WallDirection type) : base(coordinates)
+        public Wall(Coordinate coordinates, ActorRegistry registry, WallDirection type) : base(coordinates, registry)
         {
             WallType = type;
         }
 
-        public override string Name => "WALL";
-        public override string UniqueId { get; internal set; }
-
-        public override Actor Clone()
+        private Wall(Wall rhs) : base(rhs)
         {
-            return new Wall(Coordinates, WallType);
+        }
+
+        public override IActor Clone()
+        {
+            return new Wall(this);
         }
 
         public override string ToString()

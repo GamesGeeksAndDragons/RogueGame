@@ -15,6 +15,11 @@ namespace Utils
             return array.GetUpperBound(0);
         }
 
+        public static (int maxRow, int maxColumn) UpperBounds<T>(this T[,] array)
+        {
+            return (array.RowUpperBound(), array.ColumnUpperBound());
+        }
+
         public static IEnumerable<T> SliceRow<T>(this T[,] array, int row)
         {
             for (var column = 0; column <= array.ColumnUpperBound(); column++)

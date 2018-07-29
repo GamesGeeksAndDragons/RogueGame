@@ -1,5 +1,4 @@
 ﻿using Assets.Actors;
-using Assets.Tiles;
 using Xunit;
 
 namespace AssetsTests
