@@ -5,13 +5,13 @@ using System.Reflection;
 using Assets.Actors;
 using Assets.Messaging;
 using Utils;
-using ParameterType = System.Collections.Generic.IReadOnlyList<(string name, string parameter)>;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
 namespace Assets
 {
     public static class ParameterHelpers
     {
-        public static ParameterType ToParameters(this string values)
+        public static ExtractedParameters ToParameters(this string values)
         {
             var parameters = new List<(string name, string parameter)>();
 
@@ -27,9 +27,14 @@ namespace Assets
             return parameters;
         }
 
-        public static T GetParameter<T>(this ParameterType parameters, string name, ActorRegistry registry) where T : class 
+        public static string Value(this ExtractedParameters parameters, string name)
         {
-            var value = parameters.Single(param => param.name == name).parameter;
+            return parameters.Single(param => param.name == name).value;
+        }
+
+        public static T GetParameter<T>(this ExtractedParameters parameters, string name, ActorRegistry registry) where T : class 
+        {
+            var value = parameters.Value(name);
 
             if (typeof(IActor).IsAssignableFrom(typeof(T)))
             {

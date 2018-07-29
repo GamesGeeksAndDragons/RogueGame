@@ -1,6 +1,6 @@
-﻿using System.Reflection.PortableExecutable;
-using Assets.Messaging;
+﻿using Assets.Messaging;
 using Utils.Coordinates;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
 namespace Assets.Actors
 {
@@ -42,6 +42,12 @@ namespace Assets.Actors
         public abstract IActor Clone();
 
         public Coordinate Coordinates { get; private set; }
+
+        protected internal bool InDispatch(ExtractedParameters parameters)
+        {
+            var value = parameters.Value(Name);
+            return value == UniqueId;
+        }
 
         public virtual void Dispatch(string actor, string parameters) {}
     }

@@ -1,10 +1,9 @@
-﻿using Assets.ActionEnqueue;
-using Assets.Actors;
+﻿using Assets.Actors;
 using Assets.Messaging;
-using Utils;
 using Utils.Coordinates;
 using Utils.Random;
 using RoomTiles = Assets.Rooms.Tiles;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
 namespace Assets.Rooms
 {
@@ -79,11 +78,10 @@ namespace Assets.Rooms
             return Tiles.ToString();
         }
 
-        public void Teleport(string parameters)
+        public void Teleport(ExtractedParameters parameters)
         {
-            var extracted = parameters.ToParameters();
-            var room = extracted.GetParameter<Room>(Name, Registry);
-            var actor = extracted.GetParameter<IActor>("Actor", Registry);
+            var room = parameters.GetParameter<Room>(Name, Registry);
+            var actor = parameters.GetParameter<IActor>("Actor", Registry);
             var coordinates = room.Tiles.RandomEmptyTile();
 
             var tiles = Tiles.Clone();
@@ -97,7 +95,10 @@ namespace Assets.Rooms
 
         public override void Dispatch(string action, string parameters)
         {
-            if(action == ActionEnqueue.Teleport.ActionName) Teleport(parameters);
+            var extracted = parameters.ToParameters();
+            if (!InDispatch(extracted)) return;
+
+            if (action == ActionEnqueue.Teleport.ActionName) Teleport(extracted);
         }
     }
 }
