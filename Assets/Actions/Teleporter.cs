@@ -29,7 +29,7 @@ namespace Assets.Actions
             var room = (Room)_registry.GetActor(_to);
 
             var coordinate = room.Tiles.RandomEmptyTile();
-            var move = new Move(_actor, _to, string.Empty, coordinate.ToString(), _registry);
+            var move = new Position(_actor, _to, coordinate.ToString(), _registry);
 
             _dispatcher.Enqueue(move);
         }

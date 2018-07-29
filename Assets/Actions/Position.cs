@@ -1,29 +1,25 @@
-﻿using Assets.Actors;
-using Assets.Messaging;
+﻿using Assets.Messaging;
 using Assets.Rooms;
 using Utils.Coordinates;
-using Utils.Enums;
 
 namespace Assets.Actions
 {
-    public class Move : Action
+    public class Position : Action
     {
         private readonly string _actor;
         private readonly string _room;
-        private readonly string _from;
         private readonly string _to;
         private readonly ActorRegistry _registry;
 
-        public Move(string actor, string room, string @from, string to, ActorRegistry registry)
+        public Position(string actor, string room, string to, ActorRegistry registry)
         {
             _actor = actor;
             _room = room;
-            _from = @from;
             _to = to;
             _registry = registry;
         }
 
-        public override string Name => typeof(Move).Name;
+        public override string Name => typeof(Position).Name;
 
         public override void Act()
         {
