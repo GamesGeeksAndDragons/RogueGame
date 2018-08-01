@@ -13,9 +13,18 @@ namespace Assets.Actors
         {
         }
 
-        public override IActor Clone()
+        public override IActor Clone(string parameters=null)
         {
-            return new Me(this);
+            var me = new Me(this);
+
+            if (parameters != null)
+            {
+                var extracted = parameters.ToParameters();
+                var newCoordindates = extracted.GetParameter<Coordinate>("Coordinates");
+                me.Coordinates = newCoordindates;
+            }
+
+            return me;
         }
 
         public override string ToString()

@@ -30,6 +30,24 @@ namespace Utils.Coordinates
             }
         }
 
+        public static Coordinate Move(this Coordinate coordinates, Compass8Points direction)
+        {
+            switch (direction)
+            {
+                case Compass8Points.North: return coordinates.Up();
+                case Compass8Points.NorthEast: return coordinates.Up().Right();
+                case Compass8Points.NorthWest: return coordinates.Up().Left();
+                case Compass8Points.South: return coordinates.Down();
+                case Compass8Points.SouthEast: return coordinates.Down().Right();
+                case Compass8Points.SouthWest: return coordinates.Down().Left();
+                case Compass8Points.East: return coordinates.Right();
+                case Compass8Points.West: return coordinates.Left();
+                default:
+                    var message = $"Unrecognised direction [{direction}]";
+                    throw new ArgumentException(message);
+            }
+        }
+
         public static Coordinate ToCoordinates(this string coordinates)
         {
             var parts = coordinates.Split('(', ',', ')');

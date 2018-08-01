@@ -5,6 +5,7 @@ using System.Reflection;
 using Assets.Actors;
 using Assets.Messaging;
 using Utils;
+using Utils.Coordinates;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
 namespace Assets
@@ -15,7 +16,7 @@ namespace Assets
         {
             var parameters = new List<(string name, string parameter)>();
 
-            var matches = values.Split(':', ',', ' ')
+            var matches = values.Split(':', ' ')
                 .Where(value => !value.IsNullOrEmptyOrWhiteSpace())
                 .ToList();
 
@@ -32,19 +33,23 @@ namespace Assets
             return parameters.Single(param => param.name == name).value;
         }
 
-        public static T GetParameter<T>(this ExtractedParameters parameters, string name, ActorRegistry registry) where T : class 
+        public static IActor GetActor(this ExtractedParameters parameters, string name, ActorRegistry registry)
         {
             var value = parameters.Value(name);
 
-            if (typeof(IActor).IsAssignableFrom(typeof(T)))
-            {
-                return (T)registry.GetActor(value);
-            }
+            return registry.GetActor(value);
+        }
+
+        public static T GetParameter<T>(this ExtractedParameters parameters, string name) where T : struct
+        {
+            var value = parameters.Value(name);
 
             switch (typeof(T).Name)
             {
                 case "Int32": return (T)Convert.ChangeType(int.Parse(value), typeof(T));
                 case "Double": return (T)Convert.ChangeType(double.Parse(value), typeof(T));
+                case "Compass8Points": return (T)Convert.ChangeType(value.ToEnum<T>(), typeof(T));
+                case "Coordinate": return (T)Convert.ChangeType(value.ToCoordinates(), typeof(T));
             }
 
             throw new ArgumentException($"Unable to convert [{name}:{value}] to type [{typeof(T).Name}]");

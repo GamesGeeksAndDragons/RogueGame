@@ -16,7 +16,7 @@ namespace Assets.Actors
         {
         }
 
-        public override IActor Clone()
+        public override IActor Clone(string parameters=null)
         {
             return new Rock(this);
         }

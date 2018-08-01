@@ -49,7 +49,11 @@ namespace Assets.Messaging
             actor.UniqueId.ThrowIfEmpty(nameof(actor.UniqueId));
 
             _namedActors.Remove(actor.UniqueId);
-            _actorCoordindates[actor.Coordinates] = null;
+
+            if (_actorCoordindates.ContainsKey(actor.Coordinates))
+            {
+                _actorCoordindates[actor.Coordinates] = null;
+            }
         }
 
         public void Deregister(Coordinate coordinates)

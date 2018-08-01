@@ -1,6 +1,9 @@
-﻿using Assets.Actors;
+﻿using Assets.ActionEnqueue;
+using Assets.Actors;
 using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
+using Utils.Enums;
 using Utils.Random;
 using RoomTiles = Assets.Rooms.Tiles;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
@@ -29,7 +32,7 @@ namespace Assets.Rooms
             Tiles = tiles.Clone();
         }
 
-        public override IActor Clone()
+        public override IActor Clone(string parameters=null)
         {
             return new Room(this);
         }
@@ -78,27 +81,54 @@ namespace Assets.Rooms
             return Tiles.ToString();
         }
 
-        public void Teleport(ExtractedParameters parameters)
+        private void PlaceActorInRoom(IActor actor, Coordinate coordinates)
         {
-            var room = parameters.GetParameter<Room>(Name, Registry);
-            var actor = parameters.GetParameter<IActor>("Actor", Registry);
-            var coordinates = room.Tiles.RandomEmptyTile();
+            var actorParameters = $"Coordinates {coordinates}";
+            var newActor = actor.Clone(actorParameters);
 
             var tiles = Tiles.Clone();
-            tiles[coordinates] = actor.UniqueId;
+            if (tiles.IsInside(actor.Coordinates))
+            {
+                tiles[actor.Coordinates] = null;
+            }
+
+            tiles[newActor.Coordinates] = newActor.UniqueId;
+
+            Registry.Deregister(actor);
+            Registry.Register(newActor);
 
             var newRoom = new Room(this, tiles);
 
-            Registry.Deregister(room);
+            Registry.Deregister(this);
             Registry.Register(newRoom);
+        }
+
+        public void TeleportImpl(ExtractedParameters parameters)
+        {
+            var actor = parameters.GetActor("Actor", Registry);
+            var coordinates = Tiles.RandomEmptyTile();
+
+            PlaceActorInRoom(actor, coordinates);
+        }
+
+        public void MoveImpl(ExtractedParameters parameters)
+        {
+            var actor = parameters.GetActor("Actor", Registry);
+            var direction = parameters.GetParameter<Compass8Points>("Direction");
+            var newCoordindates = actor.Coordinates.Move(direction);
+
+            if (!Tiles.IsInside(newCoordindates)) return;
+            if (!Tiles[newCoordindates].IsNullOrEmpty()) return;
+
+            PlaceActorInRoom(actor, newCoordindates);
         }
 
         public override void Dispatch(string action, string parameters)
         {
             var extracted = parameters.ToParameters();
-            if (!InDispatch(extracted)) return;
 
-            if (action == ActionEnqueue.Teleport.ActionName) Teleport(extracted);
+            if (action == Teleport.ActionName) TeleportImpl(extracted);
+            if (action == Move.ActionName) MoveImpl(extracted);
         }
     }
 }

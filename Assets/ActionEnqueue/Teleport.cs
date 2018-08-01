@@ -18,7 +18,7 @@ namespace Assets.ActionEnqueue
         public override void Enqueue()
         {
             var action = ActionName;
-            var parameters = $"Room : {_room}, Actor : {_actor}";
+            var parameters = $"Actor : {_actor}";
 
             _dispatcher.Enqueue(action, parameters);
         }

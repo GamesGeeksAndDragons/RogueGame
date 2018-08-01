@@ -12,7 +12,7 @@ namespace Assets.Actors
 
         Coordinate Coordinates { get; }
 
-        IActor Clone();
+        IActor Clone(string parameters = null);
         void Dispatch(string actor, string parameters);
     }
 
@@ -39,9 +39,9 @@ namespace Assets.Actors
 
         public string UniqueId { get; }
 
-        public abstract IActor Clone();
+        public abstract IActor Clone(string parameters=null);
 
-        public Coordinate Coordinates { get; private set; }
+        public Coordinate Coordinates { get; protected set; }
 
         protected internal bool InDispatch(ExtractedParameters parameters)
         {
