@@ -8,7 +8,7 @@ namespace Assets.Actors
 {
     internal class Rock : Actor<Rock>, IActor
     {
-        public Rock(Coordinate coordinate, ActorRegistry registry) : base(coordinate, registry)
+        public Rock(Coordinate coordinate, ActorRegistry actorRegistry) : base(coordinate, actorRegistry)
         {
         }
 

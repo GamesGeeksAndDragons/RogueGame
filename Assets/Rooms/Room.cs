@@ -15,12 +15,12 @@ namespace Assets.Rooms
         private readonly IRandomNumberGenerator _randomNumbers;
         public RoomTiles Tiles;
 
-        internal Room(RoomBlocks blocks, ActorRegistry registry, IRandomNumberGenerator randomNumbers) 
-            : base(Coordinate.NotSet, registry)
+        internal Room(RoomBlocks blocks, ActorRegistry actorRegistry, IRandomNumberGenerator randomNumbers) 
+            : base(Coordinate.NotSet, actorRegistry)
         {
             _randomNumbers = randomNumbers;
 
-            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, Registry, _randomNumbers);
+            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, ActorRegistry, _randomNumbers);
         }
 
         private Room(Room rhs) : this(rhs, rhs.Tiles)
@@ -94,18 +94,24 @@ namespace Assets.Rooms
 
             tiles[newActor.Coordinates] = newActor.UniqueId;
 
-            Registry.Deregister(actor);
-            Registry.Register(newActor);
+            ActorRegistry.Deregister(actor);
+            ActorRegistry.Register(newActor);
 
             var newRoom = new Room(this, tiles);
 
-            Registry.Deregister(this);
-            Registry.Register(newRoom);
+            ActorRegistry.Deregister(this);
+            ActorRegistry.Register(newRoom);
+        }
+
+        protected internal override void RegisterActions()
+        {
+            RegisterAction(Teleport.ActionName, TeleportImpl);
+            RegisterAction(Move.ActionName, MoveImpl);
         }
 
         public void TeleportImpl(ExtractedParameters parameters)
         {
-            var actor = parameters.GetActor("Actor", Registry);
+            var actor = parameters.GetActor("Actor", ActorRegistry);
             var coordinates = Tiles.RandomEmptyTile();
 
             PlaceActorInRoom(actor, coordinates);
@@ -113,7 +119,7 @@ namespace Assets.Rooms
 
         public void MoveImpl(ExtractedParameters parameters)
         {
-            var actor = parameters.GetActor("Actor", Registry);
+            var actor = parameters.GetActor("Actor", ActorRegistry);
             var direction = parameters.GetParameter<Compass8Points>("Direction");
             var newCoordindates = actor.Coordinates.Move(direction);
 
@@ -121,14 +127,6 @@ namespace Assets.Rooms
             if (!Tiles[newCoordindates].IsNullOrEmpty()) return;
 
             PlaceActorInRoom(actor, newCoordindates);
-        }
-
-        public override void Dispatch(string action, string parameters)
-        {
-            var extracted = parameters.ToParameters();
-
-            if (action == Teleport.ActionName) TeleportImpl(extracted);
-            if (action == Move.ActionName) MoveImpl(extracted);
         }
     }
 }

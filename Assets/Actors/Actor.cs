@@ -1,4 +1,6 @@
-﻿using Assets.Messaging;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Messaging;
 using Utils.Coordinates;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
@@ -18,21 +20,25 @@ namespace Assets.Actors
 
     internal abstract class Actor<T> where T : Actor<T>, IActor
     {
-        protected Actor(Coordinate coordinate, ActorRegistry registry)
+        protected Actor(Coordinate coordinate, ActorRegistry actorRegistry)
         {
             Coordinates = coordinate;
-            Registry = registry;
-            UniqueId = registry.Register((IActor)this);
+            ActorRegistry = actorRegistry;
+            UniqueId = actorRegistry.Register((IActor)this);
+
+            RegisterActions();
         }
 
         protected Actor(Actor<T> rhs)
         {
             Coordinates = rhs.Coordinates;
-            Registry = rhs.Registry;
+            ActorRegistry = rhs.ActorRegistry;
             UniqueId = rhs.UniqueId;
-        }
 
-        protected internal readonly ActorRegistry Registry;
+            RegisterActions();
+;        }
+
+        protected internal readonly ActorRegistry ActorRegistry;
 
         public string Name => ActorName;
         public static string ActorName => typeof(T).Name;
@@ -43,12 +49,24 @@ namespace Assets.Actors
 
         public Coordinate Coordinates { get; protected set; }
 
-        protected internal bool InDispatch(ExtractedParameters parameters)
+        public virtual void Dispatch(string actor, string parameters)
         {
-            var value = parameters.Value(Name);
-            return value == UniqueId;
+            if (ActionRegistry.TryGetValue(actor, out var actionImpl))
+            {
+                var extracted = parameters.ToParameters();
+                actionImpl(extracted);
+            }
         }
 
-        public virtual void Dispatch(string actor, string parameters) {}
+        protected internal Dictionary<string, Action<ExtractedParameters>> ActionRegistry = new Dictionary<string, Action<ExtractedParameters>>();
+
+        protected internal void RegisterAction(string action, Action<ExtractedParameters> impl)
+        {
+            if(ActionRegistry.ContainsKey(action)) throw new ArgumentException($"Action [{action}] already registered", nameof(action));
+
+            ActionRegistry[action] = impl;
+        }
+
+        protected internal virtual void RegisterActions() { }
     }
 }

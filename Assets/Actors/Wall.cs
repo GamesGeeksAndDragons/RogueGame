@@ -9,7 +9,7 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; }
 
-        public Wall(Coordinate coordinates, ActorRegistry registry, WallDirection type) : base(coordinates, registry)
+        public Wall(Coordinate coordinates, ActorRegistry actorRegistry, WallDirection type) : base(coordinates, actorRegistry)
         {
             WallType = type;
         }

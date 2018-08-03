@@ -5,7 +5,7 @@ namespace Assets.Actors
 {
     internal class Me : Actor<Me>, IActor
     {
-        public Me(Coordinate coordinates, ActorRegistry registry) : base(coordinates, registry)
+        public Me(Coordinate coordinates, ActorRegistry actorRegistry) : base(coordinates, actorRegistry)
         {
         }
 
