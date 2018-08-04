@@ -5,11 +5,11 @@ using Utils.Enums;
 
 namespace Assets.Actors
 {
-    internal class Wall : Actor<Wall>, IActor
+    internal class Wall : Dispatchee<Wall>
     {
         public WallDirection WallType { get; }
 
-        public Wall(Coordinate coordinates, ActorRegistry actorRegistry, WallDirection type) : base(coordinates, actorRegistry)
+        public Wall(Coordinate coordinates, DispatchRegistry registry, WallDirection type) : base(coordinates, registry)
         {
             WallType = type;
         }
@@ -18,7 +18,7 @@ namespace Assets.Actors
         {
         }
 
-        public override IActor Clone(string parameters=null)
+        public override IDispatchee Clone(string parameters=null)
         {
             return new Wall(this);
         }

@@ -4,10 +4,10 @@ namespace Assets.Messaging
 {
     internal class Dispatcher
     {
-        private readonly ActorRegistry _registry;
+        private readonly DispatchRegistry _registry;
         private readonly Queue<(string action, string parameters)> _actionQueue = new Queue<(string action, string parameters)>();
 
-        public Dispatcher(ActorRegistry registry)
+        public Dispatcher(DispatchRegistry registry)
         {
             _registry = registry;
         }
@@ -28,9 +28,9 @@ namespace Assets.Messaging
 
         private void Dispatch(string action, string parameters)
         {
-            foreach (var actor in _registry.Actors)
+            foreach (var dispatchee in _registry.Dispatchees)
             {
-                actor.Dispatch(action, parameters);
+                dispatchee.Dispatch(action, parameters);
             }
         }
     }

@@ -12,9 +12,9 @@ namespace Assets.Messaging
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
         private readonly Dispatcher _dispatcher;
-        private readonly ActorRegistry _registry;
+        private readonly DispatchRegistry _registry;
 
-        public LevelBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, Dispatcher dispatcher, ActorRegistry registry)
+        public LevelBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, Dispatcher dispatcher, DispatchRegistry registry)
         {
             _randomNumberGenerator = randomNumberGenerator;
             _logger = logger;
@@ -30,7 +30,7 @@ namespace Assets.Messaging
             var room = roomBuilder.BuildRoom(numBlocks);
             var me = new Me(Coordinate.NotSet, _registry);
 
-            var teleporter = new Teleport(me.UniqueId, room.UniqueId, _dispatcher);
+            var teleporter = new Teleport(me.UniqueId, _dispatcher);
             teleporter.Enqueue();
         }
     }

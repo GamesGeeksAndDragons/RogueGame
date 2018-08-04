@@ -79,17 +79,17 @@ namespace AssetsTests.DispatcherTests
         [InlineData(2)]
         public void WhenBuiltDispatcher_ShouldHaveMeInRoom(int testNum)
         {
-            var actorRegistry = new ActorRegistry();
-            var dispatcher = new Dispatcher(actorRegistry);
+            var registry = new DispatchRegistry();
+            var dispatcher = new Dispatcher(registry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, actorRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
             dispatcher.Dispatch();
 
-            var room = actorRegistry.GetActor("Room1");
+            var room = registry.GetDispatchee("Room1");
             var actual = room.ToString();
 
             var expected = GetExpectation(testNum);

@@ -3,9 +3,9 @@ using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    internal class Me : Actor<Me>, IActor
+    internal class Me : Dispatchee<Me>
     {
-        public Me(Coordinate coordinates, ActorRegistry actorRegistry) : base(coordinates, actorRegistry)
+        public Me(Coordinate coordinates, DispatchRegistry registry) : base(coordinates, registry)
         {
         }
 
@@ -13,7 +13,7 @@ namespace Assets.Actors
         {
         }
 
-        public override IActor Clone(string parameters=null)
+        public override IDispatchee Clone(string parameters=null)
         {
             var me = new Me(this);
 

@@ -21,9 +21,9 @@ namespace Assets.Rooms
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
         private readonly ILog _logger;
-        private readonly ActorRegistry _registry;
+        private readonly DispatchRegistry _registry;
 
-        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, ActorRegistry registry)
+        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, DispatchRegistry registry)
         {
             _randomNumberGenerator = randomNumberGenerator;
             _logger = logger;

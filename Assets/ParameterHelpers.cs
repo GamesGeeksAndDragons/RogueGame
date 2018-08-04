@@ -32,11 +32,11 @@ namespace Assets
             return parameters.Single(param => param.name == name).value;
         }
 
-        public static IActor GetActor(this ExtractedParameters parameters, string name, ActorRegistry registry)
+        public static IDispatchee GetDispatchee(this ExtractedParameters parameters, string name, DispatchRegistry registry)
         {
             var value = parameters.Value(name);
 
-            return registry.GetActor(value);
+            return registry.GetDispatchee(value);
         }
 
         public static T GetParameter<T>(this ExtractedParameters parameters, string name) where T : struct

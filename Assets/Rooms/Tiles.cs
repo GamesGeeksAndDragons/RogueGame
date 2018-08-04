@@ -9,14 +9,14 @@ namespace Assets.Rooms
 {
     public class Tiles
     {
-        private readonly ActorRegistry _registry;
+        private readonly DispatchRegistry _registry;
         private readonly IRandomNumberGenerator _randomNumbers;
         private const int TilesPerBlock = 4;
         private readonly string[,] _tiles;
 
         public (int row, int column) UpperBounds => _tiles.UpperBounds();
 
-        public Tiles(int blockRows, int blockColumns, ActorRegistry registry, IRandomNumberGenerator randomNumbers)
+        public Tiles(int blockRows, int blockColumns, DispatchRegistry registry, IRandomNumberGenerator randomNumbers)
         {
             _registry = registry;
             _randomNumbers = randomNumbers;
@@ -67,9 +67,9 @@ namespace Assets.Rooms
             {
                 if (uniqueId == null) return "";
 
-                var actor = _registry.GetActor(uniqueId);
+                var dispatchee = _registry.GetDispatchee(uniqueId);
 
-                return actor.ToString();
+                return dispatchee.ToString();
             });
         }
 
@@ -99,7 +99,7 @@ namespace Assets.Rooms
         {
             _tiles.ThrowIfOutsideBounds(coordinates, nameof(_tiles));
 
-            _registry.Deregister(coordinates);
+            _registry.Deregister(this[coordinates]);
             this[coordinates] = null;
         }
 
@@ -134,15 +134,15 @@ namespace Assets.Rooms
             return _tiles;
         }
 
-        private string ActorType(Coordinate coordinate)
+        private string DispatcheeType(Coordinate coordinate)
         {
             var id = this[coordinate];
             if (id.IsNullOrEmpty()) return string.Empty;
 
-            var actor = _registry.GetActor(id);
-            if (actor == null) return string.Empty;
+            var dispatchee = _registry.GetDispatchee(id);
+            if (dispatchee == null) return string.Empty;
 
-            return actor.Name;
+            return dispatchee.Name;
         }
 
         public Coordinate RandomEmptyTile()

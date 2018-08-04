@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Assets.Messaging;
+﻿using Assets.Messaging;
 using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    internal class Rock : Actor<Rock>, IActor
+    internal class Rock : Dispatchee<Rock>
     {
-        public Rock(Coordinate coordinate, ActorRegistry actorRegistry) : base(coordinate, actorRegistry)
+        public Rock(Coordinate coordinate, DispatchRegistry registry) : base(coordinate, registry)
         {
         }
 
@@ -16,7 +13,7 @@ namespace Assets.Actors
         {
         }
 
-        public override IActor Clone(string parameters=null)
+        public override IDispatchee Clone(string parameters=null)
         {
             return new Rock(this);
         }

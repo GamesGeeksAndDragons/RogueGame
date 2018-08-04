@@ -87,13 +87,13 @@ namespace AssetsTests
         public void Move_Me_CanMoveIntoEmptySpace()
         {
             var testNum = 1;
-            var actorRegistry = new ActorRegistry();
-            var dispatcher = new Dispatcher(actorRegistry);
+            var registry = new DispatchRegistry();
+            var dispatcher = new Dispatcher(registry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, actorRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
             dispatcher.Dispatch();
 
@@ -103,7 +103,7 @@ namespace AssetsTests
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum);
-            var actual = actorRegistry.GetActor("Room1").ToString();
+            var actual = registry.GetDispatchee("Room1").ToString();
 
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));
@@ -116,13 +116,13 @@ namespace AssetsTests
         public void Move_Me_CantMoveIntoWallsButCanMoveIntoEmptySpace()
         {
             var testNum = 2;
-            var actorRegistry = new ActorRegistry();
-            var dispatcher = new Dispatcher(actorRegistry);
+            var registry = new DispatchRegistry();
+            var dispatcher = new Dispatcher(registry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, actorRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
             dispatcher.Dispatch();
 
@@ -138,7 +138,7 @@ namespace AssetsTests
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum);
-            var actual = actorRegistry.GetActor("Room1").ToString();
+            var actual = registry.GetDispatchee("Room1").ToString();
 
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));

@@ -150,7 +150,7 @@ namespace AssetsTests.RoomTests
         public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks(int testNum)
         {
             var fakeRandomNumbers = GetGenerator(testNum);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new DispatchRegistry());
 
             var room = builder.BuildRoom(GetBlockCount(testNum));
             var actual = room.ToString();

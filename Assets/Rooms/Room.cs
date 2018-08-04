@@ -1,5 +1,4 @@
 ﻿using Assets.ActionEnqueue;
-using Assets.Actors;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
@@ -10,17 +9,17 @@ using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string nam
 
 namespace Assets.Rooms
 {
-    internal class Room : Actor<Room>, IActor
+    internal class Room : Dispatchee<Room>
     {
         private readonly IRandomNumberGenerator _randomNumbers;
         public RoomTiles Tiles;
 
-        internal Room(RoomBlocks blocks, ActorRegistry actorRegistry, IRandomNumberGenerator randomNumbers) 
-            : base(Coordinate.NotSet, actorRegistry)
+        internal Room(RoomBlocks blocks, DispatchRegistry registry, IRandomNumberGenerator randomNumbers) 
+            : base(Coordinate.NotSet, registry)
         {
             _randomNumbers = randomNumbers;
 
-            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, ActorRegistry, _randomNumbers);
+            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, Registry, _randomNumbers);
         }
 
         private Room(Room rhs) : this(rhs, rhs.Tiles)
@@ -32,7 +31,7 @@ namespace Assets.Rooms
             Tiles = tiles.Clone();
         }
 
-        public override IActor Clone(string parameters=null)
+        public override IDispatchee Clone(string parameters=null)
         {
             return new Room(this);
         }
@@ -81,26 +80,26 @@ namespace Assets.Rooms
             return Tiles.ToString();
         }
 
-        private void PlaceActorInRoom(IActor actor, Coordinate coordinates)
+        private void PlaceInRoom(IDispatchee dispatchee, Coordinate coordinates)
         {
-            var actorParameters = $"Coordinates {coordinates}";
-            var newActor = actor.Clone(actorParameters);
+            var parameters = $"Coordinates {coordinates}";
+            var newDispatchee = dispatchee.Clone(parameters);
 
             var tiles = Tiles.Clone();
-            if (tiles.IsInside(actor.Coordinates))
+            if (tiles.IsInside(dispatchee.Coordinates))
             {
-                tiles[actor.Coordinates] = null;
+                tiles[dispatchee.Coordinates] = null;
             }
 
-            tiles[newActor.Coordinates] = newActor.UniqueId;
+            tiles[newDispatchee.Coordinates] = newDispatchee.UniqueId;
 
-            ActorRegistry.Deregister(actor);
-            ActorRegistry.Register(newActor);
+            Registry.Deregister(dispatchee);
+            Registry.Register(newDispatchee);
 
             var newRoom = new Room(this, tiles);
 
-            ActorRegistry.Deregister(this);
-            ActorRegistry.Register(newRoom);
+            Registry.Deregister(this);
+            Registry.Register(newRoom);
         }
 
         protected internal override void RegisterActions()
@@ -111,22 +110,22 @@ namespace Assets.Rooms
 
         public void TeleportImpl(ExtractedParameters parameters)
         {
-            var actor = parameters.GetActor("Actor", ActorRegistry);
+            var dispatchee = parameters.GetDispatchee("Dispatchee", Registry);
             var coordinates = Tiles.RandomEmptyTile();
 
-            PlaceActorInRoom(actor, coordinates);
+            PlaceInRoom(dispatchee, coordinates);
         }
 
         public void MoveImpl(ExtractedParameters parameters)
         {
-            var actor = parameters.GetActor("Actor", ActorRegistry);
+            var dispatchee = parameters.GetDispatchee("Dispatchee", Registry);
             var direction = parameters.GetParameter<Compass8Points>("Direction");
-            var newCoordindates = actor.Coordinates.Move(direction);
+            var newCoordindates = dispatchee.Coordinates.Move(direction);
 
             if (!Tiles.IsInside(newCoordindates)) return;
             if (!Tiles[newCoordindates].IsNullOrEmpty()) return;
 
-            PlaceActorInRoom(actor, newCoordindates);
+            PlaceInRoom(dispatchee, newCoordindates);
         }
     }
 }

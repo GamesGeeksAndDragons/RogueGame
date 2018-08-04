@@ -4,13 +4,13 @@ namespace Assets.ActionEnqueue
 {
     class Move : Enqueuer<Move>, IEnqueuer
     {
-        private readonly string _actor;
+        private readonly string _dispatchee;
         private readonly string _direction;
         private readonly Dispatcher _dispatcher;
 
-        public Move(string actor, string direction, Dispatcher dispatcher)
+        public Move(string dispatchee, string direction, Dispatcher dispatcher)
         {
-            _actor = actor;
+            _dispatchee = dispatchee;
             _direction = direction;
             _dispatcher = dispatcher;
         }
@@ -18,7 +18,7 @@ namespace Assets.ActionEnqueue
         public override void Enqueue()
         {
             var action = ActionName;
-            var parameters = $"Actor : {_actor} Direction : {_direction}";
+            var parameters = $"Dispatchee : {_dispatchee} Direction : {_direction}";
 
             _dispatcher.Enqueue(action, parameters);
         }

@@ -108,7 +108,7 @@ namespace AssetsTests.RoomTests
         public void DecideLayout_ShouldHaveConnectedBlocks(int numBlocks)
         {
             var fakeRandomNumbers = FakeRandomNumberTestFactory.CreateGenerator(numBlocks);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new ActorRegistry());
+            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new DispatchRegistry());
             var blocks = builder.DecideLayout(numBlocks);
 
             var expected = GetExpectedLayout(numBlocks);
