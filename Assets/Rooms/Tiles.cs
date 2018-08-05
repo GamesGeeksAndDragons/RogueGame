@@ -134,17 +134,6 @@ namespace Assets.Rooms
             return _tiles;
         }
 
-        private string DispatcheeType(Coordinate coordinate)
-        {
-            var id = this[coordinate];
-            if (id.IsNullOrEmpty()) return string.Empty;
-
-            var dispatchee = _registry.GetDispatchee(id);
-            if (dispatchee == null) return string.Empty;
-
-            return dispatchee.Name;
-        }
-
         public Coordinate RandomEmptyTile()
         {
             var (maxRows, maxColumns) = UpperBounds;
