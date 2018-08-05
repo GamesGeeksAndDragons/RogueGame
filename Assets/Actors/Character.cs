@@ -80,7 +80,7 @@ namespace Assets.Actors
             var newState = CharacterState(hitPoints: newHitPoints);
             var newCharacter = Clone(newState);
 
-            Registry.Swap(this, newCharacter);
+            Registry.Register(newCharacter);
         }
     }
 }

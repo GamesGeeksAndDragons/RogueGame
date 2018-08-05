@@ -49,8 +49,9 @@ namespace AssetsTests
             var registry = new DispatchRegistry();
             var dispatcher = new Dispatcher(registry);
             var fakeLogger = new FakeLogger(_output);
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
+            var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
 
             var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);

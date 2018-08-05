@@ -3,41 +3,40 @@ using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
 using Utils.Random;
-using RoomTiles = Assets.Rooms.Tiles;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
-namespace Assets.Rooms
+namespace Assets.Mazes
 {
-    internal class Room : Dispatchee<Room>
+    internal class Maze : Dispatchee<Maze>
     {
         private readonly IRandomNumberGenerator _randomNumbers;
-        public RoomTiles Tiles;
+        public Tiles Tiles;
 
-        internal Room(RoomBlocks blocks, DispatchRegistry registry, IRandomNumberGenerator randomNumbers) 
+        internal Maze(MazeBlocks blocks, DispatchRegistry registry, IRandomNumberGenerator randomNumbers) 
             : base(Coordinate.NotSet, registry)
         {
             _randomNumbers = randomNumbers;
 
-            Tiles = new RoomTiles(blocks.RowUpperBound, blocks.ColumnUpperBound, Registry, _randomNumbers);
+            Tiles = new Tiles(blocks.RowUpperBound, blocks.ColumnUpperBound, Registry, _randomNumbers);
         }
 
-        private Room(Room rhs) : this(rhs, rhs.Tiles)
+        private Maze(Maze rhs) : this(rhs, rhs.Tiles)
         {
         }
 
-        private Room(Room rhs, RoomTiles tiles) : base(rhs)
+        private Maze(Maze rhs, Tiles tiles) : base(rhs)
         {
             Tiles = tiles.Clone();
         }
 
         public override IDispatchee Clone(string parameters=null)
         {
-            return new Room(this);
+            return new Maze(this);
         }
 
-        internal Room PopulateWithTiles(RoomBlocks blocks)
+        internal Maze PopulateWithTiles(MazeBlocks blocks)
         {
-            var tiles = new RoomTiles(Tiles);
+            var tiles = new Tiles(Tiles);
 
             for (var blockRow = 0; blockRow <= blocks.RowUpperBound; blockRow++)
             {
@@ -51,12 +50,12 @@ namespace Assets.Rooms
                 }
             }
 
-            return new Room(this, tiles);
+            return new Maze(this, tiles);
         }
 
-        internal Room PopulateWithWalls()
+        internal Maze PopulateWithWalls()
         {
-            var tiles = new RoomTiles(Tiles);
+            var tiles = new Tiles(Tiles);
 
             var (rowMax, colMax) = tiles.UpperBounds;
             for (var row = 0; row <= rowMax; row++)
@@ -71,7 +70,7 @@ namespace Assets.Rooms
                 }
             }
 
-            return new Room(this, tiles);
+            return new Maze(this, tiles);
         }
 
         public override string ToString()
@@ -79,7 +78,7 @@ namespace Assets.Rooms
             return Tiles.ToString();
         }
 
-        private void PlaceInRoom(IDispatchee dispatchee, Coordinate coordinates)
+        private void PlaceInMaze(IDispatchee dispatchee, Coordinate coordinates)
         {
             var parameters = $"Coordinates [{coordinates}]";
             var newDispatchee = dispatchee.Clone(parameters);
@@ -92,11 +91,8 @@ namespace Assets.Rooms
 
             tiles[newDispatchee.Coordinates] = newDispatchee.UniqueId;
 
-            Registry.Swap(dispatchee, newDispatchee);
-
-            var newRoom = new Room(this, tiles);
-
-            Registry.Swap(this, newRoom);
+            // ReSharper disable once ObjectCreationAsStatement
+            new Maze(this, tiles);
         }
 
         protected internal override void RegisterActions()
@@ -110,7 +106,7 @@ namespace Assets.Rooms
             var dispatchee = parameters.GetDispatchee("Dispatchee", Registry);
             var coordinates = Tiles.RandomEmptyTile();
 
-            PlaceInRoom(dispatchee, coordinates);
+            PlaceInMaze(dispatchee, coordinates);
         }
 
         public void MoveImpl(ExtractedParameters parameters)
@@ -122,7 +118,7 @@ namespace Assets.Rooms
             if (!Tiles.IsInside(newCoordindates)) return;
             if (!Tiles[newCoordindates].IsNullOrEmpty()) return;
 
-            PlaceInRoom(dispatchee, newCoordindates);
+            PlaceInMaze(dispatchee, newCoordindates);
         }
     }
 }

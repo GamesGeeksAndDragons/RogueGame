@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using Assets.Rooms;
+using Assets.Mazes;
 using Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.RoomTests
+namespace AssetsTests.MazeTests
 {
     public class BlockReducerTests
     {
@@ -110,19 +108,18 @@ namespace AssetsTests.RoomTests
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(5)]
-        //[InlineData(7)]
-        public void RoomBlocks_ReduceLayout_ShouldHaveMinimumBlocks(int testNumber)
+        public void MazeBlocks_ReduceLayout_ShouldHaveMinimumBlocks(int testNumber)
         {
-            var roomBlocks = new RoomBlocks(GetBlockLayout(testNumber));
+            var mazeBlocks = new MazeBlocks(GetBlockLayout(testNumber));
 
-            var before = roomBlocks.ToString();
+            var before = mazeBlocks.ToString();
             _output.WriteLine("Before");
             _output.WriteLine(before);
             _output.WriteLine('='.ToPaddedString(10));
 
-            roomBlocks = roomBlocks.ReduceLayout();
+            mazeBlocks = mazeBlocks.ReduceLayout();
 
-            var actual = roomBlocks.ToString();
+            var actual = mazeBlocks.ToString();
 
             var expected = GetReducedLayout(testNumber);
 

@@ -1,13 +1,13 @@
 ﻿using System;
 using Assets.Messaging;
-using Assets.Rooms;
+using Assets.Mazes;
 using AssetsTests.Fakes;
 using Utils.Enums;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.RoomTests
+namespace AssetsTests.MazeTests
 {
     static class FakeRandomNumberTestFactory
     {
@@ -108,7 +108,8 @@ namespace AssetsTests.RoomTests
         public void DecideLayout_ShouldHaveConnectedBlocks(int numBlocks)
         {
             var fakeRandomNumbers = FakeRandomNumberTestFactory.CreateGenerator(numBlocks);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new DispatchRegistry());
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
+            var builder = new RandomMazeBuilder(fakeRandomNumbers, mazeDescriptor, new FakeLogger(_output), new DispatchRegistry());
             var blocks = builder.DecideLayout(numBlocks);
 
             var expected = GetExpectedLayout(numBlocks);

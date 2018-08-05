@@ -29,9 +29,28 @@ namespace Assets.Messaging
 
             var uniqueId = dispatchee.UniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatchee) : dispatchee.UniqueId;
 
+            EnsureToDeregisterExistingDispatchee(dispatchee, uniqueId);
+
             _uniquelyNamedDispatchees[uniqueId] = dispatchee;
 
             return uniqueId;
+        }
+
+        private bool DispatcheeWithSameIdExists(string uniqueId)
+        {
+            return _uniquelyNamedDispatchees.ContainsKey(uniqueId);
+        }
+
+        private void EnsureToDeregisterExistingDispatchee(IDispatchee dispatchee, string uniqueId)
+        {
+            if (DispatcheeWithSameIdExists(uniqueId))
+            {
+                var existing = _uniquelyNamedDispatchees[uniqueId];
+                if (!existing.IsSameInstance(dispatchee))
+                {
+                    Deregister(existing);
+                }
+            }
         }
 
         private void Deregister(IDispatchee dispatchee)
@@ -42,15 +61,9 @@ namespace Assets.Messaging
             _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
         }
 
-        internal void Swap(IDispatchee registered, IDispatchee with)
-        {
-            Deregister(registered);
-            Register(with);
-        }
-
         internal void Deregister(string uniqueId)
         {
-            if (!_uniquelyNamedDispatchees.ContainsKey(uniqueId)) throw new ArgumentException($"Attempting to Deregister [{uniqueId}] which is not registered.");
+            if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Deregister [{uniqueId}] which is not registered.");
 
             var dispatchee = GetDispatchee(uniqueId);
 

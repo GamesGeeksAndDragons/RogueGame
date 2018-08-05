@@ -93,8 +93,9 @@ namespace AssetsTests
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
+            var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
             var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
             dispatcher.EnqueueTeleport(me);
@@ -105,7 +106,7 @@ namespace AssetsTests
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum);
-            var actual = registry.GetDispatchee("Room1").ToString();
+            var actual = registry.GetDispatchee("Maze1").ToString();
 
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));
@@ -123,8 +124,9 @@ namespace AssetsTests
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
+            var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
             var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
             dispatcher.EnqueueTeleport(me);
@@ -138,7 +140,7 @@ namespace AssetsTests
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum);
-            var actual = registry.GetDispatchee("Room1").ToString();
+            var actual = registry.GetDispatchee("Maze1").ToString();
 
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));

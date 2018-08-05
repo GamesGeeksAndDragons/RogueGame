@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Utils.Coordinates;
 using Utils.Enums;
-using RoomTiles= Assets.Rooms.Tiles;
 
-namespace Assets.Rooms
+namespace Assets.Mazes
 {
     static class WallRecognition
     {
@@ -61,14 +60,14 @@ namespace Assets.Rooms
 
         private static readonly Compass8Points ExcludeWesterly = AllDirections ^ WesterlyDirection;
 
-        private static bool CanConvertToWall(this RoomTiles tiles, Coordinate coordinate)
+        private static bool CanConvertToWall(this Tiles tiles, Coordinate coordinate)
         {
             if (!tiles.IsInside(coordinate)) return false;
 
             return tiles[coordinate] == null;
         }
 
-        public static Compass8Points DiscoverSurroundingSpace(this RoomTiles tiles, Coordinate coordinate)
+        public static Compass8Points DiscoverSurroundingSpace(this Tiles tiles, Coordinate coordinate)
         {
             var surroundingSpace = Compass8Points.Undefined;
 

@@ -2,20 +2,20 @@
 using Utils;
 using Utils.Coordinates;
 
-namespace Assets.Rooms
+namespace Assets.Mazes
 {
-    internal class RoomBlocks
+    internal class MazeBlocks
     {
         private bool[,] Blocks { get; }
         public int RowUpperBound => Blocks.RowUpperBound();
         public int ColumnUpperBound => Blocks.ColumnUpperBound();
 
-        internal RoomBlocks(bool[,] blocks)
+        internal MazeBlocks(bool[,] blocks)
         {
             Blocks = blocks;
         }
 
-        public RoomBlocks(int numBlocks)
+        public MazeBlocks(int numBlocks)
         {
             Blocks = new bool[numBlocks, numBlocks];
         }
@@ -147,7 +147,7 @@ namespace Assets.Rooms
             return ColumnUpperBound;
         }
 
-        public RoomBlocks ReduceLayout()
+        public MazeBlocks ReduceLayout()
         {
             var minRow = MinRow();
             var maxRow = MaxRow();
@@ -171,7 +171,7 @@ namespace Assets.Rooms
                 }
             }
 
-            return new RoomBlocks(newBlocks);
+            return new MazeBlocks(newBlocks);
         }
     }
 }

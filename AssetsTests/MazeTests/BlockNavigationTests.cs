@@ -1,63 +1,79 @@
 ﻿using System;
+using Assets.Messaging;
+using Assets.Mazes;
 using AssetsTests.Fakes;
+using Utils;
 using Utils.Enums;
 using Utils.Random;
+using Xunit;
+using Xunit.Abstractions;
 
-namespace AssetsTests.RoomTests
+namespace AssetsTests.MazeTests
 {
-    public static class TestDataForNavigationTests
+    public class BlockNavigationTests
     {
-        public static int GetNumBlocks(BlockNavigationTests.Test test)
+        private readonly ITestOutputHelper _output;
+        public enum Test
+        {
+            TopLeft, TopRight, BottomRight, BottomLeft, Cornered
+        }
+
+        public BlockNavigationTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+        public static int GetNumBlocks(Test test)
         {
             switch (test)
             {
-                case BlockNavigationTests.Test.TopLeft:
-                case BlockNavigationTests.Test.TopRight:
-                case BlockNavigationTests.Test.BottomRight:
-                case BlockNavigationTests.Test.BottomLeft:
+                case Test.TopLeft:
+                case Test.TopRight:
+                case Test.BottomRight:
+                case Test.BottomLeft:
                     return 2;
-                case BlockNavigationTests.Test.Cornered:
+                case Test.Cornered:
                     return 5;
             }
 
             throw new ArgumentException($"Didn't have Blocks for [{test}]");
         }
 
-        public static string GetExpected(BlockNavigationTests.Test test)
+        public static string GetExpected(Test test)
         {
             switch (test)
             {
-                case (BlockNavigationTests.Test)(-1):
+                case (Test)(-1):
                     return
                         " |01" + Environment.NewLine +
                         "----" + Environment.NewLine +
                         "0|.." + Environment.NewLine +
                         "1|..";
-                case BlockNavigationTests.Test.TopLeft:
+                case Test.TopLeft:
                     return
                         " |01" + Environment.NewLine +
                         "----" + Environment.NewLine +
                         "0|**" + Environment.NewLine +
                         "1|..";
-                case BlockNavigationTests.Test.TopRight:
+                case Test.TopRight:
                     return
                         " |01" + Environment.NewLine +
                         "----" + Environment.NewLine +
                         "0|.*" + Environment.NewLine +
                         "1|.*";
-                case BlockNavigationTests.Test.BottomRight:
+                case Test.BottomRight:
                     return
                         " |01" + Environment.NewLine +
                         "----" + Environment.NewLine +
                         "0|.." + Environment.NewLine +
                         "1|**";
-                case BlockNavigationTests.Test.BottomLeft:
+                case Test.BottomLeft:
                     return
                         " |01" + Environment.NewLine +
                         "----" + Environment.NewLine +
                         "0|*." + Environment.NewLine +
                         "1|*.";
-                case BlockNavigationTests.Test.Cornered:
+                case Test.Cornered:
                     return
                         " |01234" + Environment.NewLine +
                         "-------" + Environment.NewLine +
@@ -71,29 +87,29 @@ namespace AssetsTests.RoomTests
             throw new ArgumentException($"Didn't have Expected Layout for [{test}]");
         }
 
-        internal static IRandomNumberGenerator GetGenerator(BlockNavigationTests.Test test)
+        internal static IRandomNumberGenerator GetGenerator(Test test)
         {
             var generator = new FakeRandomNumberGenerator();
 
             switch (test)
             {
-                case BlockNavigationTests.Test.TopLeft:
+                case Test.TopLeft:
                     generator.PopulateEnum(Compass4Points.West, Compass4Points.North, Compass4Points.East, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(0, 1);
                     break;
-                case BlockNavigationTests.Test.TopRight:
+                case Test.TopRight:
                     generator.PopulateEnum(Compass4Points.North, Compass4Points.East, Compass4Points.South, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(1, 1);
                     break;
-                case BlockNavigationTests.Test.BottomRight:
+                case Test.BottomRight:
                     generator.PopulateEnum(Compass4Points.South, Compass4Points.West, Compass4Points.East, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(1, 0);
                     break;
-                case BlockNavigationTests.Test.BottomLeft:
+                case Test.BottomLeft:
                     generator.PopulateEnum(Compass4Points.South, Compass4Points.West, Compass4Points.North, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(0, 0);
                     break;
-                case BlockNavigationTests.Test.Cornered:
+                case Test.Cornered:
                     generator.PopulateEnum(Compass4Points.West, Compass4Points.South, Compass4Points.East, Compass4Points.East, Compass4Points.East);
                     generator.PopulateDice(3, 4, 0, 0, 1, 1, 4, 2);
                     break;
@@ -102,6 +118,31 @@ namespace AssetsTests.RoomTests
             }
 
             return generator;
+        }
+
+        [Theory]
+        [InlineData(Test.TopLeft)]
+        [InlineData(Test.TopRight)]
+        [InlineData(Test.BottomRight)]
+        [InlineData(Test.BottomLeft)]
+        [InlineData(Test.Cornered)]
+        public void DecideLayout_ForSimpleNavigation_ShouldMoveAsExpected(Test test)
+        {
+            var fakeRandomNumbers = GetGenerator(test);
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
+            var builder = new RandomMazeBuilder(fakeRandomNumbers, mazeDescriptor, new FakeLogger(_output), new DispatchRegistry());
+            var numBlocks = GetNumBlocks(test);
+
+            var blocks = builder.DecideLayout(numBlocks);
+
+            var expected = GetExpected(test);
+            var actual = blocks.ToString();
+
+            _output.WriteLine(expected);
+            _output.WriteLine('='.ToPaddedString(10));
+            _output.WriteLine(actual);
+
+            Assert.Equal(expected, actual);
         }
     }
 }

@@ -77,24 +77,25 @@ namespace AssetsTests.DispatcherTests
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void WhenBuiltDispatcher_ShouldHaveMeInRoom(int testNum)
+        [InlineData(1, 2)]
+        [InlineData(2, 3)]
+        public void WhenBuiltDispatcher_ShouldHaveMeInMaze(int testNum, int blocksPerTile)
         {
             var registry = new DispatchRegistry();
             var dispatcher = new Dispatcher(registry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, blocksPerTile);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
+            var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
             var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
-            var room = registry.GetDispatchee("Room1");
-            var actual = room.ToString();
+            var maze = registry.GetDispatchee("Maze1");
+            var actual = maze.ToString();
 
             var expected = GetExpectation(testNum);
 

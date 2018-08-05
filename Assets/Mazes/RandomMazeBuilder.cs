@@ -5,51 +5,43 @@ using Utils.Coordinates;
 using Utils.Random;
 using Utils.Enums;
 
-namespace Assets.Rooms
+namespace Assets.Mazes
 {
-    /*
-     * Basic Room unit
-     *  ****
-     *  ****
-     *  ****
-     *  Four verticies
-     * 
-     * Complicated rooms are multiples of the basic unit
-     *  
-     * */
-    public class RandomRoomBuilder
+    public class RandomMazeBuilder
     {
         private readonly IRandomNumberGenerator _randomNumberGenerator;
+        private readonly IMazeDescriptor _descriptor;
         private readonly ILog _logger;
         private readonly DispatchRegistry _registry;
 
-        public RandomRoomBuilder(IRandomNumberGenerator randomNumberGenerator, ILog logger, DispatchRegistry registry)
+        public RandomMazeBuilder(IRandomNumberGenerator randomNumberGenerator, IMazeDescriptor descriptor, ILog logger, DispatchRegistry registry)
         {
             _randomNumberGenerator = randomNumberGenerator;
+            _descriptor = descriptor;
             _logger = logger;
             _registry = registry;
         }
 
-        internal Room BuildRoom(int numBlocks)
+        internal Maze BuildMaze(int level)
         {
-            var blocks = DecideLayout(numBlocks);
+            var mazeDetail = _descriptor[level];
+
+            var blocks = DecideLayout(mazeDetail.BlocksPerRoom);
             blocks = blocks.ReduceLayout();
 
-            var roomOfRocks = new Room(blocks, _registry, _randomNumberGenerator);
+            var mazeOfRocks = new Maze(blocks, _registry, _randomNumberGenerator);
 
-            var room = roomOfRocks.PopulateWithTiles(blocks);
-            room = room.PopulateWithWalls();
+            var mazeWithSpace = mazeOfRocks.PopulateWithTiles(blocks);
+            var mazeWithWalls = mazeWithSpace.PopulateWithWalls();
 
-            _registry.Swap(roomOfRocks, room);
-
-            return room;
+            return mazeWithWalls;
         }
 
-        internal RoomBlocks DecideLayout(int numBlocks)
+        internal MazeBlocks DecideLayout(int numBlocks)
         {
             numBlocks.ThrowIfBelow(2, nameof(numBlocks));
 
-            var blocks = new RoomBlocks(numBlocks);
+            var blocks = new MazeBlocks(numBlocks);
 
             var point = RandomCoordinates(blocks);
             blocks[point] = true;
@@ -76,7 +68,7 @@ namespace Assets.Rooms
             return blocks;
         }
 
-        private Coordinate RandomWalkCoordinates(RoomBlocks blocks, Coordinate point)
+        private Coordinate RandomWalkCoordinates(MazeBlocks blocks, Coordinate point)
         {
             Coordinate nextPoint;
 
@@ -92,7 +84,7 @@ namespace Assets.Rooms
             return nextPoint;
         }
 
-        private Coordinate RandomCoordinates(RoomBlocks blocks)
+        private Coordinate RandomCoordinates(MazeBlocks blocks)
         {
             Coordinate point;
 

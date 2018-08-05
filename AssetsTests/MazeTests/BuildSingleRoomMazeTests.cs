@@ -1,6 +1,6 @@
 ﻿using System;
 using Assets.Messaging;
-using Assets.Rooms;
+using Assets.Mazes;
 using AssetsTests.Fakes;
 using Utils;
 using Utils.Enums;
@@ -8,18 +8,18 @@ using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.RoomTests
+namespace AssetsTests.MazeTests
 {
-    public class BuildRoomTests
+    public class BuildSingleRoomMazeTests
     {
         private readonly ITestOutputHelper _output;
 
-        public BuildRoomTests(ITestOutputHelper output)
+        public BuildSingleRoomMazeTests(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        internal static int GetBlockCount(int testNum)
+        internal static int GetLevel(int testNum)
         {
             switch (testNum)
             {
@@ -142,18 +142,19 @@ namespace AssetsTests.RoomTests
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        [InlineData(4)]
-        [InlineData(5)]
-        public void BuildRoom_ShouldBuildARoom_FromConnectedBlocks(int testNum)
+        [InlineData(1, 1, 1, 4, 2)]
+        [InlineData(2, 1, 1, 4, 3)]
+        [InlineData(3, 1, 1, 4, 3)]
+        [InlineData(4, 1, 1, 4, 3)]
+        [InlineData(5, 1, 1, 4, 3)]
+        public void BuildMaze_ShouldBuildASingleRoomMaze_FromConnectedBlocks(int testNum, int minRooms, int maxRooms, int tileInBlock, int blocksInRoom)
         {
             var fakeRandomNumbers = GetGenerator(testNum);
-            var builder = new RandomRoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new DispatchRegistry());
+            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(minRooms, maxRooms, tileInBlock, blocksInRoom);
+            var builder = new RandomMazeBuilder(fakeRandomNumbers, mazeDescriptor, new FakeLogger(_output), new DispatchRegistry());
 
-            var room = builder.BuildRoom(GetBlockCount(testNum));
-            var actual = room.ToString();
+            var maze = builder.BuildMaze(GetLevel(testNum));
+            var actual = maze.ToString();
             
             var expected = GetExpectation(testNum);
 

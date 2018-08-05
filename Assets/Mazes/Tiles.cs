@@ -5,7 +5,7 @@ using Utils.Coordinates;
 using Utils.Enums;
 using Utils.Random;
 
-namespace Assets.Rooms
+namespace Assets.Mazes
 {
     public class Tiles
     {
