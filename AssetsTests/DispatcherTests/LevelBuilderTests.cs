@@ -1,7 +1,9 @@
 ﻿using System;
+using Assets.Actors;
 using Assets.Messaging;
 using AssetsTests.Fakes;
 using Utils;
+using Utils.Coordinates;
 using Utils.Enums;
 using Utils.Random;
 using Xunit;
@@ -87,6 +89,8 @@ namespace AssetsTests.DispatcherTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
+            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
             var room = registry.GetDispatchee("Room1");

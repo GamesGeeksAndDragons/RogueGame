@@ -40,8 +40,7 @@ namespace Assets.Rooms
             var room = roomOfRocks.PopulateWithTiles(blocks);
             room = room.PopulateWithWalls();
 
-            _registry.Deregister(roomOfRocks);
-            _registry.Register(room);
+            _registry.Swap(roomOfRocks, room);
 
             return room;
         }

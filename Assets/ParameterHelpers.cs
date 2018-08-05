@@ -15,8 +15,9 @@ namespace Assets
         {
             var parameters = new List<(string name, string parameter)>();
 
-            var matches = values.Split(':', ' ')
+            var matches = values.Split('[', ']')
                 .Where(value => !value.IsNullOrEmptyOrWhiteSpace())
+                .Select(value => value.Trim())
                 .ToList();
 
             for (var i = 0; i < matches.Count; i += 2)
@@ -27,21 +28,56 @@ namespace Assets
             return parameters;
         }
 
-        public static string Value(this ExtractedParameters parameters, string name)
+        public static (int, int) FromDice(this string dice)
+        {
+            // 1d10, 1d6, 2d7
+
+            var matches = dice.Split('d')
+                .Where(value => !value.IsNullOrEmptyOrWhiteSpace())
+                .Select(value => value.Trim())
+                .ToList();
+
+            var numRolls = int.Parse(matches[0]);
+            var maxDice = int.Parse(matches[1]);
+
+            return (numRolls, maxDice);
+        }
+
+
+        public static (int, int) FromBrackets(this string brackets)
+        {
+            var matches = brackets.Split('(', ',', ')')
+                .Where(value => !value.IsNullOrEmptyOrWhiteSpace())
+                .Select(value => value.Trim())
+                .ToList();
+
+            var first = int.Parse(matches[0]);
+            var second = int.Parse(matches[1]);
+
+            return (first, second);
+        }
+
+        public static string ToString(this ExtractedParameters parameters, string name)
         {
             return parameters.Single(param => param.name == name).value;
         }
 
         public static IDispatchee GetDispatchee(this ExtractedParameters parameters, string name, DispatchRegistry registry)
         {
-            var value = parameters.Value(name);
+            var value = parameters.ToString(name);
 
             return registry.GetDispatchee(value);
         }
 
-        public static T GetParameter<T>(this ExtractedParameters parameters, string name) where T : struct
+        public static bool HasValue(this ExtractedParameters parameters, string name)
         {
-            var value = parameters.Value(name);
+            var value = parameters.SingleOrDefault(param => param.name == name);
+            return ! value.name.IsNullOrEmpty() && ! value.value.IsNullOrEmpty();
+        }
+
+        public static T ToValue<T>(this ExtractedParameters parameters, string name) where T : struct
+        {
+            var value = parameters.ToString(name);
 
             switch (typeof(T).Name)
             {

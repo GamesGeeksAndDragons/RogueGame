@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Utils.Coordinates;
+using Utils.Enums;
 
 namespace Assets.Messaging
 {
@@ -12,9 +14,29 @@ namespace Assets.Messaging
             _registry = registry;
         }
 
-        public void Enqueue(string action, string parameters)
+        private void Enqueue(string action, string parameters)
         {
             _actionQueue.Enqueue((action, parameters));
+        }
+
+        public void EnqueueTeleport(IDispatchee dispatchee)
+        {
+            Enqueue(Actions.Teleport, $"Dispatchee [{dispatchee.UniqueId}]");
+        }
+
+        public void EnqueueMove(IDispatchee dispatchee, Compass8Points direction)
+        {
+            Enqueue(Actions.Move, $"Dispatchee [{dispatchee.UniqueId}] Direction [{direction.ToString()}]");
+        }
+
+        public void EnqueueUse(IDispatchee dispatchee, Compass8Points direction)
+        {
+            Enqueue(Actions.Use, $"Dispatchee [{dispatchee.UniqueId}] Direction [{direction.ToString()}]");
+        }
+
+        public void EnqueueStrike(Coordinate coordinates, int hit, int damage)
+        {
+            Enqueue(Actions.Strike, $"Coordinates [{coordinates}] Hit [{hit}] Damage [{damage}]");
         }
 
         public void Dispatch()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Actors;
 using Utils.Coordinates;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
@@ -71,6 +70,19 @@ namespace Assets.Messaging
         public static string DispatcheeName => typeof(T).Name;
         public string Name => DispatcheeName;
         public string UniqueId { get; protected internal set; }
+
+        public static string DispatcheeState(Coordinate coordinates)
+        {
+            return $"Coordinates [{coordinates}]";
+        }
+
+        protected virtual void UpdateState(ExtractedParameters parameters)
+        {
+            if (parameters.HasValue("Coordinates"))
+            {
+                Coordinates = parameters.ToValue<Coordinate>("Coordinates");
+            }
+        }
 
         public abstract IDispatchee Clone(string parameters = null);
     }

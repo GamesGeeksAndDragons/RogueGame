@@ -1,5 +1,4 @@
-﻿using Assets.ActionEnqueue;
-using Assets.Messaging;
+﻿using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
@@ -82,7 +81,7 @@ namespace Assets.Rooms
 
         private void PlaceInRoom(IDispatchee dispatchee, Coordinate coordinates)
         {
-            var parameters = $"Coordinates {coordinates}";
+            var parameters = $"Coordinates [{coordinates}]";
             var newDispatchee = dispatchee.Clone(parameters);
 
             var tiles = Tiles.Clone();
@@ -93,19 +92,17 @@ namespace Assets.Rooms
 
             tiles[newDispatchee.Coordinates] = newDispatchee.UniqueId;
 
-            Registry.Deregister(dispatchee);
-            Registry.Register(newDispatchee);
+            Registry.Swap(dispatchee, newDispatchee);
 
             var newRoom = new Room(this, tiles);
 
-            Registry.Deregister(this);
-            Registry.Register(newRoom);
+            Registry.Swap(this, newRoom);
         }
 
         protected internal override void RegisterActions()
         {
-            RegisterAction(Teleport.ActionName, TeleportImpl);
-            RegisterAction(Move.ActionName, MoveImpl);
+            RegisterAction(Actions.Teleport, TeleportImpl);
+            RegisterAction(Actions.Move, MoveImpl);
         }
 
         public void TeleportImpl(ExtractedParameters parameters)
@@ -119,7 +116,7 @@ namespace Assets.Rooms
         public void MoveImpl(ExtractedParameters parameters)
         {
             var dispatchee = parameters.GetDispatchee("Dispatchee", Registry);
-            var direction = parameters.GetParameter<Compass8Points>("Direction");
+            var direction = parameters.ToValue<Compass8Points>("Direction");
             var newCoordindates = dispatchee.Coordinates.Move(direction);
 
             if (!Tiles.IsInside(newCoordindates)) return;

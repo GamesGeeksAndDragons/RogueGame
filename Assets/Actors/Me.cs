@@ -3,9 +3,10 @@ using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    internal class Me : Dispatchee<Me>
+    internal class Me : Character<Me>
     {
-        public Me(Coordinate coordinates, DispatchRegistry registry) : base(coordinates, registry)
+        public Me(string state, Coordinate coordinates, DispatchRegistry registry) 
+            : base(state, coordinates, registry)
         {
         }
 
@@ -15,16 +16,9 @@ namespace Assets.Actors
 
         public override IDispatchee Clone(string parameters=null)
         {
-            var me = new Me(this);
-
-            if (parameters != null)
-            {
-                var extracted = parameters.ToParameters();
-                var newCoordindates = extracted.GetParameter<Coordinate>("Coordinates");
-                me.Coordinates = newCoordindates;
-            }
-
-            return me;
+            var clone = new Me(this);
+            clone.UpdateState(parameters.ToParameters());
+            return clone;
         }
 
         public override string ToString()

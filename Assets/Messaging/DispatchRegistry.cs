@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Utils;
-using Utils.Coordinates;
 
 namespace Assets.Messaging
 {
@@ -35,7 +34,7 @@ namespace Assets.Messaging
             return uniqueId;
         }
 
-        internal void Deregister(IDispatchee dispatchee)
+        private void Deregister(IDispatchee dispatchee)
         {
             dispatchee.ThrowIfNull(nameof(dispatchee));
             dispatchee.UniqueId.ThrowIfEmpty(nameof(dispatchee.UniqueId));
@@ -43,7 +42,13 @@ namespace Assets.Messaging
             _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
         }
 
-        public void Deregister(string uniqueId)
+        internal void Swap(IDispatchee registered, IDispatchee with)
+        {
+            Deregister(registered);
+            Register(with);
+        }
+
+        internal void Deregister(string uniqueId)
         {
             if (!_uniquelyNamedDispatchees.ContainsKey(uniqueId)) throw new ArgumentException($"Attempting to Deregister [{uniqueId}] which is not registered.");
 

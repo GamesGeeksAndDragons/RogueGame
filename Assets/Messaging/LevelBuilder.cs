@@ -1,5 +1,4 @@
-﻿using Assets.ActionEnqueue;
-using Assets.Actors;
+﻿using Assets.Actors;
 using Assets.Rooms;
 using log4net;
 using Utils.Coordinates;
@@ -28,10 +27,6 @@ namespace Assets.Messaging
 
             var roomBuilder = new RandomRoomBuilder(_randomNumberGenerator, _logger, _registry);
             var room = roomBuilder.BuildRoom(numBlocks);
-            var me = new Me(Coordinate.NotSet, _registry);
-
-            var teleporter = new Teleport(me.UniqueId, _dispatcher);
-            teleporter.Enqueue();
         }
     }
 }

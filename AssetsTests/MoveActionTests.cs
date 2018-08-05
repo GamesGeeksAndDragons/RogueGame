@@ -1,8 +1,9 @@
 ﻿using System;
-using Assets.ActionEnqueue;
+using Assets.Actors;
 using Assets.Messaging;
 using AssetsTests.Fakes;
 using Utils;
+using Utils.Coordinates;
 using Utils.Enums;
 using Utils.Random;
 using Xunit;
@@ -95,11 +96,12 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
+            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
             // t+1
-            var move = new Move("Me1", Compass8Points.South.ToString(), dispatcher);
-            move.Enqueue();
+            dispatcher.EnqueueMove(me, Compass8Points.South);
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum);
@@ -124,16 +126,14 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
+            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
-            var move = new Move("Me1", Compass8Points.West.ToString(), dispatcher);
-            move.Enqueue();
-            move = new Move("Me1", Compass8Points.North.ToString(), dispatcher);
-            move.Enqueue();
-            move = new Move("Me1", Compass8Points.SouthWest.ToString(), dispatcher);
-            move.Enqueue();
-            move = new Move("Me1", Compass8Points.SouthEast.ToString(), dispatcher);
-            move.Enqueue();
+            dispatcher.EnqueueMove(me, Compass8Points.West);
+            dispatcher.EnqueueMove(me, Compass8Points.North);
+            dispatcher.EnqueueMove(me, Compass8Points.SouthWest);
+            dispatcher.EnqueueMove(me, Compass8Points.SouthEast);
 
             dispatcher.Dispatch();
 

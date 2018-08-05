@@ -3,9 +3,9 @@ using Utils.Coordinates;
 
 namespace Assets.Actors
 {
-    internal class Monster : Dispatchee<Monster>
+    internal class Monster : Character<Monster>
     {
-        public Monster(Coordinate coordinate, DispatchRegistry registry) : base(coordinate, registry)
+        public Monster(string state, Coordinate coordinate, DispatchRegistry registry) : base(state, coordinate, registry)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Assets.Actors
         public override IDispatchee Clone(string parameters = null)
         {
             var clone = new Monster(this);
-
+            clone.UpdateState(parameters.ToParameters());
             return clone;
         }
 
