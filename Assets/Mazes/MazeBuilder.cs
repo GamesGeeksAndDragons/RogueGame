@@ -83,7 +83,10 @@ namespace Assets.Mazes
             var rooms = BuildRooms(mazeDetail);
             var roomsWithDoors = AddDoors(rooms);
 
-            var mazeOfRocks = new Maze(roomsWithDoors, _registry, _randomNumberGenerator);
+            var maxTileRows = rooms.Sum(room => room.Tiles.UpperBounds.Row) * 2;
+            var maxTileCols = rooms.Sum(room => room.Tiles.UpperBounds.Column) * 2;
+
+            var mazeOfRocks = new Maze(_registry, _randomNumberGenerator, maxTileRows, maxTileCols);
             var mazeWithDisconnectedRooms = mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
             var mazeWithConnectedRooms = mazeWithDisconnectedRooms.ConnectDoorsWithCorridors();
 

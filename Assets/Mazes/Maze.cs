@@ -13,28 +13,21 @@ namespace Assets.Mazes
     {
         private IRandomNumberGenerator _randomNumbers;
         private readonly MazeTiles _tiles;
-        private IList<Room> _rooms;
 
-        internal Maze(IList<Room> rooms, DispatchRegistry registry, IRandomNumberGenerator randomNumbers) 
+        internal Maze(DispatchRegistry registry, IRandomNumberGenerator randomNumbers, int rows, int columns) 
             : base(Coordinate.NotSet, registry)
         {
-            rooms.ThrowIfNull(nameof(rooms));
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
 
             _randomNumbers = randomNumbers;
-            _rooms = rooms;
 
-            var maxTileRows = rooms.Sum(room => room.Tiles.UpperBounds.Row) * 2;
-            var maxTileCols = rooms.Sum(room => room.Tiles.UpperBounds.Column) * 2;
-
-            _tiles = new MazeTiles(maxTileRows, maxTileCols, Registry, _randomNumbers);
+            _tiles = new MazeTiles(rows, columns, Registry, _randomNumbers);
         }
 
         private Maze(Maze maze) : base(maze.Coordinates, maze.Registry)
         {
             _randomNumbers = maze._randomNumbers;
             _tiles = (MazeTiles)maze._tiles.Clone();
-            _rooms = maze._rooms?.Select(room => room.Clone()).ToList();
         }
 
         public override Maze Create()
