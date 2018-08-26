@@ -15,7 +15,7 @@ namespace Utils
             return array.GetUpperBound(0);
         }
 
-        public static (int maxRow, int maxColumn) UpperBounds<T>(this T[,] array)
+        public static (int MaxRow, int MaxColumn) UpperBounds<T>(this T[,] array)
         {
             return (array.RowUpperBound(), array.ColumnUpperBound());
         }
@@ -38,8 +38,9 @@ namespace Utils
 
         public static bool IsInside<T>(this T[,] array, int row, int column)
         {
-            return row    >= 0 && row    <= array.RowUpperBound() && 
-                   column >= 0 && column <= array.ColumnUpperBound();
+            var bounds = array.UpperBounds();
+            return row    >= 0 && row    <= bounds.MaxRow && 
+                   column >= 0 && column <= bounds.MaxColumn;
         }
 
         public static bool IsInside<T>(this T[,] array, Coordinate coordinates)

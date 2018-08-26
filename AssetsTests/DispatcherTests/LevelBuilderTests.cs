@@ -90,7 +90,7 @@ namespace AssetsTests.DispatcherTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
-            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

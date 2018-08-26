@@ -47,6 +47,16 @@
             return !point1.Equals(point2);
         }
 
+        public static Coordinate operator +(Coordinate point1, Coordinate point2)
+        {
+            return new Coordinate(point1.Row + point2.Row, point1.Column + point2.Column);
+        }
+
+        public static Coordinate operator -(Coordinate point1, Coordinate point2)
+        {
+            return new Coordinate(point1.Row - point2.Row, point1.Column - point2.Column);
+        }
+
         public override string ToString()
         {
             return $"({Row},{Column})";

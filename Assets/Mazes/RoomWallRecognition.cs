@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
 
 namespace Assets.Mazes
 {
-    static class WallRecognition
+    static class RoomWallRecognition
     {
         static class OutsideCorders
         {
@@ -60,14 +61,14 @@ namespace Assets.Mazes
 
         private static readonly Compass8Points ExcludeWesterly = AllDirections ^ WesterlyDirection;
 
-        private static bool CanConvertToWall(this Tiles tiles, Coordinate coordinate)
+        private static bool CanConvertToWall(this RoomTiles tiles, Coordinate coordinate)
         {
             if (!tiles.IsInside(coordinate)) return false;
 
-            return tiles[coordinate] == null;
+            return tiles[coordinate].IsNullOrEmpty();
         }
 
-        public static Compass8Points DiscoverSurroundingSpace(this Tiles tiles, Coordinate coordinate)
+        public static Compass8Points DiscoverSurroundingSpace(this RoomTiles tiles, Coordinate coordinate)
         {
             var surroundingSpace = Compass8Points.Undefined;
 

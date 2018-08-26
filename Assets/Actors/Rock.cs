@@ -9,18 +9,18 @@ namespace Assets.Actors
         {
         }
 
-        private Rock(Rock rhs) : base(rhs)
+        private Rock(Rock rock) : base(rock.Coordinates, rock.Registry)
         {
         }
 
-        public override IDispatchee Clone(string parameters=null)
+        public override Rock Create()
         {
             return new Rock(this);
         }
 
         public override string ToString()
         {
-            return "■";
+            return "█";
         }
     }
 }

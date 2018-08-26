@@ -5,56 +5,33 @@ using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string nam
 namespace Assets.Actors
 {
     internal abstract class Character<T> : Dispatchee<T> 
-        where T : IDispatchee
+        where T : class, IDispatchee
     {
-        protected Character(string state, Coordinate coordinates, DispatchRegistry registry) : base(coordinates, registry)
+        protected Character(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
         {
             var extracted = state.ToParameters();
-            UpdateState(extracted);
+
+            UpdateState(this as T, extracted);
         }
         
-        protected Character(Character<T> rhs) : base(rhs)
+        public override void UpdateState(T t, ExtractedParameters state)
         {
-            HitPoints = rhs.HitPoints;
-            ArmourClass = rhs.ArmourClass;
+            var character = t as Character<T>;
+            if (state.HasValue(nameof(HitPoints))) character.HitPoints = state.ToValue<int>(nameof(HitPoints));
+            if (state.HasValue(nameof(ArmourClass))) character.ArmourClass = state.ToValue<int>(nameof(ArmourClass));
+
+            base.UpdateState(t, state);
         }
 
-        protected override void UpdateState(ExtractedParameters parameters)
-        {
-            if (parameters.Count > 0)
-            {
-                if (parameters.HasValue("HitPoints"))
-                {
-                    HitPoints = parameters.ToValue<int>("HitPoints");
-                }
-
-                if (parameters.HasValue("ArmourClass"))
-                {
-                    ArmourClass = parameters.ToValue<int>("ArmourClass");
-                }
-            }
-
-            base.UpdateState(parameters);
-        }
-
-        public static string CharacterState(int? hitPoints = null, int? armourClass = null)
+        public static string FormatState(int? hitPoints = null, int? armourClass = null, Coordinate? coordinates = null, string uniqueId = null)
         {
             var state = string.Empty;
 
-            if (hitPoints.HasValue)
-            {
-                state += $"HitPoints [{hitPoints}] ";
-            }
+            if (hitPoints.HasValue) state += nameof(HitPoints).FormatParameter(hitPoints.Value);
+            if (armourClass.HasValue) state += nameof(ArmourClass).FormatParameter(armourClass.Value);
 
-            if (armourClass.HasValue)
-            {
-                state += $"ArmourClass [{armourClass}] ";
-            }
-
-            return state;
+            return state + Dispatchee<T>.FormatState(coordinates, uniqueId);
         }
-
-        public abstract override IDispatchee Clone(string parameters = null);
 
         public int ArmourClass { get; protected internal set; }
         public int HitPoints { get; protected internal set; }
@@ -68,19 +45,19 @@ namespace Assets.Actors
 
         private void StrikeImpl(ExtractedParameters parameters)
         {
-            var coordindates = parameters.ToValue<Coordinate>("Coordinates");
+            var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
             if (coordindates != Coordinates) return;
 
-            var hit = parameters.ToValue<int>("Hit");
+            var hit = parameters.ToValue<int>(nameof(HitPoints));
             if (hit < ArmourClass) return;
 
             var damage = parameters.ToValue<int>("Damage");
             var newHitPoints = HitPoints - damage;
 
-            var newState = CharacterState(hitPoints: newHitPoints);
-            var newCharacter = Clone(newState);
+            //var newState = FormatState(hitPoints: newHitPoints);
+            //var newCharacter = Clone(newState);
 
-            Registry.Register(newCharacter);
+            //Registry.Register(newCharacter);
         }
     }
 }

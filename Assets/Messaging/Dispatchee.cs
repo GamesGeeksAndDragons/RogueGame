@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utils;
 using Utils.Coordinates;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
@@ -7,22 +8,28 @@ using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string nam
 
 namespace Assets.Messaging
 {
+    public interface ICloner<T>
+    {
+        T Clone(string stateChange = null);
+        T Create();
+        void UpdateState(T dispatchee, ExtractedParameters state);
+    }
+
     public interface IDispatchee
     {
         void Dispatch(string dispatchee, string parameters);
+        IDispatchee CloneDispatchee(string stateChange = null);
 
         Coordinate Coordinates { get; }
 
         string Name { get; }
         string UniqueId { get; }
-
-        IDispatchee Clone(string parameters = null);
     }
 
-    internal abstract class Dispatchee<T> : IDispatchee
-        where T : IDispatchee
+    internal abstract class Dispatchee<T> : IDispatchee, ICloner<T>
+        where T : class
     {
-        protected internal readonly DispatchRegistry Registry;
+        protected internal DispatchRegistry Registry;
 
         protected Dispatchee(Coordinate coordinates, DispatchRegistry registry)
         {
@@ -30,17 +37,6 @@ namespace Assets.Messaging
             Registry = registry;
 
             UniqueId = Registry.Register(this);
-
-            RegisterActions();
-        }
-
-        protected Dispatchee(Dispatchee<T> rhs)
-        {
-            Coordinates = rhs.Coordinates;
-            Registry = rhs.Registry;
-            UniqueId = rhs.UniqueId;
-
-            Registry.Register(this);
 
             RegisterActions();
         }
@@ -71,19 +67,40 @@ namespace Assets.Messaging
         public string Name => DispatcheeName;
         public string UniqueId { get; protected internal set; }
 
-        public static string DispatcheeState(Coordinate coordinates)
+        public virtual void UpdateState(T t, ExtractedParameters state)
         {
-            return $"Coordinates [{coordinates}]";
+            var dispatchee = t as Dispatchee<T>;
+            dispatchee.ThrowIfNull(nameof(t));
+
+            if (state.HasValue(nameof(Coordinates))) dispatchee.Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
         }
 
-        protected virtual void UpdateState(ExtractedParameters parameters)
+        protected internal static string FormatState(Coordinate? coordinates = null, string uniqueId = null)
         {
-            if (parameters.HasValue("Coordinates"))
-            {
-                Coordinates = parameters.ToValue<Coordinate>("Coordinates");
-            }
+            var state = string.Empty;
+
+            if (coordinates.HasValue) state += nameof(Coordinates).FormatParameter(coordinates.Value);
+            if (! uniqueId.IsNullOrEmpty()) state += nameof(UniqueId).FormatParameter(uniqueId);
+
+            return state;
         }
 
-        public abstract IDispatchee Clone(string parameters = null);
+        public IDispatchee CloneDispatchee(string stateChange = null)
+        {
+            return (IDispatchee)Clone(stateChange);
+        }
+
+        public T Clone(string stateChange = null)
+        {
+            var clone = Create();
+            if (stateChange.IsNullOrEmpty()) return clone;
+
+            var stateParameters = stateChange.ToParameters();
+            UpdateState(clone, stateParameters);
+
+            return clone;
+        }
+
+        public abstract T Create();
     }
 }

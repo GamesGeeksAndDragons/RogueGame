@@ -6,6 +6,8 @@
 
         int Dice(int points);
 
+        int Between(int min, int max);
+
         T Enum<T>() where T : struct;
     }
 }

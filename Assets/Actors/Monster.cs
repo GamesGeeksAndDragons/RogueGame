@@ -5,24 +5,23 @@ namespace Assets.Actors
 {
     internal class Monster : Character<Monster>
     {
-        public Monster(string state, Coordinate coordinate, DispatchRegistry registry) : base(state, coordinate, registry)
+        public Monster(Coordinate coordinate, DispatchRegistry registry, string state) 
+            : base(coordinate, registry, state)
         {
         }
 
-        public Monster(Monster rhs) : base(rhs)
+        private Monster(Monster monster) : base(monster.Coordinates, monster.Registry, "")
         {
-        }
-
-        public override IDispatchee Clone(string parameters = null)
-        {
-            var clone = new Monster(this);
-            clone.UpdateState(parameters.ToParameters());
-            return clone;
         }
 
         public override string ToString()
         {
             return "M";
+        }
+
+        public override Monster Create()
+        {
+            return new Monster(this);
         }
     }
 }

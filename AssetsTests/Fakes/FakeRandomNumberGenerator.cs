@@ -25,9 +25,20 @@ namespace AssetsTests.Fakes
                 _fakeDice.Enqueue(roll);
             }
         }
+
         public int Dice(int points)
         {
             return _fakeDice.Dequeue();
+        }
+
+        public int Between(int min, int max)
+        {
+            var num = _fakeDice.Dequeue();
+
+            num.ThrowIfBelow(min, nameof(num));
+            num.ThrowIfAbove(max, nameof(num));
+
+            return num;
         }
 
         private readonly Queue<int> _fakeEnums = new Queue<int>();

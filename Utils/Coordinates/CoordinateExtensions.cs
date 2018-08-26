@@ -16,18 +16,30 @@ namespace Utils.Coordinates
                    point.Row <= maxRow && point.Column <= maxColumn;
         }
 
-        public static Coordinate Move(this Coordinate coordinates, Compass4Points direction)
+        public static Coordinate Move(this Coordinate coordinates, Compass4Points direction, int steps = 1)
         {
+            steps.ThrowIfBelow(1, nameof(steps));
+
             switch (direction)
             {
-                case Compass4Points.North: return coordinates.Up();
-                case Compass4Points.South: return coordinates.Down();
-                case Compass4Points.East: return coordinates.Right(); 
-                case Compass4Points.West: return coordinates.Left();
+                case Compass4Points.North:
+                    coordinates = coordinates.Up(steps);
+                    break;
+                case Compass4Points.South:
+                    coordinates = coordinates.Down(steps);
+                    break;
+                case Compass4Points.East:
+                    coordinates = coordinates.Right(steps);
+                    break;
+                case Compass4Points.West:
+                    coordinates = coordinates.Left(steps);
+                    break;
                 default:
                     var message = $"Unrecognised direction [{direction}]";
                     throw new ArgumentException(message);
             }
+
+            return coordinates;
         }
 
         public static Coordinate Move(this Coordinate coordinates, Compass8Points direction)

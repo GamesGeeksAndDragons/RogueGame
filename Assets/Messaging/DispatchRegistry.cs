@@ -63,6 +63,8 @@ namespace Assets.Messaging
 
         internal void Deregister(string uniqueId)
         {
+            uniqueId.ThrowIfEmpty(nameof(uniqueId));
+
             if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Deregister [{uniqueId}] which is not registered.");
 
             var dispatchee = GetDispatchee(uniqueId);
@@ -70,9 +72,11 @@ namespace Assets.Messaging
             Deregister(dispatchee);
         }
 
-        public IDispatchee GetDispatchee(string id)
+        public IDispatchee GetDispatchee(string uniqueId)
         {
-            return _uniquelyNamedDispatchees[id];
+            uniqueId.ThrowIfEmpty(nameof(uniqueId));
+
+            return _uniquelyNamedDispatchees[uniqueId];
         }
 
         public IReadOnlyList<IDispatchee> Dispatchees => _uniquelyNamedDispatchees.Values.ToList();

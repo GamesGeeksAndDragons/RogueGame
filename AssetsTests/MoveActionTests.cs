@@ -28,8 +28,8 @@ namespace AssetsTests
             {
                 case 1:
                 case 2:
-                    generator.PopulateEnum(Compass4Points.South);
-                    generator.PopulateDice(0, 1, 1, 1);
+                    generator.PopulateEnum(Compass4Points.South, Compass4Points.North);
+                    generator.PopulateDice(1, 0, 1, 1, 1);
                     break;
 
                 default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
@@ -97,7 +97,7 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
-            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
@@ -128,7 +128,7 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
-            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

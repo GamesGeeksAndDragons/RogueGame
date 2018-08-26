@@ -17,6 +17,11 @@ namespace Utils.Random
             return Genarator.Next(1, points+1);
         }
 
+        public int Between(int min, int max)
+        {
+            return Genarator.Next(min, max);
+        }
+
         public T Enum<T>() where T : struct
         {
             var typeItems = EnumHelpers.Values<T>()

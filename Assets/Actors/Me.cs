@@ -1,29 +1,29 @@
-﻿using Assets.Messaging;
+﻿using System.Collections.Generic;
+using Assets.Messaging;
 using Utils.Coordinates;
 
 namespace Assets.Actors
 {
     internal class Me : Character<Me>
     {
-        public Me(string state, Coordinate coordinates, DispatchRegistry registry) 
-            : base(state, coordinates, registry)
+        public Me(Coordinate coordinates, DispatchRegistry registry, string state) 
+            : base(coordinates, registry, state)
         {
         }
 
-        private Me(Me rhs) : base(rhs)
+        private Me(Me me) : base(me.Coordinates, me.Registry, "")
         {
-        }
 
-        public override IDispatchee Clone(string parameters=null)
-        {
-            var clone = new Me(this);
-            clone.UpdateState(parameters.ToParameters());
-            return clone;
         }
 
         public override string ToString()
         {
             return "@";
+        }
+
+        public override Me Create()
+        {
+            return new Me(this);
         }
     }
 }

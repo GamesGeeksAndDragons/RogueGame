@@ -42,7 +42,7 @@ namespace AssetsTests
         [Fact]
         public void AttachingAMonstor_WillReduceItsHitPoints()
         {
-            var state = MeleeWeapon.BuildState("Wooden Club", "Me1", 1, 12, -1, 1, 7.5, 0, 50);
+            var state = MeleeWeapon.FormatState("Wooden Club", "Me1", 1, 12, -1, 1, 7.5, 0, 50);
 
             var testNum = 1;
             var fakeRandomNumbers = GetGenerator(testNum);
@@ -54,13 +54,13 @@ namespace AssetsTests
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
 
-            var me = new Me(Me.CharacterState(10, 10), Coordinate.NotSet, registry);
+            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
-            var monster = new Monster(Monster.CharacterState(10, 10), Coordinate.NotSet, registry);
+            var monster = new Monster(Coordinate.NotSet, registry, Monster.FormatState(10, 10));
             dispatcher.EnqueueTeleport(monster);
             dispatcher.Dispatch();
 
-            var weapon = new MeleeWeapon(state, fakeRandomNumbers, registry, dispatcher);
+            var weapon = new MeleeWeapon(fakeRandomNumbers, registry, dispatcher, state);
             dispatcher.EnqueueUse(weapon, Compass8Points.East);
             dispatcher.Dispatch();
 

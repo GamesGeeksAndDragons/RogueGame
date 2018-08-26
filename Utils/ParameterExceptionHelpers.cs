@@ -5,11 +5,19 @@ namespace Utils
 {
     public static class ParameterExceptionHelpers
     {
+        public static void ThrowIfSameInstance<T>(this T t1, T t2, string name1, string name2) where T : class
+        {
+            if (ReferenceEquals(t1, t2))
+            {
+                throw new ArgumentNullException($"Unexpected same instances [{name1},{name2}] for type [{typeof(T).Name}]");
+            }
+        }
+
         public static void ThrowIfNull<T>(this T t, string name) where T : class
         {
             if (t == null)
             {
-                throw new ArgumentNullException(name, $"Unexpected null for [{name}]");
+                throw new ArgumentNullException(name, $"Unexpected null for [{name}] for type [{typeof(T).Name}]");
             }
         }
 
@@ -17,7 +25,7 @@ namespace Utils
         {
             if (t != null)
             {
-                throw new ArgumentNullException(name, $"Expected [{name}] to be null and it was [{t}]");
+                throw new ArgumentNullException(name, $"Expected [{name}] to be null for type [{typeof(T).Name}] and it was [{t}]");
             }
         }
 

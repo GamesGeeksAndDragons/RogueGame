@@ -108,9 +108,9 @@ namespace AssetsTests.MazeTests
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(5)]
-        public void MazeBlocks_ReduceLayout_ShouldHaveMinimumBlocks(int testNumber)
+        public void RoomBlocks_ReduceLayout_ShouldHaveMinimumBlocks(int testNumber)
         {
-            var mazeBlocks = new MazeBlocks(GetBlockLayout(testNumber));
+            var mazeBlocks = new RoomBlocks(GetBlockLayout(testNumber));
 
             var before = mazeBlocks.ToString();
             _output.WriteLine("Before");

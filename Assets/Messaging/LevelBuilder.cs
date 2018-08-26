@@ -21,10 +21,26 @@ namespace Assets.Messaging
             _registry = registry;
         }
 
+        internal void Compact(Maze maze, int level)
+        {
+            foreach (var dispatchee in _registry.Dispatchees)
+            {
+                var uniqueId = dispatchee.UniqueId;
+                if (maze.IsInMaze(uniqueId)) continue;
+
+                _registry.Deregister(uniqueId);
+            }
+
+            maze.UniqueId = Maze.DispatcheeName + level;
+            _registry.Register(maze);
+        }
+
         internal void Build(int level)
         {
-            var mazeBuilder = new RandomMazeBuilder(_randomNumberGenerator, _mazeDescriptor,  _logger, _registry);
-            mazeBuilder.BuildMaze(level);
+            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _registry);
+            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _mazeDescriptor,  _logger, _registry);
+            var maze = mazeBuilder.BuildMaze(level);
+            Compact(maze, level);
         }
     }
 }

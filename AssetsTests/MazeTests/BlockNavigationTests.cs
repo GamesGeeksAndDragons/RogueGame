@@ -129,8 +129,7 @@ namespace AssetsTests.MazeTests
         public void DecideLayout_ForSimpleNavigation_ShouldMoveAsExpected(Test test)
         {
             var fakeRandomNumbers = GetGenerator(test);
-            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
-            var builder = new RandomMazeBuilder(fakeRandomNumbers, mazeDescriptor, new FakeLogger(_output), new DispatchRegistry());
+            var builder = new RoomBuilder(fakeRandomNumbers, new FakeLogger(_output), new DispatchRegistry());
             var numBlocks = GetNumBlocks(test);
 
             var blocks = builder.DecideLayout(numBlocks);
