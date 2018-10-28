@@ -93,23 +93,31 @@ namespace Assets.Mazes
             return Clone(tilesWithWalls.ToTilesState());
         }
 
-        internal bool HasDoors => Tiles.HasDoors;
+        public IList<string> Doors => Tiles.GetTilesOfType<Door>();
 
         internal Room AddDoor(int doorNumber)
         {
-            IDispatchee tile = null;
-            while(tile == null)
+            IDispatchee dispatchee = null;
+            while(dispatchee == null)
             {
                 var tileName = FindNonEmptyTile();
-                tile = Registry.GetDispatchee(tileName);
+                dispatchee = Registry.GetDispatchee(tileName);
 
-                if (! (tile is Wall))
+                if (dispatchee.Name != "Wall")
                 {
-                    tile = null;
+                    dispatchee = null;
+                }
+                else
+                {
+                    var wall = (Wall)dispatchee;
+                    if (wall.IsCorner)
+                    {
+                        dispatchee = null;
+                    }
                 }
             }
 
-            var door = new Door(tile.Coordinates, Registry, doorNumber);
+            var door = new Door(dispatchee.Coordinates, Registry, doorNumber);
             var newState = door.Coordinates.ToTileState(door.UniqueId);
 
             return Clone(newState);

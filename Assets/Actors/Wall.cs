@@ -54,6 +54,26 @@ namespace Assets.Actors
             throw new ArgumentException($"Unexpected WallType [{WallType}]");
         }
 
+        public bool IsCorner
+        {
+            get
+            {
+                switch (WallType)
+                {
+                    case WallDirection.Horizontal:
+                    case WallDirection.Vertical:
+                        return false;
+                    case WallDirection.TopLeftCorner:
+                    case WallDirection.TopRightCorner:
+                    case WallDirection.BottomLeftCorner:
+                    case WallDirection.BottomRightCorner:
+                        return true;
+                }
+
+                throw new ArgumentException($"Unexpected WallType [{WallType}]");
+            }
+        }
+
         public override Wall Create()
         {
             return new Wall(this);

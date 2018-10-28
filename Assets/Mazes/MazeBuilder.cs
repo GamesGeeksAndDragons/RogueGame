@@ -47,36 +47,51 @@ namespace Assets.Mazes
 
         private IList<Room> AddDoors(IList<Room> rooms)
         {
-            var roomsToConnect = new List<Room>(rooms);
+            var roomsWithoutDoors = new List<Room>(rooms);
+            var roomsWithDoors = new List<Room>(rooms.Count);
 
-            var roomToAddDoorTo = roomsToConnect.FirstOrDefault(room => ! room.HasDoors);
-
-            var doorNumber = 0;
-            while (roomToAddDoorTo != null)
+            Room RoomWithoutDoor(Room first)
             {
-                var roomWithDoor = roomToAddDoorTo.AddDoor(++doorNumber);
-
-                roomsToConnect.Remove(roomToAddDoorTo);
-                roomsToConnect.Add(roomWithDoor);
-
-                if (roomsToConnect.Count != 0)
+                return roomsWithoutDoors.FirstOrDefault(room =>
                 {
-                    var randomRoom = _randomNumberGenerator.Between(0, roomsToConnect.Count - 1);
-                    var roomToConnect = roomsToConnect[randomRoom];
-
-                    var connectedRoom = roomToConnect.AddDoor(doorNumber);
-
-                    roomsToConnect.Remove(roomToConnect);
-                    roomsToConnect.Add(connectedRoom);
-                }
-
-                roomToAddDoorTo = roomsToConnect.FirstOrDefault(room => !room.HasDoors);
+                    var doors = first == null ?
+                        room.Doors :
+                        room.Doors.Where(doorName => doorName != first?.Name).ToList();
+                    return doors.Count == 0;
+                });
             }
 
-            return roomsToConnect;
+            (Room first, Room second) RoomsWithoutAnyDoors()
+            {
+                var room1 = RoomWithoutDoor(null);
+                if (room1 != null) roomsWithoutDoors.Remove(room1);
+
+                var room2 = RoomWithoutDoor(room1);
+                if (room2 != null) roomsWithoutDoors.Remove(room2);
+
+                return (room1, room2);
+            }
+
+            var doorNumber = 0;
+            void AddDoors((Room first, Room second) roomsWithNoDoors)
+            {
+                var room1 = roomsWithNoDoors.first?.AddDoor(++doorNumber);
+                if (room1 != null) roomsWithDoors.Add(room1);
+
+                var room2 = roomsWithNoDoors.second?.AddDoor(doorNumber);
+                if (room2 != null) roomsWithDoors.Add(room2);
+            }
+
+            while (roomsWithoutDoors.Count > 1)
+            {
+                var roomsWithNoDoors = RoomsWithoutAnyDoors();
+                AddDoors(roomsWithNoDoors);
+            }
+
+            return roomsWithDoors;
         }
 
-        internal Maze BuildMaze(int level)
+        internal Maze BuildMazeWithRoomsAndDoors(int level)
         {
             var mazeDetail = _descriptor[level];
 
@@ -88,6 +103,13 @@ namespace Assets.Mazes
 
             var mazeOfRocks = new Maze(_registry, _randomNumberGenerator, maxTileRows, maxTileCols);
             var mazeWithDisconnectedRooms = mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
+
+            return mazeWithDisconnectedRooms;
+        }
+
+        internal Maze BuildMaze(int level)
+        {
+            var mazeWithDisconnectedRooms = BuildMazeWithRoomsAndDoors(level);
             var mazeWithConnectedRooms = mazeWithDisconnectedRooms.ConnectDoorsWithCorridors();
 
             return mazeWithConnectedRooms;

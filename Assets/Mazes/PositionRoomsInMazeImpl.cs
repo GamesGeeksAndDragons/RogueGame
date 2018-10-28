@@ -8,9 +8,9 @@ namespace Assets.Mazes
 {
     static class PositionRoomsInMazeImpl
     {
-        public const int NumAttemptTillGrowMaze = 10;
+        public const int NumAttemptTillGrowMaze = 3;
         public const int TilesToCheckIfRoomTooClose = 4;
-        private const int TilesToCheckIfEdgeTooClose = 3;
+        public const int TilesToCheckIfEdgeTooClose = 3;
 
         internal static Maze PositionRoomsInMaze(this Maze maze, IEnumerable<Room> rooms)
         {
@@ -18,13 +18,20 @@ namespace Assets.Mazes
 
             foreach (var room in rooms)
             {
-                var postitionAttempts = 0;
                 var roomIsPositioned = false;
 
                 var tilesChange = new List<(string Name, Coordinate coordinates)>();
-                while (!roomIsPositioned && ++postitionAttempts < NumAttemptTillGrowMaze)
+                while (!roomIsPositioned)
                 {
-                    var (topLeft, topRight, bottomLeft, bottomRight) = FindCoordindatesInsideMaze(room, mazeWithRooms);
+                    var (topLeft, topRight, bottomLeft, bottomRight) = FindCoordinatesInsideMaze(room, mazeWithRooms);
+
+                    var mazeBigEnough = topLeft != topRight && topRight != bottomLeft && bottomLeft != bottomRight && bottomRight != Coordinate.NotSet;
+                    if (!mazeBigEnough)
+                    {
+                        mazeWithRooms = mazeWithRooms.GrowMaze();
+                        continue;
+                    }
+
                     if (IsTooCloseToEdgeOfMaze(mazeWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
                     if (IsTooCloseToAnotherRoom(mazeWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
 
@@ -57,7 +64,7 @@ namespace Assets.Mazes
                     if (name.IsNullOrEmpty()) return false;
 
                     // really want isPaper and isSissors
-                    var isRock = maze.IsTyleType<Rock>(checkCoordinate);
+                    var isRock = maze.IsTileType<Rock>(checkCoordinate);
                     if (!isRock) return false;
                 }
             }
@@ -94,33 +101,31 @@ namespace Assets.Mazes
             return !IsSurroundedByRock(bottomRight, maze, TilesToCheckIfRoomTooClose, row, column);
         }
 
-        private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) FindCoordindatesInsideMaze(Room room, Maze maze)
+        private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) FindCoordinatesInsideMaze(Room room, Maze maze)
         {
-            var isInsideMaze = false;
-
-            var topLeft = Coordinate.NotSet;
-            var topRight = Coordinate.NotSet;
-            var bottomLeft = Coordinate.NotSet;
-            var bottomRight = Coordinate.NotSet;
-
-            while (!isInsideMaze)
+            for(var attempts = 0; attempts < NumAttemptTillGrowMaze; ++attempts)
             {
                 var start = maze.RandomRockTile();
 
-                (topLeft, topRight, bottomLeft, bottomRight) = room.GetCorners();
+                var (topLeft, topRight, bottomLeft, bottomRight) = room.GetCorners();
                 topLeft += start;
                 topRight += start;
                 bottomLeft += start;
                 bottomRight += start;
 
-                isInsideMaze =
+                var isInsideMaze =
                     maze.IsInsideMaze(topLeft) &&
                     maze.IsInsideMaze(topRight) &&
                     maze.IsInsideMaze(bottomLeft) &&
                     maze.IsInsideMaze(bottomRight);
+
+                if (isInsideMaze)
+                {
+                    return (topLeft, topRight, bottomLeft, bottomRight);
+                }
             }
 
-            return (topLeft, topRight, bottomLeft, bottomRight);
+            return (Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet);
         }
 
         public static IList<(string Name, Coordinate coordinates)> PositionRoom(Maze maze, Room room, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft)

@@ -4,7 +4,7 @@ using Utils;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.MazeTests
+namespace AssetsTests.RoomTests
 {
     public class BlockReducerTests
     {

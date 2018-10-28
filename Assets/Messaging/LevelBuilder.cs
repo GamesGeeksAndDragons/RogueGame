@@ -35,11 +35,15 @@ namespace Assets.Messaging
             _registry.Register(maze);
         }
 
-        internal void Build(int level)
+        internal void Build(int level, bool connectTunnels=true)
         {
             var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _registry);
             var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _mazeDescriptor,  _logger, _registry);
-            var maze = mazeBuilder.BuildMaze(level);
+
+            var maze = connectTunnels ? 
+                mazeBuilder.BuildMaze(level) :
+                mazeBuilder.BuildMazeWithRoomsAndDoors(level);
+
             Compact(maze, level);
         }
     }

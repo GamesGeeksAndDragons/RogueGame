@@ -1,13 +1,13 @@
 ﻿using System;
-using Assets.Messaging;
 using Assets.Mazes;
+using Assets.Messaging;
 using AssetsTests.Fakes;
 using Utils.Enums;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.MazeTests
+namespace AssetsTests.RoomTests
 {
     static class FakeRandomNumberTestFactory
     {
@@ -36,11 +36,11 @@ namespace AssetsTests.MazeTests
         }
     }
 
-    public class DecideLayoutTests
+    public class BlockLayoutTests
     {
         private readonly ITestOutputHelper _output;
 
-        public DecideLayoutTests(ITestOutputHelper output)
+        public BlockLayoutTests(ITestOutputHelper output)
         {
             _output = output;
         }

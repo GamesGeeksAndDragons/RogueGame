@@ -55,16 +55,5 @@ namespace Assets.Mazes
         {
             return new RoomTiles(this);
         }
-
-        public override Tiles Clone(string state = null)
-        {
-            var clone = Create();
-            if (state.IsNullOrEmpty()) return clone;
-
-            var stateChange = state.ToParameters();
-            UpdateState(clone, stateChange);
-
-            return clone;
-        }
     }
 }

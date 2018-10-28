@@ -20,14 +20,14 @@ namespace Utils
             return axis;
         }
 
-        private static List<string> GetXAxis<T>(T[,] array)
+        private static List<string> GetColumnAxis<T>(T[,] array)
         {
-            return GetAxis(array, arr => arr.ColumnUpperBound());
+            return GetAxis(array, ArrayHelpers.ColumnUpperBound);
         }
 
-        private static List<string> GetYAxis<T>(T[,] array)
+        private static List<string> GetRowAxis<T>(T[,] array)
         {
-            return GetAxis(array, arr => arr.RowUpperBound());
+            return GetAxis(array, ArrayHelpers.RowUpperBound);
         }
 
         private static string[,] GetIntermediateArray<T>(this T[,] array, Func<T, string> printer)
@@ -168,20 +168,20 @@ namespace Utils
             }
 
             var intermediate = GetIntermediateArray(array, printer);
-            var xAxis = GetXAxis(array);
-            var yAxis = GetYAxis(array);
+            var xAxis = GetColumnAxis(array);
+            var yAxis = GetRowAxis(array);
 
             return Print(intermediate, xAxis, yAxis);
         }
 
         public static string PrintCoordinates<T>(this T[,] array)
         {
-            var intermediate = BuildCoordnateArray(array);
+            var intermediate = BuildCoordinateArray(array);
 
             return Print(intermediate);
         }
 
-        private static Coordinate[,] BuildCoordnateArray<T>(T[,] array)
+        private static Coordinate[,] BuildCoordinateArray<T>(T[,] array)
         {
             int maxColumns = array.ColumnUpperBound() + 1;
             int maxRows = array.RowUpperBound() + 1;

@@ -41,6 +41,20 @@ namespace UtilsTests
         }
 
         [Fact]
+        public void OneDimiensionBounds_AreExpected()
+        {
+            var array = new string[1,10];
+
+            var row = array.RowUpperBound();
+            var column = array.ColumnUpperBound();
+
+            var expected = $"(0,9)";
+            var actual   = $"({row},{column})";
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void SliceRow_ShouldReturnCorrectRows()
         {
             var test = TestMatrix(1);
@@ -82,7 +96,7 @@ namespace UtilsTests
             Assert.Equal(expected, actual);
         }
 
-        [FactAttribute]
+        [Fact]
         public void SliceColumn_ShouldReturnCorrectColumns()
         {
             var test = TestMatrix(2);

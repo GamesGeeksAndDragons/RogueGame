@@ -10,7 +10,7 @@ using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string nam
 
 namespace Assets.Mazes
 {
-    abstract class Tiles : ICloner<Tiles>
+    class Tiles : ICloner<Tiles>
     {
         protected readonly DispatchRegistry Registry;
         protected readonly IRandomNumberGenerator RandomNumbers;
@@ -18,7 +18,7 @@ namespace Assets.Mazes
 
         public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
 
-        protected Tiles(int maxRows, int maxColumns, DispatchRegistry registry, IRandomNumberGenerator randomNumbers)
+        internal Tiles(int maxRows, int maxColumns, DispatchRegistry registry, IRandomNumberGenerator randomNumbers)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             registry.ThrowIfNull(nameof(registry));
@@ -54,11 +54,11 @@ namespace Assets.Mazes
             }
         }
 
-        protected Wall CreateWall(Coordinate coordindates, WallDirection direction)
+        protected Wall CreateWall(Coordinate coordinates, WallDirection direction)
         {
-            this[coordindates].ThrowIfNull($"TilesRegistry[{coordindates}]");
+            this[coordinates].ThrowIfNull($"TilesRegistry[{coordinates}]");
 
-            return new Wall(coordindates, Registry, direction);
+            return new Wall(coordinates, Registry, direction);
         }
 
         public bool IsInside(Coordinate coordinate)
@@ -72,13 +72,20 @@ namespace Assets.Mazes
 
             Coordinate coordinates;
 
+            var found = false;
+
             do
             {
                 var row = RandomNumbers.Dice(maxRows);
                 var col = RandomNumbers.Dice(maxColumns);
 
                 coordinates = new Coordinate(row, col);
-            } while (! TilesRegistry.IsInside(coordinates) && ! tileCondition(coordinates));
+                found = TilesRegistry.IsInside(coordinates);
+                if (found)
+                {
+                    found = tileCondition(coordinates);
+                }
+            } while (! found);
 
             return coordinates;
         }
@@ -122,44 +129,8 @@ namespace Assets.Mazes
 
         public IList<string> GetTilesOfType<TTileType>()
         {
-            var tiles = new List<string>();
-            var tileType = typeof(TTileType).Name;
-
-            var (rowMax, colMax) = TilesRegistry.UpperBounds();
-            for (var row = 0; row <= rowMax; row++)
-            {
-                for (var col = 0; col <= colMax; col++)
-                {
-                    var name = TilesRegistry[row, col];
-                    if (name.IsNullOrEmpty()) continue;
-
-                    var tile = Registry.GetDispatchee(name);
-                    if (tile.Name == tileType) tiles.Add(tile.UniqueId);
-                }
-            }
-
+            var tiles = TilesRegistry.GetTilesOfType<TTileType>(Registry.GetDispatchee);
             return tiles;
-        }
-
-        public bool HasDoors
-        {
-            get
-            {
-                var (rowMax, colMax) = TilesRegistry.UpperBounds();
-                for (var row = 0; row <= rowMax; row++)
-                {
-                    for (var col = 0; col <= colMax; col++)
-                    {
-                        var name = TilesRegistry[row, col];
-                        if (name.IsNullOrEmpty()) continue;
-
-                        var tile = Registry.GetDispatchee(name);
-                        if (tile.Name == "Door") return true;
-                    }
-                }
-
-                return false;
-            }
         }
 
         public (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) GetCorners()
@@ -192,8 +163,21 @@ namespace Assets.Mazes
             });
         }
 
-        public abstract Tiles Clone(string stateChange = null);
-        public abstract Tiles Create();
+        public Tiles Clone(string stateChange = null)
+        {
+            var clone = Create();
+            if (stateChange.IsNullOrEmpty()) return clone;
+
+            var state = stateChange.ToParameters();
+            UpdateState(clone, state);
+
+            return clone;
+        }
+
+        public virtual Tiles Create()
+        {
+            return new Tiles(this);
+        }
 
         public virtual void UpdateState(Tiles tiles, ExtractedParameters state)
         {
