@@ -53,23 +53,6 @@ namespace Assets.Mazes
 
         private static Maze ConnectDoors(Maze maze, Door door1, Door door2)
         {
-            var startDirection = GetPosition(maze.Registry, maze, door1);
-            var start = door1.Coordinates.Move(startDirection, 2);
-            var targetDirection = GetPosition(maze.Registry, maze, door2);
-            var target = door2.Coordinates.Move(targetDirection);
-
-            Coordinate current = Coordinate.NotSet;
-            (current, maze) = Tunnel(maze, door1.Coordinates, start.Move(startDirection), startDirection, 2);
-
-            //while (current != target)
-            for(int i = 0; i < 3; i++)
-            {
-                var direction = GetNextDirection(current, target);
-                var difference = target - current;
-                var numTiles = GetMaxNumTilesToMove(maze, difference, direction);
-                (current, maze) = Tunnel(maze, current, target, direction, numTiles);
-            }
-
             return maze;
         }
         

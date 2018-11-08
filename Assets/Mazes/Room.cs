@@ -100,7 +100,7 @@ namespace Assets.Mazes
             IDispatchee dispatchee = null;
             while(dispatchee == null)
             {
-                var tileName = FindNonEmptyTile();
+                var tileName = FindWall();
                 dispatchee = Registry.GetDispatchee(tileName);
 
                 if (dispatchee.Name != "Wall")
@@ -123,7 +123,7 @@ namespace Assets.Mazes
             return Clone(newState);
         }
 
-        private string FindNonEmptyTile()
+        private string FindWall()
         {
             var coordinates = Tiles.RandomEmptyTile();
 
