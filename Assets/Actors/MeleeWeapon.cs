@@ -59,7 +59,7 @@ namespace Assets.Actors
 
         public override MeleeWeapon Create()
         {
-            return new MeleeWeapon(this);
+            return ActorBuilder.Build(this);
         }
 
         public override void UpdateState(MeleeWeapon weapon, ExtractedParameters state)

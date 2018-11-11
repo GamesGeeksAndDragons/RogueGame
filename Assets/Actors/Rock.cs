@@ -5,22 +5,22 @@ namespace Assets.Actors
 {
     internal class Rock : Dispatchee<Rock>
     {
-        public Rock(Coordinate coordinate, DispatchRegistry registry) : base(coordinate, registry)
+        internal Rock(Coordinate coordinate, DispatchRegistry registry, string _) : base(coordinate, registry)
         {
         }
 
-        private Rock(Rock rock) : base(rock.Coordinates, rock.Registry)
+        internal Rock(Rock rock) : base(rock.Coordinates, rock.Registry)
         {
         }
 
         public override Rock Create()
         {
-            return new Rock(this);
+            return ActorBuilder.Build(this);
         }
 
         public override string ToString()
         {
-            return "█";
+            return ActorDisplay.Rock.ToString();
         }
     }
 }

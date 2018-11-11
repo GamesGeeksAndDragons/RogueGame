@@ -117,7 +117,7 @@ namespace Assets.Mazes
                 }
             }
 
-            var door = new Door(dispatchee.Coordinates, Registry, doorNumber);
+            var door = ActorBuilder.Build<Door>(dispatchee.Coordinates, Registry, doorNumber.ToString());
             var newState = door.Coordinates.ToTileState(door.UniqueId);
 
             return Clone(newState);

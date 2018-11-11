@@ -54,9 +54,9 @@ namespace AssetsTests
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(testNum);
 
-            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
+            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
-            var monster = new Monster(Coordinate.NotSet, registry, Monster.FormatState(10, 10));
+            var monster = ActorBuilder.Build<Monster>(Coordinate.NotSet, registry, Monster.FormatState(10, 10));
             dispatcher.EnqueueTeleport(monster);
             dispatcher.Dispatch();
 

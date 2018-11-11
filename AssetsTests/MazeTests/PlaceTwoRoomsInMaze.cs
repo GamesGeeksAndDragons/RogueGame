@@ -121,17 +121,11 @@ case 2: return
                     ;
             }
 
-            void SetupDoorForFirstRoom()
+            void SetupDoors()
             {
                 fakeRandomNumbers
                     .AddCoordinates(2, 2) // Door placement, empty tile to start walk from
                     .AddDirection(Compass8Points.West) // direction to walk to find a wall and place a door
-                    ;
-            }
-
-            void SetupDoorForSecondRoom()
-            {
-                fakeRandomNumbers
                     .AddCoordinates(3, 3) // Door placement, empty tile to start walk from
                     .AddDirection(Compass8Points.East) // direction to walk to find a wall and place a door
                     ;
@@ -159,8 +153,7 @@ case 2: return
             var dispatcher = new Dispatcher(registry);
 
             SetupTwoRooms();
-            SetupDoorForFirstRoom();
-            SetupDoorForSecondRoom();
+            SetupDoors();
             SetupCoordinatesForPlacingFirstRoom();
             SetupCoordinatesForPlacingSecondRoom();
 
@@ -174,9 +167,11 @@ case 2: return
             var actual = (Maze) registry.GetDispatchee("Maze1");
             var actualString = actual.ToString();
 
+            _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(actualString);
+            _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine("Maze (R,C) " + actual.MazeUpperBounds);
 
             Assert.Equal(expected, actualString);

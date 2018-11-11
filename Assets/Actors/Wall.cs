@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
@@ -10,12 +11,12 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; private set; }
 
-        public Wall(Coordinate coordinates, DispatchRegistry registry, WallDirection type) : base(coordinates, registry)
+        internal Wall(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
         {
-            WallType = type;
+            WallType = state.ToEnum<WallDirection>();
         }
 
-        private Wall(Wall wall) : base(wall.Coordinates, wall.Registry)
+        internal Wall(Wall wall) : base(wall.Coordinates, wall.Registry)
         {
             WallType = wall.WallType;
         }
@@ -43,15 +44,30 @@ namespace Assets.Actors
         {
             switch (WallType)
             {
-                case WallDirection.Horizontal: return "═";
-                case WallDirection.Vertical: return "║";
-                case WallDirection.TopLeftCorner: return "╔";
-                case WallDirection.TopRightCorner: return "╗";
-                case WallDirection.BottomLeftCorner: return "╚";
-                case WallDirection.BottomRightCorner: return "╝";
+                case WallDirection.Horizontal: return ActorDisplay.WallHorizontal.ToString();
+                case WallDirection.Vertical: return ActorDisplay.WallVertical.ToString();
+                case WallDirection.TopLeftCorner: return ActorDisplay.WallTopLeftCorner.ToString();
+                case WallDirection.TopRightCorner: return ActorDisplay.WallTopRightCorner.ToString();
+                case WallDirection.BottomLeftCorner: return ActorDisplay.WallBottomLeftCorner.ToString();
+                case WallDirection.BottomRightCorner: return ActorDisplay.WallBottomRightCorner.ToString();
             }
 
             throw new ArgumentException($"Unexpected WallType [{WallType}]");
+        }
+
+        public static WallDirection GetDirection(char actor)
+        {
+            switch (actor)
+            {
+                case ActorDisplay.WallHorizontal: return WallDirection.Horizontal;
+                case ActorDisplay.WallVertical: return WallDirection.Vertical;
+                case ActorDisplay.WallTopLeftCorner: return WallDirection.TopLeftCorner;
+                case ActorDisplay.WallTopRightCorner: return WallDirection.TopRightCorner;
+                case ActorDisplay.WallBottomLeftCorner: return WallDirection.BottomLeftCorner;
+                case ActorDisplay.WallBottomRightCorner: return WallDirection.BottomRightCorner;
+            }
+
+            throw new ArgumentException($"Unexpected actor [{actor}]");
         }
 
         public bool IsCorner
@@ -76,7 +92,7 @@ namespace Assets.Actors
 
         public override Wall Create()
         {
-            return new Wall(this);
+            return ActorBuilder.Build(this);
         }
     }
 }

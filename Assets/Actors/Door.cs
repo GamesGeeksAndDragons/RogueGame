@@ -6,12 +6,13 @@ namespace Assets.Actors
 {
     internal class Door : Dispatchee<Door>
     {
-        public Door(Coordinate coordinates, DispatchRegistry registry, int doorId) : base(coordinates, registry)
+        internal Door(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
         {
+            var doorId = int.Parse(state);
             DoorId = doorId;
         }
 
-        private Door(Door door) : base(door.Coordinates, door.Registry)
+        internal Door(Door door) : base(door.Coordinates, door.Registry)
         {
             DoorId = door.DoorId;
         }
@@ -27,7 +28,7 @@ namespace Assets.Actors
 
         public override Door Create()
         {
-            return new Door(this);
+            return ActorBuilder.Build(this);
         }
 
         public override void UpdateState(Door door, ExtractedParameters state)

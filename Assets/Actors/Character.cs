@@ -5,7 +5,7 @@ using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string nam
 namespace Assets.Actors
 {
     internal abstract class Character<T> : Dispatchee<T> 
-        where T : class, IDispatchee
+        where T : class, IDispatchee, ICloner<T>
     {
         protected Character(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
         {

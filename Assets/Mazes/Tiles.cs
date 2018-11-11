@@ -48,7 +48,7 @@ namespace Assets.Mazes
                     var rockCoordinates = new Coordinate(row, column);
                     TilesRegistry.ThrowIfOutsideBounds(rockCoordinates, nameof(TilesRegistry));
 
-                    var rock = new Rock(rockCoordinates, Registry);
+                    var rock = ActorBuilder.Build<Rock>(rockCoordinates, Registry, "");
                     this[rock.Coordinates] = rock.UniqueId;
                 }
             }
@@ -58,7 +58,7 @@ namespace Assets.Mazes
         {
             this[coordinates].ThrowIfNull($"TilesRegistry[{coordinates}]");
 
-            return new Wall(coordinates, Registry, direction);
+            return ActorBuilder.Build<Wall>(coordinates, Registry, direction.ToString());
         }
 
         public bool IsInside(Coordinate coordinate)
@@ -183,10 +183,13 @@ namespace Assets.Mazes
         {
             if (state.HasValue(nameof(Tiles)))
             {
-                var tilesState = state.ToString(nameof(Tiles));
-                //                var newTiles = tilesState.ToTiles();
+                var newTiles = state.ToString(nameof(Tiles));
 
-                tiles.TilesRegistry = tiles.TilesRegistry.CloneStrings();
+                var tileValues = newTiles.ToTiles();
+                foreach (var newTile in tileValues)
+                {
+                    tiles[newTile.Coordinates] = newTile.Name;
+                }
             }
         }
     }

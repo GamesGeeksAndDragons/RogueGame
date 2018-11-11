@@ -21,7 +21,7 @@ namespace Assets.Actors
 
         public override Monster Create()
         {
-            return new Monster(this);
+            return ActorBuilder.Build(this);
         }
     }
 }

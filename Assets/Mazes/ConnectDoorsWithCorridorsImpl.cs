@@ -153,7 +153,7 @@ namespace Assets.Mazes
             (string Name, Coordinate Coordinates) tile = (null, moveCoordinates);
             if (wallType.HasValue)
             {
-                var wall = new Wall(moveCoordinates, maze.Registry, wallType.Value);
+                var wall = ActorBuilder.Build<Wall>(moveCoordinates, maze.Registry, wallType.Value.ToString());
                 tile.Name = wall.UniqueId;
             }
 

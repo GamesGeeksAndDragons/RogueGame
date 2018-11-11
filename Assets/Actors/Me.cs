@@ -6,7 +6,7 @@ namespace Assets.Actors
 {
     internal class Me : Character<Me>
     {
-        public Me(Coordinate coordinates, DispatchRegistry registry, string state) 
+        internal Me(Coordinate coordinates, DispatchRegistry registry, string state) 
             : base(coordinates, registry, state)
         {
         }
@@ -23,7 +23,7 @@ namespace Assets.Actors
 
         public override Me Create()
         {
-            return new Me(this);
+            return ActorBuilder.Build(this);
         }
     }
 }

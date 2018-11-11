@@ -97,7 +97,7 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
-            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
+            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
@@ -128,7 +128,7 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
             builder.Build(GetLevel(testNum));
-            var me = new Me(Coordinate.NotSet, registry, Me.FormatState(10, 10));
+            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, registry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
