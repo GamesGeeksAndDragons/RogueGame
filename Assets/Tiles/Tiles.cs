@@ -8,7 +8,7 @@ using Utils.Enums;
 using Utils.Random;
 using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
 
-namespace Assets.Mazes
+namespace Assets.Tiles
 {
     class Tiles : ICloner<Tiles>
     {
@@ -72,7 +72,7 @@ namespace Assets.Mazes
 
             Coordinate coordinates;
 
-            var found = false;
+            bool found;
 
             do
             {
@@ -90,7 +90,7 @@ namespace Assets.Mazes
             return coordinates;
         }
 
-        protected bool IsEmptyTile(Coordinate coordinates)
+        public bool IsEmptyTile(Coordinate coordinates)
         {
             return this[coordinates].IsNullOrEmpty();
         }
@@ -115,16 +115,18 @@ namespace Assets.Mazes
             return RandomTile(IsEmptyTile);
         }
 
-        public bool IsTyleType<T>(Coordinate coordinates)
+        public bool IsTileType<T>(Coordinate coordinates)
         {
             var name = this[coordinates];
+            if (name.IsNullOrEmpty()) return false;
+
             var dispatchee = Registry.GetDispatchee(name);
             return dispatchee.Name == typeof(T).Name;
         }
 
         public Coordinate RandomRockTile()
         {
-            return RandomTile(coordinates => !IsEmptyTile(coordinates) && IsTyleType<Rock>(coordinates));
+            return RandomTile(coordinates => !IsEmptyTile(coordinates) && IsTileType<Rock>(coordinates));
         }
 
         public IList<string> GetTilesOfType<TTileType>()
@@ -135,12 +137,12 @@ namespace Assets.Mazes
 
         public (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) GetCorners()
         {
-            var boundary = TilesRegistry.UpperBounds();
+            var (maxRow, maxColumn) = TilesRegistry.UpperBounds();
 
             var topLeft  = Registry.GetDispatchee(TilesRegistry[0, 0]);
-            var topRight = Registry.GetDispatchee(TilesRegistry[0, boundary.MaxColumn]);
-            var bottomLeft = Registry.GetDispatchee(TilesRegistry[boundary.MaxRow, 0]);
-            var bottomRight = Registry.GetDispatchee(TilesRegistry[boundary.MaxRow, boundary.MaxColumn]);
+            var topRight = Registry.GetDispatchee(TilesRegistry[0, maxColumn]);
+            var bottomLeft = Registry.GetDispatchee(TilesRegistry[maxRow, 0]);
+            var bottomRight = Registry.GetDispatchee(TilesRegistry[maxRow, maxColumn]);
 
             return (topLeft.Coordinates, topRight.Coordinates, bottomLeft.Coordinates, bottomRight.Coordinates);
         }
@@ -161,6 +163,23 @@ namespace Assets.Mazes
 
                 return dispatchee.ToString();
             });
+        }
+
+        internal static Tiles Grow(Tiles tiles)
+        {
+            var (maxRow, maxColumn) = tiles.UpperBounds;
+            var grown = new Tiles(maxRow * 2, maxColumn * 2, tiles.Registry, tiles.RandomNumbers);
+
+            for (var row = 0; row <= maxRow; row++)
+            {
+                for (var column = 0; column <= maxColumn; column++)
+                {
+                    var coordinate = new Coordinate(row, column);
+                    grown[coordinate] = tiles[coordinate];
+                }
+            }
+
+            return grown;
         }
 
         public Tiles Clone(string stateChange = null)
@@ -186,9 +205,9 @@ namespace Assets.Mazes
                 var newTiles = state.ToString(nameof(Tiles));
 
                 var tileValues = newTiles.ToTiles();
-                foreach (var newTile in tileValues)
+                foreach (var (name, coordinates) in tileValues)
                 {
-                    tiles[newTile.Coordinates] = newTile.Name;
+                    tiles[coordinates] = name;
                 }
             }
         }

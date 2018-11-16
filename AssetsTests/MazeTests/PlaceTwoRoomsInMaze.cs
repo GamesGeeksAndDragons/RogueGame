@@ -172,7 +172,6 @@ case 2: return
             _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(actualString);
             _output.WriteLine('='.ToPaddedString(10));
-            _output.WriteLine("Maze (R,C) " + actual.MazeUpperBounds);
 
             Assert.Equal(expected, actualString);
         }
@@ -245,10 +244,11 @@ case 2: return
             var actual = (Maze) registry.GetDispatchee("Maze1");
             var actualString = actual.ToString();
 
+            _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(expected);
             _output.WriteLine('='.ToPaddedString(10));
             _output.WriteLine(actualString);
-            _output.WriteLine("Maze (R,C) " + actual.MazeUpperBounds);
+            _output.WriteLine('='.ToPaddedString(10));
 
             Assert.Equal(expected, actualString);
         }

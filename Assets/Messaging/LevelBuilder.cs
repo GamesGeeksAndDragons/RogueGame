@@ -28,7 +28,7 @@ namespace Assets.Messaging
                 var uniqueId = dispatchee.UniqueId;
                 if (maze.IsInMaze(uniqueId)) continue;
 
-                _registry.Deregister(uniqueId);
+                _registry.Unregister(uniqueId);
             }
 
             maze.UniqueId = Maze.DispatcheeName + level;

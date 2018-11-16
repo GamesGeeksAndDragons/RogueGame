@@ -56,7 +56,7 @@ namespace Assets.Mazes
                 {
                     var doors = first == null ?
                         room.Doors :
-                        room.Doors.Where(doorName => doorName != first?.Name).ToList();
+                        room.Doors.Where(doorId => doorId != first?.Name).ToList();
                     return doors.Count == 0;
                 });
             }

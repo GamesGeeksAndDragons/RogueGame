@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Actors;
 using Assets.Messaging;
-using Utils;
 using Utils.Coordinates;
 using Utils.Random;
 using TilesChange=System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Mazes
+namespace Assets.Tiles
 {
     internal static class TilesBuilder
     {

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Tiles;
 using AssetsTests.Fakes;
 using Utils;
-using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 

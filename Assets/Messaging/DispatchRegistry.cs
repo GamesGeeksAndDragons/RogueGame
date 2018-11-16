@@ -29,7 +29,7 @@ namespace Assets.Messaging
 
             var uniqueId = dispatchee.UniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatchee) : dispatchee.UniqueId;
 
-            EnsureToDeregisterExistingDispatchee(dispatchee, uniqueId);
+            EnsureToUnregisterExistingDispatchee(dispatchee, uniqueId);
 
             _uniquelyNamedDispatchees[uniqueId] = dispatchee;
 
@@ -41,19 +41,19 @@ namespace Assets.Messaging
             return _uniquelyNamedDispatchees.ContainsKey(uniqueId);
         }
 
-        private void EnsureToDeregisterExistingDispatchee(IDispatchee dispatchee, string uniqueId)
+        private void EnsureToUnregisterExistingDispatchee(IDispatchee dispatchee, string uniqueId)
         {
             if (DispatcheeWithSameIdExists(uniqueId))
             {
                 var existing = _uniquelyNamedDispatchees[uniqueId];
                 if (!existing.IsSameInstance(dispatchee))
                 {
-                    Deregister(existing);
+                    Unregister(existing);
                 }
             }
         }
 
-        private void Deregister(IDispatchee dispatchee)
+        private void Unregister(IDispatchee dispatchee)
         {
             dispatchee.ThrowIfNull(nameof(dispatchee));
             dispatchee.UniqueId.ThrowIfEmpty(nameof(dispatchee.UniqueId));
@@ -61,15 +61,15 @@ namespace Assets.Messaging
             _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
         }
 
-        internal void Deregister(string uniqueId)
+        internal void Unregister(string uniqueId)
         {
             uniqueId.ThrowIfEmpty(nameof(uniqueId));
 
-            if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Deregister [{uniqueId}] which is not registered.");
+            if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Unregister [{uniqueId}] which is not registered.");
 
             var dispatchee = GetDispatchee(uniqueId);
 
-            Deregister(dispatchee);
+            Unregister(dispatchee);
         }
 
         public IDispatchee GetDispatchee(string uniqueId)

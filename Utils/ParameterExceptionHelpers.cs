@@ -37,6 +37,14 @@ namespace Utils
             }
         }
 
+        public static void ThrowIfNotEqual(this int lhs, int rhs, string name)
+        {
+            if (lhs != rhs)
+            {
+                throw new ArgumentException(name, $"[{name}:{lhs}] should have the same, but it was different [{rhs}]");
+            }
+        }
+
         public static void ThrowIfAbove(this int lhs, int rhs, string name, bool alsoCheckEquality=false)
         {
             if (lhs > rhs)

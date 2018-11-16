@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Actors;
 using Assets.Messaging;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
@@ -11,7 +12,7 @@ namespace Assets.Mazes
 {
     internal class Room : Dispatchee<Room>
     {
-        private IRandomNumberGenerator _randomNumbers;
+        private readonly IRandomNumberGenerator _randomNumbers;
         public RoomTiles Tiles;
 
         internal Room(RoomBlocks blocks, DispatchRegistry registry, IRandomNumberGenerator randomNumbers, int tilesPerBlock)

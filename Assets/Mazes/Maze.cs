@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Messaging;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
@@ -11,7 +12,7 @@ namespace Assets.Mazes
     internal class Maze : Dispatchee<Maze>
     {
         private readonly IRandomNumberGenerator _randomNumbers;
-        private readonly Tiles _tiles;
+        private readonly Tiles.Tiles _tiles;
 
         internal Maze(DispatchRegistry registry, IRandomNumberGenerator randomNumbers, int rows, int columns) 
             : base(Coordinate.NotSet, registry)
@@ -20,7 +21,7 @@ namespace Assets.Mazes
 
             _randomNumbers = randomNumbers;
 
-            _tiles = new Tiles(rows, columns, Registry, _randomNumbers);
+            _tiles = new Tiles.Tiles(rows, columns, Registry, _randomNumbers);
         }
 
         private Maze(Maze maze) : base(maze.Coordinates, maze.Registry)
@@ -29,6 +30,11 @@ namespace Assets.Mazes
             _tiles = maze._tiles.Clone();
         }
 
+        private Maze(DispatchRegistry registry, IRandomNumberGenerator randomNumbers, Tiles.Tiles tiles) : base(Coordinate.NotSet, registry)
+        {
+            _randomNumbers = randomNumbers;
+            _tiles = tiles.Clone();
+        }
         public override Maze Create()
         {
             return new Maze(this);
@@ -51,15 +57,6 @@ namespace Assets.Mazes
             return Clone(newState);
         }
 
-        public bool IsInsideMaze(Coordinate coordinates) => _tiles.IsInside(coordinates);
-        public string TileName(Coordinate coordinates) => _tiles[coordinates];
-        public bool IsTileType<TTileType>(Coordinate coordinates) => _tiles.IsTyleType<TTileType>(coordinates);
-        public Coordinate RandomRockTile() => _tiles.RandomRockTile();
-        public (int MaxRows, int MaxColumns) MazeUpperBounds => _tiles.UpperBounds;
-        public IDispatchee GetDispatchee(string uniqueId) => Registry.GetDispatchee(uniqueId);
-        public IList<string> GetTiles<TTileType>() => _tiles.GetTilesOfType<TTileType>();
-        public int RandomNumber(int max) { return _randomNumbers.Dice(max); }
-        public int RandomBetween(int max) { return _randomNumbers.Between(1, max); }
         public bool IsInMaze(string uniqueId) => _tiles.TileExists(uniqueId);
 
         protected internal override void RegisterActions()
@@ -70,9 +67,9 @@ namespace Assets.Mazes
 
         public override void UpdateState(Maze clone, ExtractedParameters state)
         {
-            if (state.HasValue(nameof(Tiles)))
+            if (state.HasValue(nameof(Tiles.Tiles)))
             {
-                var tiles = state.ToString(nameof(Tiles));
+                var tiles = state.ToString(nameof(Tiles.Tiles));
                 var tilesChanged = tiles.ToTiles();
 
                 foreach (var tileChange in tilesChanged)
@@ -113,12 +110,23 @@ namespace Assets.Mazes
         {
             var dispatchee = parameters.GetDispatchee("Dispatchee", Registry);
             var direction = parameters.ToValue<Compass8Points>("Direction");
-            var newCoordindates = dispatchee.Coordinates.Move(direction);
+            var newCoordinates = dispatchee.Coordinates.Move(direction);
 
-            if (!_tiles.IsInside(newCoordindates)) return;
-            if (!_tiles[newCoordindates].IsNullOrEmpty()) return;
+            if (!_tiles.IsInside(newCoordinates)) return;
+            if (!_tiles[newCoordinates].IsNullOrEmpty()) return;
 
-            PlaceInMaze(dispatchee, newCoordindates);
+            PlaceInMaze(dispatchee, newCoordinates);
+        }
+
+        public Maze PositionRoomsInMaze(IList<Room> roomsWithDoors)
+        {
+            var tiles = _tiles.PositionRoomsInTiles(Registry, roomsWithDoors);
+            return new Maze(Registry, _randomNumbers, tiles);
+        }
+
+        public Maze ConnectDoorsWithCorridors()
+        {
+            return this;
         }
     }
 }

@@ -7,7 +7,7 @@ using Utils.Random;
 
 namespace Assets.Mazes
 {
-    internal class RoomTiles : Tiles
+    internal class RoomTiles : Tiles.Tiles
     {
         internal readonly int TilesPerBlock;
 
@@ -51,7 +51,7 @@ namespace Assets.Mazes
             }
         }
 
-        public override Tiles Create()
+        public override Tiles.Tiles Create()
         {
             return new RoomTiles(this);
         }

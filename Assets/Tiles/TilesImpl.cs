@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Assets.Mazes;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 
-namespace Assets.Mazes
+namespace Assets.Tiles
 {
     internal static class TilesImpl
     {
@@ -19,9 +19,9 @@ namespace Assets.Mazes
             {
                 for (var column = 0; column < tiles.TilesPerBlock; column++)
                 {
-                    var coordindates = new Coordinate(row + rowOffset, column + colOffset);
+                    var coordinates = new Coordinate(row + rowOffset, column + colOffset);
 
-                    emptyTiles.Add((string.Empty, coordindates));
+                    emptyTiles.Add((string.Empty, coordinates));
                 }
             }
 
@@ -47,6 +47,15 @@ namespace Assets.Mazes
             }
 
             return tilesType;
+        }
+
+        internal static IDispatchee GetDispatchee(this Tiles tiles, Coordinate coordinates,
+            DispatchRegistry registry)
+        {
+            if (!tiles.IsInside(coordinates) || tiles.IsEmptyTile(coordinates)) return null;
+
+            var uniqueId = tiles[coordinates];
+            return registry.GetDispatchee(uniqueId);
         }
     }
 }
