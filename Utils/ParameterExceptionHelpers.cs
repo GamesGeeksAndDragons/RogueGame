@@ -29,62 +29,111 @@ namespace Utils
             }
         }
 
-        public static void ThrowIfEqual(this int lhs, int rhs, string name)
+        public static (T Lhs, T Rhs, string Name) ThrowIfEqual<T>(this T lhs, T rhs, string name)
+            where T : struct 
         {
-            if (lhs == rhs)
-            {
-                throw new ArgumentException(name, $"[{name}:{lhs}] should not have a value of [{rhs}]");
-            }
+            return (lhs, rhs, name).ThrowIfEqual<T>();
         }
 
-        public static void ThrowIfNotEqual(this int lhs, int rhs, string name)
+        public static (T Lhs, T Rhs, string Name) ThrowIfEqual<T>(this (T Lhs, T Rhs, string Name) test)
+            where T : struct
         {
-            if (lhs != rhs)
+            if (test.Lhs.Equals(test.Rhs))
             {
-                throw new ArgumentException(name, $"[{name}:{lhs}] should have the same, but it was different [{rhs}]");
+                throw new ArgumentException(test.Name, $"[{test.Name}:{test.Lhs}] should not equal [{test.Rhs}]");
             }
+
+            return test;
         }
 
-        public static void ThrowIfAbove(this int lhs, int rhs, string name, bool alsoCheckEquality=false)
-        {
-            if (lhs > rhs)
-            {
-                throw new ArgumentException(name, $"[{name}:{lhs}] should not be above [{rhs}]");
-            }
+        //public static (int Lhs, int Rhs, string Name) ThrowIfEqual(this int lhs, int rhs, string name)
+        //{
+        //    return (lhs, rhs, name).ThrowIfEqual();
+        //}
 
-            if (alsoCheckEquality)
-            {
-                rhs.ThrowIfEqual(lhs, name);
-            }
+        //public static (int Lhs, int Rhs, string Name) ThrowIfEqual(this (int Lhs, int Rhs, string Name) test)
+        //{
+        //    if (test.Lhs == test.Rhs)
+        //    {
+        //        throw new ArgumentException(test.Name, $"[{test.Name}:{test.Lhs}] should not equal [{test.Rhs}]");
+        //    }
+
+        //    return test;
+        //}
+
+        public static (int Lhs, int Rhs, string Name) ThrowIfNotEqual(this int lhs, int rhs, string name)
+        {
+            return (lhs, rhs, name).ThrowIfNotEqual();
         }
 
-        public static void ThrowIfBelow(this int lhs, int rhs, string name, bool alsoCheckEquality = false)
+        public static (int Lhs, int Rhs, string Name) ThrowIfNotEqual(this (int Lhs, int Rhs, string Name) test)
         {
-            if (lhs < rhs)
+            if (test.Lhs != test.Rhs)
             {
-                throw new ArgumentException(name, $"[{name}:{lhs}] should not be below [{rhs}]");
+                throw new ArgumentException(test.Name, $"[{test.Name}:{test.Lhs}] should not differ, but it was [{test.Rhs}]");
             }
 
-            if (alsoCheckEquality)
-            {
-                rhs.ThrowIfEqual(lhs, name);
-            }
+            return test;
         }
 
-        public static void ThrowIfEmpty(this string lhs, string name)
+        public static (int Lhs, int Rhs, string Name) ThrowIfAbove(this int lhs, int rhs, string name)
         {
-            if(lhs.IsNullOrEmpty())
-            {
-                throw new ArgumentException(name, $"[{name}] was empty when it should not have been");
-            }
+            return (lhs, rhs, name).ThrowIfAbove();
         }
 
-        public static void ThrowIfNotEmpty(this string lhs, string name)
+        public static (int Lhs, int Rhs, string Name) ThrowIfAbove(this (int Lhs, int Rhs, string Name) test)
         {
-            if (! lhs.IsNullOrEmpty())
+            if (test.Lhs > test.Rhs)
             {
-                throw new ArgumentException(name, $"[{name}] was expected to be empty when it was [{lhs}]");
+                throw new ArgumentException(test.Name, $"[{test.Name}:{test.Lhs}] should not be above [{test.Rhs}]");
             }
+
+            return test;
+        }
+
+        public static (int Lhs, int Rhs, string Name) ThrowIfBelow(this int lhs, int rhs, string name)
+        {
+            return (lhs, rhs, name).ThrowIfBelow();
+        }
+
+        public static (int Lhs, int Rhs, string Name) ThrowIfBelow(this (int Lhs, int Rhs, string Name) test)
+        {
+            if (test.Lhs < test.Rhs)
+            {
+                throw new ArgumentException(test.Name, $"[{test.Name}:{test.Lhs}] should not be below [{test.Rhs}]");
+            }
+
+            return test;
+        }
+
+        public static (string Lhs, string Name) ThrowIfEmpty(this string lhs, string name)
+        {
+            return (lhs, name).ThrowIfEmpty();
+        }
+
+        public static (string Lhs, string Name) ThrowIfEmpty(this (string Lhs, string Name) test)
+        {
+            if (test.Lhs.IsNullOrEmpty())
+            {
+                throw new ArgumentException(test.Name, $"[{test.Name}] was empty when it should not have been");
+            }
+
+            return test;
+        }
+
+        public static (string Lhs, string Name) ThrowIfNotEmpty(this string lhs, string name)
+        {
+            return (lhs, name).ThrowIfNotEmpty();
+        }
+
+        public static (string Lhs, string Name) ThrowIfNotEmpty(this (string Lhs, string Name) test)
+        {
+            if (!test.Lhs.IsNullOrEmpty())
+            {
+                throw new ArgumentException(test.Name, $"[{test.Name}] was expected to be empty when it was [{test.Lhs}]");
+            }
+
+            return test;
         }
 
         public static void ThrowIfOutsideBounds(this string [,] array, Coordinate coordinates, string name)

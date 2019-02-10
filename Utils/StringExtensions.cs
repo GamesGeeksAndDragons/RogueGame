@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Utils
 {
@@ -66,6 +67,11 @@ namespace Utils
         public static string AddPadding(this string str, char pad, int length)
         {
             return length > 0 ? str + new string(pad, length) : str;
+        }
+
+        public static bool IsSame(this string str, string with, StringComparison comparison= StringComparison.CurrentCultureIgnoreCase)
+        {
+            return string.Compare(str, with, comparison)==0;
         }
     }
 

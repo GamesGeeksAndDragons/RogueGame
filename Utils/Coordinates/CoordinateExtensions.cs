@@ -68,5 +68,27 @@ namespace Utils.Coordinates
 
             return new Coordinate(row, column);
         }
+
+        public static bool IsOverlapping(this Coordinate point1, Coordinate point2)
+        {
+            return point1.Row == point2.Row ||
+                   point1.Column == point2.Column;
+        }
+
+        public static Compass4Points GetStraightDirectionOfTravel(this Coordinate point1, Coordinate point2)
+        {
+            if (point1.Row == point2.Row)
+            {
+                if (point1.Column < point2.Column) return Compass4Points.East;
+                if (point1.Column > point2.Column) return Compass4Points.West;
+            }
+            else if (point1.Column == point2.Column)
+            {
+                if (point1.Row < point2.Row) return Compass4Points.South;
+                if (point1.Row > point2.Row) return Compass4Points.North;
+            }
+
+            return Compass4Points.Undefined;
+        }
     }
 }
