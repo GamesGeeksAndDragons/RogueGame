@@ -4,22 +4,22 @@ namespace AssetsTests.Fakes
 {
     static class FakeMazeDescriptorBuilder
     {
-        internal static MazeDescriptor Build(int minRooms = 0, int maxRooms = 0, int tileInBlock = 0, int blocksInRoom = 0)
+        internal static MazeDescriptor Build(int minRooms = 0, int maxRooms = 0)
         {
             var descriptor = new MazeDescriptor();
             descriptor.MazeDetailByLevel.Clear();
-            descriptor.MazeDetailByLevel.Add(1, new MazeDetail(minRooms, maxRooms, tileInBlock, blocksInRoom));
+            descriptor.MazeDetailByLevel.Add(1, new MazeDetail(minRooms, maxRooms));
             return descriptor;
         }
 
-        public static MazeDescriptor MazeRoomsWithTwoBlocks()
+        public static MazeDescriptor MazeWithTwoRooms()
         {
-            return Build(2, 2, 4, 2);
+            return Build(2, 2);
         }
 
-        public static MazeDescriptor MazeRoomsWithThreeBlocks()
+        public static MazeDescriptor MazeWithThreeRooms()
         {
-            return Build(2, 2, 4, 3);
+            return Build(3, 3);
         }
     }
 }

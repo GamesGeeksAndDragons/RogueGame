@@ -1,4 +1,6 @@
-﻿using Assets.Mazes;
+﻿using Assets.Deeds;
+using Assets.Mazes;
+using Assets.Rooms;
 using log4net;
 using Utils.Random;
 
@@ -6,45 +8,47 @@ namespace Assets.Messaging
 {
     internal class LevelBuilder
     {
-        private readonly IRandomNumberGenerator _randomNumberGenerator;
-        private readonly IMazeDescriptor _mazeDescriptor;
+        private readonly IDieBuilder _randomNumberGenerator;
         private readonly ILog _logger;
         private readonly Dispatcher _dispatcher;
-        private readonly DispatchRegistry _registry;
+        private readonly DispatchRegistry _dispatchRegistry;
+        private readonly ActionRegistry _actionRegistry;
 
-        public LevelBuilder(IRandomNumberGenerator randomNumberGenerator, IMazeDescriptor mazeDescriptor, ILog logger, Dispatcher dispatcher, DispatchRegistry registry)
+        public LevelBuilder(IDieBuilder randomNumberGenerator, ILog logger, Dispatcher dispatcher, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
         {
             _randomNumberGenerator = randomNumberGenerator;
-            _mazeDescriptor = mazeDescriptor;
             _logger = logger;
             _dispatcher = dispatcher;
-            _registry = registry;
+            _dispatchRegistry = dispatchRegistry;
+            _actionRegistry = actionRegistry;
         }
 
         internal void Compact(Maze maze, int level)
         {
-            foreach (var dispatchee in _registry.Dispatchees)
+            foreach (var dispatchee in _dispatchRegistry.Dispatchees)
             {
                 var uniqueId = dispatchee.UniqueId;
                 if (maze.IsInMaze(uniqueId)) continue;
 
-                _registry.Unregister(uniqueId);
+                _dispatchRegistry.Unregister(uniqueId);
             }
 
             maze.UniqueId = Maze.DispatcheeName + level;
-            _registry.Register(maze);
+            _dispatchRegistry.Register(maze);
         }
 
-        internal void Build(int level, bool connectTunnels=true)
+        internal Maze Build(int level, bool connectTunnels=true)
         {
-            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _registry);
-            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _mazeDescriptor,  _logger, _registry);
+            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry);
+            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry);
 
             var maze = connectTunnels ? 
                 mazeBuilder.BuildMaze(level) :
                 mazeBuilder.BuildMazeWithRoomsAndDoors(level);
 
-            Compact(maze, level);
+            //Compact(maze, level);
+
+            return maze;
         }
     }
 }

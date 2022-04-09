@@ -1,0 +1,27 @@
+﻿using Utils.Dispatching;
+using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+
+namespace Assets.Deeds
+{
+    class StrikeAction : IAction
+    {
+        public void Act(IDispatchee dispatchee, string actionValue)
+        {
+            //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
+            //if (coordindates != Coordinates) return;
+
+            //var hit = parameters.ToValue<int>(nameof(HitPoints));
+            //if (hit < ArmourClass) return;
+
+            //var damage = parameters.ToValue<int>("Damage");
+            //var newHitPoints = HitPoints - damage;
+
+            // below was commented out before above
+
+            //var newState = FormatState(hitPoints: newHitPoints);
+            //var newCharacter = Clone(newState);
+
+            //DispatchRegistry.Register(newCharacter);
+        }
+    }
+}

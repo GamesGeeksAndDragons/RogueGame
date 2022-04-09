@@ -1,18 +1,20 @@
-﻿using Assets.Messaging;
+﻿using Assets.Deeds;
+using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
     internal class Door : Dispatchee<Door>
     {
-        internal Door(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
+        internal Door(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) : base(coordinates, dispatchRegistry, actionRegistry)
         {
             var doorId = int.Parse(state);
             DoorId = doorId;
         }
 
-        internal Door(Door door) : base(door.Coordinates, door.Registry)
+        internal Door(Door door) : base(door.Coordinates, door.DispatchRegistry, door.ActionRegistry)
         {
             DoorId = door.DoorId;
         }
@@ -42,7 +44,7 @@ namespace Assets.Actors
 
         public override string ToString()
         {
-            return DoorId.ToString();
+            return DoorId.ToString("X1");
         }
     }
 }

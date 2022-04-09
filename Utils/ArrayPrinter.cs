@@ -59,7 +59,7 @@ namespace Utils
             return max;
         }
 
-        private static int GetMaxSizeForAxis(List<string> axis)
+        private static int GetMaxSizeForAxis(IEnumerable<string> axis)
         {
             int max = 0;
             foreach (var item in axis)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Utils.Coordinates;
 
 namespace Utils
@@ -144,5 +145,15 @@ namespace Utils
                 throw new ArgumentException(name, $"[{name}] expected the indexer [{coordinates}] to be inside [{maxBounary}] and they were outside");
             }
         }
+
+        public static void ThrowIfFileNotExist(this string filename)
+        {
+            var exists = File.Exists(filename);
+            if (!exists)
+            {
+                throw new FileNotFoundException("Not exist", filename);
+            }
+        }
+
     }
 }

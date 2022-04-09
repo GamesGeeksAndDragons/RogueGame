@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Utils;
+using Utils.Dispatching;
 
 namespace Assets.Messaging
 {
-    public class DispatchRegistry
+    public class DispatchRegistry : IDispatchRegistry
     {
         private readonly Dictionary<string, IDispatchee> _uniquelyNamedDispatchees = new Dictionary<string, IDispatchee>();
         private readonly Dictionary<string, uint> _dispatcheeCounts = new Dictionary<string, uint>();
@@ -80,5 +81,64 @@ namespace Assets.Messaging
         }
 
         public IReadOnlyList<IDispatchee> Dispatchees => _uniquelyNamedDispatchees.Values.ToList();
+
+        public IDispatchee[][] Tiles { get; private set; }
+
+        internal void NewLevel()
+        {
+            var tiles = Dispatchees.Where(dispatchee => dispatchee.IsTile());
+
+            var tilesRegistry = new List<List<IDispatchee>>();
+
+            foreach (var tile in tiles)
+            {
+                if (!tile.IsTile()) continue;
+
+                var row = GetRow(tile);
+                AddTile(tile, row);
+            }
+
+            Tiles = tilesRegistry.Select(list => list.ToArray()).ToArray();
+
+            void Grow<T>(List<T> list, Func<T> create, int newSize)
+            {
+                var growBy = newSize - list.Count + 1;
+
+                for (int i = 0; i < growBy; i++)
+                {
+                    list.Add(create());
+                }
+            }
+
+            List<IDispatchee> GetRow(IDispatchee tile)
+            {
+                var row = tile.Coordinates.Row;
+
+                if (tilesRegistry.Count < row - 1)
+                {
+                    Grow(tilesRegistry, () => new List<IDispatchee>(), row);
+                    var growBy = row - tilesRegistry.Count + 1;
+
+                    for (int i = 0; i < growBy; i++)
+                    {
+                        tilesRegistry.Add(new List<IDispatchee>());
+                    }
+                }
+
+                return tilesRegistry[row];
+            }
+
+            void AddTile(IDispatchee tile, List<IDispatchee> row)
+            {
+                var column = tile.Coordinates.Column;
+
+                if (row.Count < column - 1)
+                {
+                    Grow(row, () => null, column);
+                }
+
+                row[column] = tile;
+            }
+        }
     }
 }

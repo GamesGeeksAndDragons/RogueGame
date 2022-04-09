@@ -33,4 +33,19 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Rogue\LShaped.room">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Rogue\OShaped.room">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Rogue\Rectangle.room">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Rogue\Square.room">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

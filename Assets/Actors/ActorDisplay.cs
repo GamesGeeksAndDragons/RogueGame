@@ -1,8 +1,13 @@
-﻿namespace Assets.Actors
+﻿using System;
+using Assets.Messaging;
+using Utils.Dispatching;
+
+namespace Assets.Actors
 {
     public static class ActorDisplay
     {
-        public const char Empty = ' ';
+        public const char Null = '#';
+        public const char Floor = ' ';
         public const char Rock = '█';
         public const char WallHorizontal = '═';
         public const char WallVertical = '║';
@@ -19,5 +24,25 @@
         public const char Door7 = '7';
         public const char Door8 = '8';
         public const char Door9 = '9';
+
+        public static char ToChar(this IDispatchee dispatchee)
+        {
+            System.Diagnostics.Debugger.Break();
+
+            switch (dispatchee.Name)
+            {
+                case "Null": return Null;
+                case "Floor": return Floor;
+                case "Rock": return Rock;
+                case "WallHorizontal": return WallHorizontal;
+                case "WallVertical": return WallVertical;
+                case "WallTopLeftCorner": return WallTopLeftCorner;
+                case "WallTopRightCorner": return WallTopRightCorner;
+                case "WallBottomLeftCorner": return WallBottomLeftCorner;
+                case "WallBottomRightCorner": return WallBottomRightCorner;
+                default:
+                    throw new ArgumentException($"Unknown dispatchee [{dispatchee.Name}] in ToChar");
+            }
+        }
     }
 }

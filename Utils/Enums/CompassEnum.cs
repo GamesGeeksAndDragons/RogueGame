@@ -8,7 +8,6 @@ namespace Utils.Enums
         Undefined = 0x00, North = 0x01, South = 0x02, East = 0x04, West = 0x08
     }
 
-
     [Flags]
     public enum Compass8Points
     {

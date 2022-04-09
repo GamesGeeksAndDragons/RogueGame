@@ -1,15 +1,17 @@
-﻿using Assets.Messaging;
+﻿using Assets.Deeds;
+using Assets.Messaging;
 using Utils.Coordinates;
 
 namespace Assets.Actors
 {
     internal class Rock : Dispatchee<Rock>
     {
-        internal Rock(Coordinate coordinate, DispatchRegistry registry, string _) : base(coordinate, registry)
+        internal Rock(Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry) 
+            : base(coordinate, dispatchRegistry, actionRegistry)
         {
         }
 
-        internal Rock(Rock rock) : base(rock.Coordinates, rock.Registry)
+        internal Rock(Rock rock) : base(rock.Coordinates, rock.DispatchRegistry, rock.ActionRegistry)
         {
         }
 

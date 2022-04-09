@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Utils
@@ -72,6 +73,13 @@ namespace Utils
         public static bool IsSame(this string str, string with, StringComparison comparison= StringComparison.CurrentCultureIgnoreCase)
         {
             return string.Compare(str, with, comparison)==0;
+        }
+
+        public static string[] SplitIntoLines(this string str)
+        {
+            return str.Split(CharHelpers.EndOfLine)
+                .Where(line => ! line.IsNullOrEmpty())
+                .ToArray();
         }
     }
 

@@ -1,73 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Assets.Deeds;
 using Utils;
 using Utils.Coordinates;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using Utils.Dispatching;
+using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 // ReSharper disable VirtualMemberCallInConstructor
 
 namespace Assets.Messaging
 {
-    public interface ICloner<T>
-    {
-        T Clone(string stateChange = null);
-        T Create();
-        void UpdateState(T dispatchee, ExtractedParameters state);
-    }
-
-    public interface IDispatchee
-    {
-        void Dispatch(string dispatchee, string parameters);
-        IDispatchee CloneDispatchee(string stateChange = null);
-
-        Coordinate Coordinates { get; }
-
-        string Name { get; }
-        string UniqueId { get; }
-    }
-
     internal abstract class Dispatchee<T> : IDispatchee, ICloner<T>
         where T : class
     {
-        protected internal DispatchRegistry Registry;
-
-        protected Dispatchee(Coordinate coordinates, DispatchRegistry registry)
+        protected Dispatchee(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
         {
             Coordinates = coordinates;
-            Registry = registry;
+            DispatchRegistry = dispatchRegistry;
+            ActionRegistry = actionRegistry;
 
-            UniqueId = Registry.Register(this);
+            UniqueId = DispatchRegistry.Register(this);
 
             RegisterActions();
         }
 
-        public virtual void Dispatch(string dispatchee, string parameters)
+        public virtual void Dispatch(string parameters)
         {
-            if (ActionRegistry.TryGetValue(dispatchee, out var actionImpl))
+            var parametersList = parameters.ToParameters().ToList();
+
+            foreach (var parameter in parametersList)
             {
-                var extracted = parameters.ToParameters();
-                actionImpl(extracted);
+                var action = ActionRegistry.GetAction(Name, parameter.Name);
+                action.Act(this, parameter.Value);
             }
-        }
-
-        protected internal Dictionary<string, Action<ExtractedParameters>> ActionRegistry = new Dictionary<string, Action<ExtractedParameters>>();
-
-        protected internal void RegisterAction(string action, Action<ExtractedParameters> impl)
-        {
-            if (ActionRegistry.ContainsKey(action)) throw new ArgumentException($"Action [{action}] already registered", nameof(action));
-
-            ActionRegistry[action] = impl;
         }
 
         protected internal virtual void RegisterActions() { }
 
         public Coordinate Coordinates { get; protected set; }
+        public DispatchRegistry DispatchRegistry { get; }
+        public ActionRegistry ActionRegistry { get; }
 
-        public static string DispatcheeName => typeof(T).Name;
+        public static readonly string DispatcheeName = typeof(T).Name;
         public string Name => DispatcheeName;
         public string UniqueId { get; protected internal set; }
 
-        public virtual void UpdateState(T t, ExtractedParameters state)
+        public virtual void UpdateState(T t, Parameters state)
         {
             var dispatchee = t as Dispatchee<T>;
             dispatchee.ThrowIfNull(nameof(t));
@@ -79,7 +58,7 @@ namespace Assets.Messaging
         {
             var state = string.Empty;
 
-            if (coordinates.HasValue) state += nameof(Coordinates).FormatParameter(coordinates.Value);
+            if (coordinates.HasValue) state += coordinates.Value.FormatParameter();
             if (! uniqueId.IsNullOrEmpty()) state += nameof(UniqueId).FormatParameter(uniqueId);
 
             return state;

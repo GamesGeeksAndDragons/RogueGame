@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Coordinates;
 
@@ -6,12 +6,12 @@ namespace Assets.Actors
 {
     internal class Me : Character<Me>
     {
-        internal Me(Coordinate coordinates, DispatchRegistry registry, string state) 
-            : base(coordinates, registry, state)
+        internal Me(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+            : base(coordinates, dispatchRegistry, actionRegistry, state)
         {
         }
 
-        private Me(Me me) : base(me.Coordinates, me.Registry, "")
+        private Me(Me me) : base(me.Coordinates, me.DispatchRegistry, me.ActionRegistry, "")
         {
 
         }

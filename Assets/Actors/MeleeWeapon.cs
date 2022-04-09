@@ -1,19 +1,19 @@
-﻿using Assets.Messaging;
+﻿using Assets.Deeds;
+using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
-using Utils.Enums;
 using Utils.Random;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
     internal class MeleeWeapon : Dispatchee<MeleeWeapon>
     {
-        private readonly IRandomNumberGenerator _randomNumbers;
+        private readonly IDieBuilder _randomNumbers;
         private readonly Dispatcher _dispatcher;
 
-        public MeleeWeapon(IRandomNumberGenerator randomNumbers, DispatchRegistry registry, Dispatcher dispatcher, string state) 
-            : base(Coordinate.NotSet, registry)
+        public MeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, Dispatcher dispatcher, string state) 
+            : base(Coordinate.NotSet, dispatchRegistry, actionRegistry)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             dispatcher.ThrowIfNull(nameof(dispatcher));
@@ -26,7 +26,7 @@ namespace Assets.Actors
         }
 
         private MeleeWeapon(MeleeWeapon weapon)
-            : this(weapon._randomNumbers, weapon.Registry, weapon._dispatcher, 
+            : this(weapon._randomNumbers, weapon.DispatchRegistry, weapon.ActionRegistry, weapon._dispatcher, 
                 FormatState(weapon.WeaponName, weapon.Owner, weapon.NumRolls, weapon.MaxPoints,
                     weapon.Hit, weapon.Damage, weapon.Weight, weapon.Level, weapon.OriginalCost, weapon.Coordinates))
         {
@@ -62,7 +62,7 @@ namespace Assets.Actors
             return ActorBuilder.Build(this);
         }
 
-        public override void UpdateState(MeleeWeapon weapon, ExtractedParameters state)
+        public override void UpdateState(MeleeWeapon weapon, Parameters state)
         {
             if (state.HasValue(nameof(WeaponName))) weapon.WeaponName = state.ToString(nameof(WeaponName));
             if (state.HasValue(nameof(Owner))) weapon.Owner = state.ToString(nameof(Owner));
@@ -114,7 +114,7 @@ namespace Assets.Actors
 
         protected internal override void RegisterActions()
         {
-            RegisterAction(Actions.Use, UseImpl);
+            ActionRegistry.RegisterAction(this, Deed.Use);
         }
 
         internal int RollDice()
@@ -123,24 +123,10 @@ namespace Assets.Actors
 
             for (var i = 0; i < NumRolls; i++)
             {
-                sum += _randomNumbers.Dice(MaxPoints);
+                sum += _randomNumbers.Dice(MaxPoints).Random;
             }
 
             return sum;
-        }
-
-        private void UseImpl(ExtractedParameters parameters)
-        {
-            var dispatchee = parameters.ToString("Dispatchee");
-            if (dispatchee != UniqueId) return;
-
-            var direction = parameters.ToValue<Compass8Points>("Direction");
-            var owner = Registry.GetDispatchee(Owner);
-            var strikeCoordindates = owner.Coordinates.Move(direction);
-            var hit = RollDice() + Hit;
-            var damage = RollDice() + Damage;
-
-            _dispatcher.EnqueueStrike(strikeCoordindates, hit, damage);
         }
     }
 }

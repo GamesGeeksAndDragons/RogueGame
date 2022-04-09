@@ -11,44 +11,8 @@ namespace UtilsTests
 {
     public class RandomNumberTests
     {
-        [Fact]
-        public void RandomBoolean_ShouldBeApproxTheSame()
-        {
-            int numRolls = 2 * 1000;
-
-            var rolls = new bool[numRolls];
-
-            var generator = new RandomNumberGenerator();
-
-            for (int i = 1; i < numRolls; i++)
-            {
-                rolls[i] = generator.Boolean;
-            }
-
-            var keys = new List<bool> {true, false};
-            var samples = keys.Select(key =>
-            {
-                var count = rolls.Count(roll => key == roll);
-                return (key: key, count: count);
-            }).ToList();
-
-            var midpoint = 1000;
-            var min = midpoint - (midpoint * 5 / 100);
-            var max = midpoint + (midpoint * 5 / 100);
-
-            var errorMessage = new StringBuilder();
-            foreach (var sample in samples)
-            {
-                errorMessage.AppendLine($"Expected [{sample.key}] to be in the range [{min},{max}] and it was [{sample.count}]");
-            }
-
-            foreach (var sample in samples)
-            {
-                Assert.True(sample.count >= min && sample.count <= max, errorMessage.ToString());
-            }
-        }
-
         [Theory]
+        [InlineData(2)]
         [InlineData(3)]
         [InlineData(6)]
         [InlineData(12)]
@@ -59,11 +23,11 @@ namespace UtilsTests
 
             var rolls = new int[numRolls];
 
-            var generator = new RandomNumberGenerator();
+            var generator = new DieBuilder(nameof(ARandomDice_ShouldHaveAGoodDistribution), Die.RandomiserReset.Full);
 
-            for (int i = 1; i < numRolls; i++)
+            for (int i = 0; i < numRolls; i++)
             {
-                rolls[i] = generator.Dice(points);
+                rolls[i] = generator.Dice(points).Random;
             }
 
             var keys = new List<int>();
@@ -93,31 +57,32 @@ namespace UtilsTests
 
             foreach (var sample in samples)
             {
-                Assert.True(sample.count >= min && sample.count <= max, errorMessage.ToString());
+               Assert.True(sample.count >= min && sample.count <= max, errorMessage.ToString());
             }
         }
 
         [Fact]
-        public void ARandomEnum_ShouldHaveAGoodDistribution()
+        public void ARandomCompassDirection_ShouldHaveAGoodDistribution()
         {
-            var enumItems = EnumHelpers.Values<Compass4Points>().ToList();
+            var enumItems = EnumHelpers.Values<Compass8Points>().ToList();
+            enumItems.Remove(Compass8Points.Undefined);
             var enumCount = enumItems.Count;
 
             int numRolls = enumCount * 1000;
 
-            var rolls = new Compass4Points[numRolls];
+            var rolls = new Compass8Points[numRolls];
 
-            var generator = new RandomNumberGenerator();
+            var generator = new DieBuilder(nameof(ARandomCompassDirection_ShouldHaveAGoodDistribution), Die.RandomiserReset.Full);
 
-            for (int i = 1; i < numRolls; i++)
+            for (int i = 0; i < numRolls; i++)
             {
-                rolls[i] = generator.Enum<Compass4Points>();
+                rolls[i] = generator.Compass8Die.Random;
             }
 
             var samples = enumItems.Select(enumItem =>
             {
                 var count = rolls.Count(roll => enumItem == roll);
-                return (enumItem: enumItem, count: count);
+                return (enumItem, count);
             }).ToList();
 
             var midpoint = 1000;
@@ -128,12 +93,12 @@ namespace UtilsTests
             var errorMessage = new StringBuilder();
             foreach (var sample in samples)
             {
-                errorMessage.AppendLine($"Expected [{sample.enumItem}] to be in the range [{min},{max}] and it was [{sample.count}]");
+                errorMessage.AppendLine($"Expected [{sample.Item1}] to be in the range [{min},{max}] and it was [{sample.Item2}]");
             }
 
             foreach (var sample in samples)
             {
-                Assert.True(sample.count >= min && sample.count <= max, errorMessage.ToString());
+                Assert.True(sample.Item2 >= min && sample.Item2 <= max, errorMessage.ToString());
             }
         }
     }

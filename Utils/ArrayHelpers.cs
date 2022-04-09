@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Utils.Coordinates;
 
 namespace Utils
@@ -20,11 +21,18 @@ namespace Utils
             return (array.RowUpperBound(), array.ColumnUpperBound());
         }
 
-        public static IEnumerable<T> SliceRow<T>(this T[,] array, int row)
+        public static T[] ExtractRow<T>(this T[,] matrix, int row)
         {
-            for (var column = 0; column <= array.ColumnUpperBound(); column++)
+            var extractedRow = matrix.SliceRow(row).ToArray();
+            return extractedRow;
+        }
+
+        public static IEnumerable<T> SliceRow<T>(this T[,] matrix, int row)
+        {
+            var columnUpperBound = matrix.ColumnUpperBound();
+            for (var column = 0; column <= columnUpperBound; column++)
             {
-                yield return array[row, column];
+                yield return matrix[row, column];
             }
         }
 
@@ -66,6 +74,25 @@ namespace Utils
             }
 
             return clone;
+        }
+
+        public static T[,] Duplicate<T>(this T[,] matrix)
+        {
+            var maxRow = matrix.RowUpperBound();
+            var maxCol = matrix.ColumnUpperBound();
+            var duplicate = new T[maxRow + 1, maxCol + 1];
+
+            for (var row = 0; row <= maxRow; row++)
+            {
+                for (var col = 0; col <= maxCol; col++)
+                {
+                    var value = matrix[row, col];
+
+                    duplicate[row, col] = value;
+                }
+            }
+
+            return duplicate;
         }
     }
 }

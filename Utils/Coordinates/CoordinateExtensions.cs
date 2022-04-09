@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Utils.Enums;
 
 namespace Utils.Coordinates
@@ -60,11 +61,9 @@ namespace Utils.Coordinates
             }
         }
 
-        public static Coordinate ToCoordinates(this string coordinates)
+        public static Coordinate ToCoordinates(this string coordinate)
         {
-            var parts = coordinates.Split('(', ',', ')');
-            var row = int.Parse(parts[1]);
-            var column = int.Parse(parts[2]);
+            var (row, column) = coordinate.FromBrackets();
 
             return new Coordinate(row, column);
         }
@@ -75,7 +74,42 @@ namespace Utils.Coordinates
                    point1.Column == point2.Column;
         }
 
-        public static Compass4Points GetStraightDirectionOfTravel(this Coordinate point1, Coordinate point2)
+        public static string FormatParameter(this Coordinate coordinates)
+        {
+            return nameof(Coordinates).FormatParameter(coordinates);
+        }
+
+        public static int GetOverlappingMax(this Coordinate point1, Coordinate point2)
+        {
+            if (point1.Row == point2.Row)
+            {
+                return Math.Max(point1.Column, point2.Column);
+            }
+
+            if (point1.Column == point2.Column)
+            {
+                return Math.Max(point1.Row, point2.Row);
+            }
+
+            throw new ArgumentException($"Points are not overlapping [{point1}], [{point2}]");
+        }
+
+        public static int GetOverlappingMin(this Coordinate point1, Coordinate point2)
+        {
+            if (point1.Row == point2.Row)
+            {
+                return Math.Min(point1.Column, point2.Column);
+            }
+
+            if (point1.Column == point2.Column)
+            {
+                return Math.Min(point1.Row, point2.Row);
+            }
+
+            throw new ArgumentException($"Points are not overlapping [{point1}], [{point2}]");
+        }
+
+        public static Compass4Points GetDirectionOfTravel(this Coordinate point1, Coordinate point2)
         {
             if (point1.Row == point2.Row)
             {

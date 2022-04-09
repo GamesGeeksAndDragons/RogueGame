@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Actors;
+using Assets.Deeds;
 using Assets.Messaging;
 using AssetsTests.Fakes;
 using Utils.Coordinates;
@@ -21,22 +22,10 @@ namespace AssetsTests
             _output = output;
         }
 
-        internal static IRandomNumberGenerator GetGenerator(int testNum)
+        internal static IDieBuilder GetGenerator(int testNum)
         {
-            var generator = new FakeRandomNumberGenerator();
-
-            switch (testNum)
-            {
-                case 1:
-                case 2:
-                    generator.PopulateEnum(Compass4Points.South);
-                    generator.PopulateDice(0, 1, 1, 1, 1, 2, 12, 2);
-                    break;
-
-                default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
-            }
-
-            return generator;
+            var name = $"{nameof(AttackWithMeleeWeapon)}_{testNum}";
+            return new DieBuilder(name);
         }
 
         [Fact]
@@ -46,25 +35,25 @@ namespace AssetsTests
 
             var testNum = 1;
             var fakeRandomNumbers = GetGenerator(testNum);
-            var registry = new DispatchRegistry();
-            var dispatcher = new Dispatcher(registry);
+            var dispatchRegistry = new DispatchRegistry();
+            var actionRegistry = new ActionRegistry();
+            var dispatcher = new Dispatcher(dispatchRegistry);
             var fakeLogger = new FakeLogger(_output);
-            var mazeDescriptor = FakeMazeDescriptorBuilder.Build(1, 1, 4, 2);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, mazeDescriptor, fakeLogger, dispatcher, registry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
             builder.Build(testNum);
 
-            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, registry, Me.FormatState(10, 10));
+            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, dispatchRegistry, actionRegistry, Me.FormatState(10, 10));
             dispatcher.EnqueueTeleport(me);
-            var monster = ActorBuilder.Build<Monster>(Coordinate.NotSet, registry, Monster.FormatState(10, 10));
+            var monster = ActorBuilder.Build<Monster>(Coordinate.NotSet, dispatchRegistry, actionRegistry,  Monster.FormatState(10, 10));
             dispatcher.EnqueueTeleport(monster);
             dispatcher.Dispatch();
 
-            var weapon = new MeleeWeapon(fakeRandomNumbers, registry, dispatcher, state);
+            var weapon = new MeleeWeapon(fakeRandomNumbers, dispatchRegistry, actionRegistry, dispatcher, state);
             dispatcher.EnqueueUse(weapon, Compass8Points.East);
             dispatcher.Dispatch();
 
-            monster = (Monster)registry.GetDispatchee(monster.UniqueId);
+            monster = (Monster)dispatchRegistry.GetDispatchee(monster.UniqueId);
             var expected = "HitPoints [7], ArmourClass [10]";
             var actual = $"HitPoints [{monster.HitPoints}], ArmourClass [{monster.ArmourClass}]";
 

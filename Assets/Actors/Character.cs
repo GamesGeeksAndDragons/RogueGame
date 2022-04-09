@@ -1,20 +1,24 @@
-﻿using Assets.Messaging;
+﻿using Assets.Deeds;
+using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using Utils.Dispatching;
+using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
     internal abstract class Character<T> : Dispatchee<T> 
         where T : class, IDispatchee, ICloner<T>
     {
-        protected Character(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
+        protected Character(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+            : base(coordinates, dispatchRegistry, actionRegistry)
         {
             var extracted = state.ToParameters();
 
             UpdateState(this as T, extracted);
         }
         
-        public override void UpdateState(T t, ExtractedParameters state)
+        public override void UpdateState(T t, Parameters state)
         {
             var character = t as Character<T>;
             if (state.HasValue(nameof(HitPoints))) character.HitPoints = state.ToValue<int>(nameof(HitPoints));
@@ -30,7 +34,7 @@ namespace Assets.Actors
             if (hitPoints.HasValue) state += nameof(HitPoints).FormatParameter(hitPoints.Value);
             if (armourClass.HasValue) state += nameof(ArmourClass).FormatParameter(armourClass.Value);
 
-            return state + Dispatchee<T>.FormatState(coordinates, uniqueId);
+            return state + FormatState(coordinates, uniqueId);
         }
 
         public int ArmourClass { get; protected internal set; }
@@ -38,26 +42,11 @@ namespace Assets.Actors
 
         protected internal override void RegisterActions()
         {
-            RegisterAction(Actions.Strike, StrikeImpl);
+            ActionRegistry.RegisterAction(this, Deed.Teleport);
+            ActionRegistry.RegisterAction(this, Deed.Move);
+            ActionRegistry.RegisterAction(this, Deed.Strike);
 
             base.RegisterActions();
-        }
-
-        private void StrikeImpl(ExtractedParameters parameters)
-        {
-            var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
-            if (coordindates != Coordinates) return;
-
-            var hit = parameters.ToValue<int>(nameof(HitPoints));
-            if (hit < ArmourClass) return;
-
-            var damage = parameters.ToValue<int>("Damage");
-            var newHitPoints = HitPoints - damage;
-
-            //var newState = FormatState(hitPoints: newHitPoints);
-            //var newCharacter = Clone(newState);
-
-            //Registry.Register(newCharacter);
         }
     }
 }

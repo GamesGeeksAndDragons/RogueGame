@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Actors;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
 
@@ -14,7 +15,7 @@ namespace Assets.Tiles
         public const int TilesToCheckIfRoomTooClose = 4;
         public const int TilesToCheckIfEdgeTooClose = 3;
 
-        internal static Tiles PositionRoomsInTiles(this Tiles tiles, DispatchRegistry registry, IEnumerable<Room> rooms)
+        internal static Tiles PositionRoomsInTiles(this Tiles tiles, IEnumerable<Room> rooms)
         {
             var tilesWithRooms = tiles;
 
@@ -37,12 +38,12 @@ namespace Assets.Tiles
                     if (IsTooCloseToEdge(tilesWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
                     if (IsTooCloseToARoom(tilesWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
 
-                    var changes = PositionRoom(room, registry, topLeft, topRight, bottomLeft);
+                    var changes = PositionRoom(room, topLeft);
                     tilesChange.AddRange(changes);
                     roomIsPositioned = true;
                 }
 
-                var changedTileState = tilesChange.ToTilesState();
+                var changedTileState = tilesChange.ToStateChange();
                 tilesWithRooms = tilesWithRooms.Clone(changedTileState);
             }
 
@@ -54,7 +55,7 @@ namespace Assets.Tiles
             return topLeft != topRight && topRight != bottomLeft && bottomLeft != bottomRight && bottomRight != Coordinate.NotSet;
         }
 
-        private static bool IsSurroundedByRock(Coordinate coordinate, Tiles tiles, int tilesToCheck, int boundaryRow, int boundaryColumn)
+        private static bool IsSurroundedByRock(Coordinate coordinate, Tiles tiles, int tilesToCheck, int boundaryRow, int boundaryColumn, DispatchRegistry registry)
         {
             var minRow = Math.Max(coordinate.Row - tilesToCheck, 0);
             var maxRow = Math.Min(coordinate.Row + tilesToCheck, boundaryRow);
@@ -71,7 +72,7 @@ namespace Assets.Tiles
                     if (name.IsNullOrEmpty()) return false;
 
                     // really want isPaper and isScissors
-                    var isRock = tiles.IsTileType<Rock>(checkCoordinate);
+                    var isRock = tiles.IsTileType<Rock>(checkCoordinate, registry);
                     if (!isRock) return false;
                 }
             }
@@ -100,14 +101,14 @@ namespace Assets.Tiles
             return IsTooCloseToEdge(tiles, bottomRight, TilesToCheckIfEdgeTooClose);
         }
 
-        private static bool IsTooCloseToARoom(Tiles tiles, Coordinate topLeft, Coordinate topRight,
-            Coordinate bottomLeft, Coordinate bottomRight)
+        private static bool IsTooCloseToARoom(Tiles tiles, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
         {
+            var dispatchRegistry = tiles.DispatchRegistry;
             var (row, column) = tiles.UpperBounds;
-            if (!IsSurroundedByRock(topLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            if (!IsSurroundedByRock(topRight, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            if (!IsSurroundedByRock(bottomLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            return !IsSurroundedByRock(bottomRight, tiles, TilesToCheckIfRoomTooClose, row, column);
+            if (!IsSurroundedByRock(topLeft, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
+            if (!IsSurroundedByRock(topRight, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
+            if (!IsSurroundedByRock(bottomLeft, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
+            return !IsSurroundedByRock(bottomRight, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry);
         }
 
         private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight)
@@ -117,7 +118,7 @@ namespace Assets.Tiles
             {
                 var start = tiles.RandomRockTile();
 
-                var (topLeft, topRight, bottomLeft, bottomRight) = room.GetCorners();
+                var (topLeft, topRight, bottomLeft, bottomRight) = room.GetSize();
                 topLeft += start;
                 topRight += start;
                 bottomLeft += start;
@@ -138,26 +139,24 @@ namespace Assets.Tiles
             return (Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet);
         }
 
-        private static IList<(string Name, Coordinate coordinates)> PositionRoom(Room room, DispatchRegistry registry,
-            Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft)
+        private static IList<(string Name, Coordinate coordinates)> PositionRoom(Room room, Coordinate topLeft)
         {
-            var rows = bottomLeft.Row - topLeft.Row;
-            var columns = topRight.Column - topLeft.Column;
+            var rows = room.NumberRows;
+            var columns = room.NumberColumns;
 
             var tileChanges = new List<(string Name, Coordinate coordinates)>();
 
-            for (var row = 0; row <= rows; row++)
+            for (var row = 0; row < rows; row++)
             {
-                for (var column = 0; column <= columns; column++)
+                for (var column = 0; column < columns; column++)
                 {
                     var roomCoordinates = new Coordinate(row, column);
-                    var roomTileName = room.Tiles[roomCoordinates];
-                    var mazeCoordinates = topLeft + roomCoordinates;
+                    var roomTile = room[roomCoordinates];
 
+                    var mazeCoordinates = topLeft + roomCoordinates;
                     (string Name, Coordinate Coordinates) tile = (null, mazeCoordinates);
-                    if (!roomTileName.IsNullOrEmpty())
+                    if (!roomTile.UniqueId.IsNullOrEmpty())
                     {
-                        var roomTile = registry.GetDispatchee(roomTileName);
                         var state = Maze.FormatState(mazeCoordinates);
                         var mazeTile = roomTile.CloneDispatchee(state);
                         tile.Name = mazeTile.UniqueId;

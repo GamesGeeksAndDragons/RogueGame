@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Assets.Deeds;
 using Assets.Messaging;
+using Assets.Rooms;
 using log4net;
 using Utils;
 using Utils.Random;
@@ -9,36 +12,38 @@ namespace Assets.Mazes
 {
     public class MazeBuilder
     {
-        private readonly IRandomNumberGenerator _randomNumberGenerator;
+        private readonly IDieBuilder _dieBuilder;
         private readonly RoomBuilder _roomBuilder;
         private readonly IMazeDescriptor _descriptor;
         private readonly ILog _logger;
-        private readonly DispatchRegistry _registry;
+        private readonly DispatchRegistry _dispatchRegistry;
+        private readonly ActionRegistry _actionRegistry;
 
-        public MazeBuilder(IRandomNumberGenerator randomNumberGenerator, RoomBuilder roomBuilder, IMazeDescriptor descriptor, ILog logger, DispatchRegistry registry)
+        internal MazeBuilder(IDieBuilder dieBuilder, RoomBuilder roomBuilder, ILog logger, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
         {
-            randomNumberGenerator.ThrowIfNull(nameof(randomNumberGenerator));
+            dieBuilder.ThrowIfNull(nameof(dieBuilder));
             roomBuilder.ThrowIfNull(nameof(roomBuilder));
-            descriptor.ThrowIfNull(nameof(descriptor));
             logger.ThrowIfNull(nameof(logger));
-            registry.ThrowIfNull(nameof(registry));
+            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
 
-            _randomNumberGenerator = randomNumberGenerator;
+            _dieBuilder = dieBuilder;
             _roomBuilder = roomBuilder;
-            _descriptor = descriptor;
+            _descriptor = new MazeDescriptor();
             _logger = logger;
-            _registry = registry;
+            _dispatchRegistry = dispatchRegistry;
+            _actionRegistry = actionRegistry;
         }
 
         private IList<Room> BuildRooms(MazeDetail detail)
         {
             var rooms = new List<Room>();
 
-            var numRooms = _randomNumberGenerator.Between(detail.MinNumRooms, detail.MaxNumRooms);
+            var dice = _dieBuilder.Between(detail.MinNumRooms, detail.MaxNumRooms);
+            var numRooms = dice.Random;
 
             for (var i = 0; i < numRooms; i++)
             {
-                var room = _roomBuilder.BuildRoom(detail.BlocksPerRoom, detail.TilesPerBlock);
+                var room = _roomBuilder.BuildRoom(KnownRooms.Square);
                 rooms.Add(room);
             }
 
@@ -47,48 +52,33 @@ namespace Assets.Mazes
 
         private IList<Room> AddDoors(IList<Room> rooms)
         {
-            var roomsWithoutDoors = new List<Room>(rooms);
-            var roomsWithDoors = new List<Room>(rooms.Count);
+            var roomsWithDoors = new List<Room>(rooms);
 
-            Room RoomWithoutDoor(Room first)
+            for (var index = 0; index < roomsWithDoors.Count; index++)
             {
-                return roomsWithoutDoors.FirstOrDefault(room =>
-                {
-                    var doors = first == null ?
-                        room.Doors :
-                        room.Doors.Where(doorId => doorId != first?.Name).ToList();
-                    return doors.Count == 0;
-                });
-            }
+                var room = roomsWithDoors[index];
 
-            (Room first, Room second) RoomsWithoutAnyDoors()
-            {
-                var room1 = RoomWithoutDoor(null);
-                if (room1 != null) roomsWithoutDoors.Remove(room1);
+                var doorNumber = index + 1;
+                var roomWithDoor = room.AddDoor(doorNumber);
+                roomsWithDoors[index] = roomWithDoor;
 
-                var room2 = RoomWithoutDoor(room1);
-                if (room2 != null) roomsWithoutDoors.Remove(room2);
-
-                return (room1, room2);
-            }
-
-            var doorNumber = 0;
-            void AddDoors((Room first, Room second) roomsWithNoDoors)
-            {
-                var room1 = roomsWithNoDoors.first?.AddDoor(++doorNumber);
-                if (room1 != null) roomsWithDoors.Add(room1);
-
-                var room2 = roomsWithNoDoors.second?.AddDoor(doorNumber);
-                if (room2 != null) roomsWithDoors.Add(room2);
-            }
-
-            while (roomsWithoutDoors.Count > 1)
-            {
-                var roomsWithNoDoors = RoomsWithoutAnyDoors();
-                AddDoors(roomsWithNoDoors);
+                var connectedRoom = GetRoomToConnectTo(roomWithDoor);
+                var connectedRoomIndex = roomsWithDoors.IndexOf(connectedRoom);
+                connectedRoom = connectedRoom.AddDoor(doorNumber);
+                roomsWithDoors[connectedRoomIndex] = connectedRoom;
             }
 
             return roomsWithDoors;
+
+            Room GetRoomToConnectTo(Room toConnect)
+            {
+                var connectableRooms = roomsWithDoors.Where(room => !room.Name.IsSame(toConnect.Name)).ToArray();
+                if (connectableRooms.Length == 0) throw new ArgumentException("AddDoors: Unable to find a room to add a door to.");
+                if (connectableRooms.Length == 1) return connectableRooms.First();
+
+                var randomRoomIndex = _dieBuilder.Between(1, connectableRooms.Length).Random - 1;
+                return connectableRooms[randomRoomIndex];
+            }
         }
 
         internal Maze BuildMazeWithRoomsAndDoors(int level)
@@ -98,10 +88,10 @@ namespace Assets.Mazes
             var rooms = BuildRooms(mazeDetail);
             var roomsWithDoors = AddDoors(rooms);
 
-            var maxTileRows = rooms.Sum(room => room.Tiles.UpperBounds.Row) * 2;
-            var maxTileCols = rooms.Sum(room => room.Tiles.UpperBounds.Column) * 2;
+            var maxTileRows = rooms.Sum(room => room.NumberRows) * rooms.Count;
+            var maxTileCols = rooms.Sum(room => room.NumberColumns) * rooms.Count;
 
-            var mazeOfRocks = new Maze(_registry, _randomNumberGenerator, maxTileRows, maxTileCols);
+            var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, maxTileRows, maxTileCols);
             var mazeWithDisconnectedRooms = mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
 
             return mazeWithDisconnectedRooms;

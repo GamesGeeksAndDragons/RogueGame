@@ -1,0 +1,55 @@
+﻿using System;
+using System.Linq;
+using Assets.Mazes;
+using Utils;
+using Xunit.Abstractions;
+
+namespace AssetsTests.MazeTests.Helpers
+{
+    internal static class TestHelper
+    {
+        internal static void ThrowUnknownTest(int testNumber) => throw new ArgumentException($"Unknown test [{testNumber}]");
+
+        private static void OutputDivider(this ITestOutputHelper output, int lineLength) =>
+            output.WriteLine('='.ToPaddedString(lineLength));
+
+        private static void Output(this string maze, ITestOutputHelper output, int lineLength)
+        {
+            output.OutputDivider(lineLength);
+            output.WriteLine(maze);
+        }
+
+
+        internal static void OutputMazes(this ITestOutputHelper output, params string[] mazes)
+        {
+            var longestLength = GetLongestLineLength();
+
+            foreach (var maze in mazes)
+            {
+                maze.Output(output, longestLength);
+            }
+
+            output.OutputDivider(longestLength);
+
+            int GetLongestLineLength()
+            {
+                var longest = int.MaxValue;
+
+                foreach (var maze in mazes)
+                {
+                    int length = maze.SplitIntoLines().Max(line => line.Length);
+                    if (length < longest) longest = length;
+                }
+
+                return longest;
+            }
+        }
+
+        internal static void OutputMazes(this ITestOutputHelper output, params Maze[] mazes)
+        {
+            var stringMazes = mazes.Select(maze => maze.ToString()).ToArray();
+
+            output.OutputMazes(stringMazes);
+        }
+    }
+}

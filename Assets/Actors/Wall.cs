@@ -1,9 +1,10 @@
 ﻿using System;
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Enums;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
@@ -11,14 +12,21 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; private set; }
 
-        internal Wall(Coordinate coordinates, DispatchRegistry registry, string state) : base(coordinates, registry)
+        internal Wall(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+            : base(coordinates, dispatchRegistry, actionRegistry)
         {
             WallType = state.ToEnum<WallDirection>();
         }
 
-        internal Wall(Wall wall) : base(wall.Coordinates, wall.Registry)
+        internal Wall(Wall wall) 
+            : base(wall.Coordinates, wall.DispatchRegistry, wall.ActionRegistry)
         {
             WallType = wall.WallType;
+        }
+
+        public override Wall Create()
+        {
+            return ActorBuilder.Build(this);
         }
 
         public override void UpdateState(Wall wall, ExtractedParameters state)
@@ -84,15 +92,31 @@ namespace Assets.Actors
                     case WallDirection.BottomLeftCorner:
                     case WallDirection.BottomRightCorner:
                         return true;
+                    default:
+                        throw new ArgumentException($"Unexpected WallType [{WallType}]");
                 }
-
-                throw new ArgumentException($"Unexpected WallType [{WallType}]");
             }
         }
 
-        public override Wall Create()
+        public Wall Rotate()
         {
-            return ActorBuilder.Build(this);
+            WallDirection GetRotatedDirection()
+            {
+                switch (WallType)
+                {
+                    case WallDirection.Horizontal: return WallDirection.Vertical;
+                    case WallDirection.Vertical: return WallDirection.Horizontal;
+                    case WallDirection.TopLeftCorner: return WallDirection.TopRightCorner;
+                    case WallDirection.TopRightCorner: return WallDirection.BottomRightCorner;
+                    case WallDirection.BottomLeftCorner: return WallDirection.TopLeftCorner;
+                    case WallDirection.BottomRightCorner: return WallDirection.BottomLeftCorner;
+                    default:
+                        throw new ArgumentException($"Unexpected WallType [{WallType}]");
+                }
+            }
+
+            var newDirection = GetRotatedDirection().ToString();
+            return new Wall(Coordinates, DispatchRegistry, ActionRegistry, newDirection);
         }
     }
 }

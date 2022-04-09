@@ -1,42 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Actors;
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
+using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Random;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string name, string value)>;
+using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Tiles
 {
-    class Tiles : ICloner<Tiles>
+    public class Tiles : ICloner<Tiles>
     {
-        protected readonly DispatchRegistry Registry;
-        protected readonly IRandomNumberGenerator RandomNumbers;
-        protected string[,] TilesRegistry;
+        protected internal readonly DispatchRegistry DispatchRegistry;
+        protected internal readonly ActionRegistry ActionRegistry;
 
-        public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
+        protected readonly IDieBuilder DieBuilder;
+        protected string[,] TilesRegistryOfDispatcheeNames;
 
-        internal Tiles(int maxRows, int maxColumns, DispatchRegistry registry, IRandomNumberGenerator randomNumbers)
+        public (int Row, int Column) UpperBounds => TilesRegistryOfDispatcheeNames.UpperBounds();
+
+        internal Tiles(int maxRows, int maxColumns, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
         {
-            randomNumbers.ThrowIfNull(nameof(randomNumbers));
-            registry.ThrowIfNull(nameof(registry));
+            dieBuilder.ThrowIfNull(nameof(dieBuilder));
+            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
+            actionRegistry.ThrowIfNull(nameof(actionRegistry));
             maxRows.ThrowIfBelow(0, nameof(maxRows));
             maxColumns.ThrowIfBelow(0, nameof(maxColumns));
 
-            Registry = registry;
-            RandomNumbers = randomNumbers;
+            DispatchRegistry = dispatchRegistry;
+            ActionRegistry = actionRegistry;
+            DieBuilder = dieBuilder;
 
-            TilesRegistry = new string[maxRows, maxColumns];
+            TilesRegistryOfDispatcheeNames = new string[maxRows, maxColumns];
             DefaultTilesToRock(maxRows, maxColumns);
+        }
+
+        internal Tiles(string[,] registryOfDispatcheeNames, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        {
+            dieBuilder.ThrowIfNull(nameof(dieBuilder));
+            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
+            registryOfDispatcheeNames.RowUpperBound().ThrowIfBelow(1, nameof(registryOfDispatcheeNames));
+            registryOfDispatcheeNames.ColumnUpperBound().ThrowIfBelow(1, nameof(registryOfDispatcheeNames));
+
+            DispatchRegistry = dispatchRegistry;
+            ActionRegistry = actionRegistry;
+            DieBuilder = dieBuilder;
+            TilesRegistryOfDispatcheeNames = registryOfDispatcheeNames;
         }
 
         protected Tiles(Tiles tiles)
         {
-            Registry = tiles.Registry;
-            RandomNumbers = tiles.RandomNumbers;
-            TilesRegistry = tiles.TilesRegistry.CloneStrings();
+            DispatchRegistry = tiles.DispatchRegistry;
+            ActionRegistry = tiles.ActionRegistry;
+            DieBuilder = tiles.DieBuilder;
+            TilesRegistryOfDispatcheeNames = tiles.TilesRegistryOfDispatcheeNames.CloneStrings();
         }
 
         private void DefaultTilesToRock(int maxRows, int maxColumns)
@@ -46,24 +66,24 @@ namespace Assets.Tiles
                 for (var column = 0; column < maxColumns; column++)
                 {
                     var rockCoordinates = new Coordinate(row, column);
-                    TilesRegistry.ThrowIfOutsideBounds(rockCoordinates, nameof(TilesRegistry));
+                    TilesRegistryOfDispatcheeNames.ThrowIfOutsideBounds(rockCoordinates, nameof(TilesRegistryOfDispatcheeNames));
 
-                    var rock = ActorBuilder.Build<Rock>(rockCoordinates, Registry, "");
+                    var rock = ActorBuilder.Build<Rock>(rockCoordinates, DispatchRegistry, ActionRegistry, "");
                     this[rock.Coordinates] = rock.UniqueId;
                 }
             }
         }
 
-        protected Wall CreateWall(Coordinate coordinates, WallDirection direction)
+        internal Wall CreateWall(Coordinate coordinates, WallDirection direction)
         {
-            this[coordinates].ThrowIfNull($"TilesRegistry[{coordinates}]");
+            this[coordinates].ThrowIfNull($"TilesRegistryOfDispatcheeNames[{coordinates}]");
 
-            return ActorBuilder.Build<Wall>(coordinates, Registry, direction.ToString());
+            return ActorBuilder.Build<Wall>(coordinates, DispatchRegistry, ActionRegistry, direction.ToString());
         }
 
         public bool IsInside(Coordinate coordinate)
         {
-            return TilesRegistry.IsInside(coordinate);
+            return TilesRegistryOfDispatcheeNames.IsInside(coordinate);
         }
 
         public Coordinate RandomTile(Predicate<Coordinate> tileCondition)
@@ -76,11 +96,11 @@ namespace Assets.Tiles
 
             do
             {
-                var row = RandomNumbers.Dice(maxRows);
-                var col = RandomNumbers.Dice(maxColumns);
+                var row = DieBuilder.Dice(maxRows).Random;
+                var col = DieBuilder.Dice(maxColumns).Random;
 
                 coordinates = new Coordinate(row, col);
-                found = TilesRegistry.IsInside(coordinates);
+                found = TilesRegistryOfDispatcheeNames.IsInside(coordinates);
                 if (found)
                 {
                     found = tileCondition(coordinates);
@@ -97,12 +117,12 @@ namespace Assets.Tiles
 
         public bool TileExists(string name)
         {
-            var (rowMax, colMax) = TilesRegistry.UpperBounds();
+            var (rowMax, colMax) = TilesRegistryOfDispatcheeNames.UpperBounds();
             for (var row = 0; row <= rowMax; row++)
             {
                 for (var col = 0; col <= colMax; col++)
                 {
-                    var tile = TilesRegistry[row, col];
+                    var tile = TilesRegistryOfDispatcheeNames[row, col];
                     if (tile == name) return true;
                 }
             }
@@ -115,51 +135,42 @@ namespace Assets.Tiles
             return RandomTile(IsEmptyTile);
         }
 
-        public bool IsTileType<T>(Coordinate coordinates)
-        {
-            var name = this[coordinates];
-            if (name.IsNullOrEmpty()) return false;
-
-            var dispatchee = Registry.GetDispatchee(name);
-            return dispatchee.Name == typeof(T).Name;
-        }
-
         public Coordinate RandomRockTile()
         {
-            return RandomTile(coordinates => !IsEmptyTile(coordinates) && IsTileType<Rock>(coordinates));
+            return RandomTile(coordinates => !IsEmptyTile(coordinates) && this.IsRock(coordinates, DispatchRegistry));
         }
 
         public IList<string> GetTilesOfType<TTileType>()
         {
-            var tiles = TilesRegistry.GetTilesOfType<TTileType>(Registry.GetDispatchee);
+            var tiles = TilesRegistryOfDispatcheeNames.GetTilesOfType<TTileType>(DispatchRegistry.GetDispatchee);
             return tiles;
         }
 
         public (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) GetCorners()
         {
-            var (maxRow, maxColumn) = TilesRegistry.UpperBounds();
+            var (maxRow, maxColumn) = TilesRegistryOfDispatcheeNames.UpperBounds();
 
-            var topLeft  = Registry.GetDispatchee(TilesRegistry[0, 0]);
-            var topRight = Registry.GetDispatchee(TilesRegistry[0, maxColumn]);
-            var bottomLeft = Registry.GetDispatchee(TilesRegistry[maxRow, 0]);
-            var bottomRight = Registry.GetDispatchee(TilesRegistry[maxRow, maxColumn]);
+            var topLeft  = DispatchRegistry.GetDispatchee(TilesRegistryOfDispatcheeNames[0, 0]);
+            var topRight = DispatchRegistry.GetDispatchee(TilesRegistryOfDispatcheeNames[0, maxColumn]);
+            var bottomLeft = DispatchRegistry.GetDispatchee(TilesRegistryOfDispatcheeNames[maxRow, 0]);
+            var bottomRight = DispatchRegistry.GetDispatchee(TilesRegistryOfDispatcheeNames[maxRow, maxColumn]);
 
             return (topLeft.Coordinates, topRight.Coordinates, bottomLeft.Coordinates, bottomRight.Coordinates);
         }
 
         public string this[Coordinate point]
         {
-            get => TilesRegistry[point.Row, point.Column];
-            set => TilesRegistry[point.Row, point.Column] = value;
+            get => TilesRegistryOfDispatcheeNames[point.Row, point.Column];
+            set => TilesRegistryOfDispatcheeNames[point.Row, point.Column] = value;
         }
 
         public override string ToString()
         {
-            return TilesRegistry.Print(uniqueId =>
+            return TilesRegistryOfDispatcheeNames.Print(uniqueId =>
             {
                 if (uniqueId == null) return "";
 
-                var dispatchee = Registry.GetDispatchee(uniqueId);
+                var dispatchee = DispatchRegistry.GetDispatchee(uniqueId);
 
                 return dispatchee.ToString();
             });
@@ -168,7 +179,7 @@ namespace Assets.Tiles
         internal static Tiles Grow(Tiles tiles)
         {
             var (maxRow, maxColumn) = tiles.UpperBounds;
-            var grown = new Tiles(maxRow * 2, maxColumn * 2, tiles.Registry, tiles.RandomNumbers);
+            var grown = new Tiles(maxRow * 2, maxColumn * 2, tiles.DispatchRegistry, tiles.ActionRegistry, tiles.DieBuilder);
 
             for (var row = 0; row <= maxRow; row++)
             {
@@ -200,15 +211,10 @@ namespace Assets.Tiles
 
         public virtual void UpdateState(Tiles tiles, ExtractedParameters state)
         {
-            if (state.HasValue(nameof(Tiles)))
+            foreach (var (name, pos) in state)
             {
-                var newTiles = state.ToString(nameof(Tiles));
-
-                var tileValues = newTiles.ToTiles();
-                foreach (var (name, coordinates) in tileValues)
-                {
-                    tiles[coordinates] = name;
-                }
+                var coordinates = pos.ToCoordinates();
+                tiles[coordinates] = name;
             }
         }
     }
