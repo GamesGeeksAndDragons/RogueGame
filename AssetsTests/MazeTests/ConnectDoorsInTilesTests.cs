@@ -1,42 +1,27 @@
-﻿using System;
-using Assets.Deeds;
-using Assets.Messaging;
-using Assets.Tiles;
+﻿using Assets.Tiles;
+using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
-using Utils;
-using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.MazeTests
 {
-    public class ConnectDoorsInTilesTests
+    public class ConnectDoorsInTilesTests : TilesTestHelper
     {
-        private readonly ITestOutputHelper _output;
-
-        public ConnectDoorsInTilesTests(ITestOutputHelper output)
+        public ConnectDoorsInTilesTests(ITestOutputHelper output) : base(output)
         {
-            _output = output;
         }
 
-        private void ConnectDoorTestsImpl(ITwoDoorConnectingTests testDefinition)
+        protected override void TestAct()
         {
-            var dispatchRegistry = new DispatchRegistry();
-            var actionRegistry = new ActionRegistry();
-            var dieBuilder = new DieBuilder();
+            Tiles = Tiles.ConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
+        }
 
-            var dispatchees = dispatchRegistry.Register(actionRegistry, testDefinition.StartingMaze);
-            var tilesRegistry = dispatchees.ExtractTilesRegistry();
-            var tiles = new Tiles(tilesRegistry, dispatchRegistry, actionRegistry, dieBuilder);
-
-            _output.OutputMazes(testDefinition.StartingMaze);
-
-            tiles = tiles.ConnectDoors(dispatchRegistry, actionRegistry, dieBuilder);
-            var actual = tiles.ToString();
-            
-            _output.OutputMazes(testDefinition.ExpectedMaze, actual);
-
-            Assert.Equal(testDefinition.ExpectedMaze, actual);
+        private void ConnectDoorTestsImpl(IMazeExpectations expectations)
+        {
+            TestArrange(expectations);
+            TestAct();
+            TestAssert(expectations);
         }
 
         [Theory]
@@ -44,9 +29,9 @@ namespace AssetsTests.MazeTests
         [InlineData(2)]
         public void ConnectDoorsWithOneLine(int testNumber)
         {
-            var testDefinition = OneConnectingLineTestDefinitions.GetExpectations(testNumber);
+            var expectations = OneConnectingLineTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
 
         [Theory]
@@ -54,9 +39,9 @@ namespace AssetsTests.MazeTests
         [InlineData(2)]
         public void ConnectDoorsWithTwoLines(int testNumber)
         {
-            var testDefinition = TwoConnectingLinesTestDefinitions.GetExpectations(testNumber);
+            var expectations = TwoConnectingLinesTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
 
         [Theory]
@@ -66,9 +51,9 @@ namespace AssetsTests.MazeTests
         [InlineData(4)]
         public void ConnectDoorsWithThreeLines(int testNumber)
         {
-            var testDefinition = ThreeConnectingLinesTestDefinitions.GetExpectations(testNumber);
+            var expectations = ThreeConnectingLinesTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
 
         [Theory]
@@ -78,9 +63,9 @@ namespace AssetsTests.MazeTests
         [InlineData(4)]
         public void ConnectDoorsWithFourLines(int testNumber)
         {
-            var testDefinition = FourConnectingLinesTestDefinitions.GetExpectations(testNumber);
+            var expectations = FourConnectingLinesTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
 
         [Theory]
@@ -90,9 +75,9 @@ namespace AssetsTests.MazeTests
         [InlineData(4)]
         public void ConnectDoorsWithFiveLines(int testNumber)
         {
-            var testDefinition = FiveConnectingLinesTestDefinitions.GetExpectations(testNumber);
+            var expectations =FiveConnectingLinesTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
 
         [Theory]
@@ -102,9 +87,9 @@ namespace AssetsTests.MazeTests
         [InlineData(5)]
         public void ConnectMultipleDoors(int testNumber)
         {
-            var testDefinition = MultipleConnectingDoorsTestDefinitions.GetExpectations(testNumber);
+            var expectations = MultipleConnectingDoorsTestDefinitions.GetExpectations(testNumber);
 
-            ConnectDoorTestsImpl(testDefinition);
+            ConnectDoorTestsImpl(expectations);
         }
     }
 }

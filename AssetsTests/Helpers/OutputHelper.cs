@@ -4,12 +4,10 @@ using Assets.Mazes;
 using Utils;
 using Xunit.Abstractions;
 
-namespace AssetsTests.MazeTests.Helpers
+namespace AssetsTests.Helpers
 {
-    internal static class TestHelper
+    internal static class OutputHelper
     {
-        internal static void ThrowUnknownTest(int testNumber) => throw new ArgumentException($"Unknown test [{testNumber}]");
-
         private static void OutputDivider(this ITestOutputHelper output, int lineLength) =>
             output.WriteLine('='.ToPaddedString(lineLength));
 

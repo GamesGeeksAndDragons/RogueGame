@@ -3,8 +3,9 @@ using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
+using Utils.Dispatching;
 using Utils.Enums;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
@@ -12,7 +13,7 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; private set; }
 
-        internal Wall(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+        internal Wall(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(coordinates, dispatchRegistry, actionRegistry)
         {
             WallType = state.ToEnum<WallDirection>();
@@ -29,41 +30,26 @@ namespace Assets.Actors
             return ActorBuilder.Build(this);
         }
 
-        public override void UpdateState(Wall wall, ExtractedParameters state)
+        public override void UpdateState(Parameters state)
         {
             if (state.HasValue(nameof(WallType)))
             {
-                wall.WallType = state.ToValue<WallDirection>(nameof(WallType));
+                WallType = state.ToValue<WallDirection>(nameof(WallType));
             }
 
-            base.UpdateState(wall, state);
+            base.UpdateState(state);
         }
-        
-        public static string FormatState(WallDirection? wallType = null, int? armourClass = null, Coordinate? coordinates = null, string uniqueId = null)
+
+        public override Parameters CurrentState()
         {
-            var state = string.Empty;
+            var state = base.CurrentState();
 
-            if (wallType.HasValue) state += nameof(WallType).FormatParameter(wallType.Value);
+            state.AppendParameter(nameof(WallType), WallType);
 
-            return state + Dispatchee<Wall>.FormatState(coordinates, uniqueId);
+            return state;
         }
 
-        public override string ToString()
-        {
-            switch (WallType)
-            {
-                case WallDirection.Horizontal: return ActorDisplay.WallHorizontal.ToString();
-                case WallDirection.Vertical: return ActorDisplay.WallVertical.ToString();
-                case WallDirection.TopLeftCorner: return ActorDisplay.WallTopLeftCorner.ToString();
-                case WallDirection.TopRightCorner: return ActorDisplay.WallTopRightCorner.ToString();
-                case WallDirection.BottomLeftCorner: return ActorDisplay.WallBottomLeftCorner.ToString();
-                case WallDirection.BottomRightCorner: return ActorDisplay.WallBottomRightCorner.ToString();
-            }
-
-            throw new ArgumentException($"Unexpected WallType [{WallType}]");
-        }
-
-        public static WallDirection GetDirection(char actor)
+        public static WallDirection GetDirection(string actor)
         {
             switch (actor)
             {

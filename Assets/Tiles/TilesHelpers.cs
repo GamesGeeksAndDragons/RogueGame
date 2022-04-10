@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Actors;
-using Assets.Mazes;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Exceptions;
+using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Tiles
 {
@@ -34,9 +34,9 @@ namespace Assets.Tiles
             return tilesType;
         }
 
-        internal static IDispatchee GetDispatchee(this Tiles tiles, Coordinate coordinates, DispatchRegistry registry)
+        internal static IDispatchee GetDispatchee(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
         {
-            if (!tiles.IsInside(coordinates) || tiles.IsEmptyTile(coordinates)) return null;
+            if (!tiles.IsInside(coordinates)) return null;
 
             var uniqueId = tiles[coordinates];
             return registry.GetDispatchee(uniqueId);
@@ -59,7 +59,7 @@ namespace Assets.Tiles
             throw new UnexpectedTileException($"Attempting to find the direction through rock for coordinates [{searchFrom}]");
         }
 
-        internal static bool IsTileType<T>(this Tiles tiles, Coordinate coordinates, DispatchRegistry registry) 
+        internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry) 
             where T : Dispatchee<T>
         {
             var name = tiles[coordinates];
@@ -69,19 +69,35 @@ namespace Assets.Tiles
             return dispatchee.IsTypeof<T>();
         }
 
-        internal static bool IsDoor(this Tiles tiles, Coordinate coordinates, DispatchRegistry registry)
+        internal static bool IsDoor(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
         {
             return tiles.IsTileType<Door>(coordinates, registry);
         }
 
-        internal static bool IsRock(this Tiles tiles, Coordinate coordinates, DispatchRegistry registry)
+        internal static bool IsRock(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
         {
             return tiles.IsTileType<Rock>(coordinates, registry);
         }
 
-        internal static bool IsFloor(this Tiles tiles, Coordinate coordinates, DispatchRegistry registry)
+        internal static bool IsFloor(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
         {
             return tiles.IsTileType<Floor>(coordinates, registry);
+        }
+
+        public static IDispatchee RandomFloorTile(this ITiles tiles, bool isOccupied = true)
+        {
+            return tiles.RandomTile(dispatchee =>
+            {
+                if (!dispatchee.IsFloor()) return false;
+
+                var floor = (Floor) dispatchee;
+                return IsOccupied() == isOccupied;
+
+                bool IsOccupied()
+                {
+                    return floor.Contains != null;
+                }
+            });
         }
     }
 }

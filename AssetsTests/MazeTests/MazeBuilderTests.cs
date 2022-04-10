@@ -3,6 +3,7 @@ using Assets.Mazes;
 using Assets.Messaging;
 using Assets.Rooms;
 using AssetsTests.Fakes;
+using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
 using Utils.Random;
 using Xunit;
@@ -32,21 +33,11 @@ namespace AssetsTests.MazeTests
         }
 
         [Fact]
-        public void WhenBuildLevelOneMaze_WithUnconnectedDoors_ShouldBeAbleToBuildIt()
-        {
-            var levelBuilder = Arrange();
-
-            var maze = levelBuilder.Build(6, false);
-
-            _output.OutputMazes(maze);
-        }
-
-        [Fact]
         public void WhenBuildLevelOneMaze_WithConnectedDoors_ShouldBeAbleToBuildIt()
         {
             var levelBuilder = Arrange();
 
-            var maze = levelBuilder.Build(6, true);
+            var maze = levelBuilder.Build(1);
 
             _output.OutputMazes(maze);
         }

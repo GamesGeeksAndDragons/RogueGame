@@ -1,19 +1,26 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Assets.Deeds;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 
 namespace Assets.Messaging
 {
-    internal class Dispatcher
+    public interface IDispatcher
     {
-        private readonly DispatchRegistry _registry;
+        void EnqueueTeleport(IDispatchee dispatchee);
+        void EnqueueMove(IDispatchee dispatchee, Compass8Points direction);
+        void EnqueueUse(IDispatchee dispatchee, Compass8Points direction);
+        void EnqueueStrike(string name, int hit, int damage);
+        void Dispatch();
+    }
+
+    internal class Dispatcher : IDispatcher
+    {
+        private readonly IDispatchRegistry _registry;
         private readonly Queue<(IDispatchee Dispatchee, string Parameters)> _actionQueue = new Queue<(IDispatchee Dispatchee, string Parameters)>();
 
-        public Dispatcher(DispatchRegistry registry)
+        public Dispatcher(IDispatchRegistry registry)
         {
             _registry = registry;
         }

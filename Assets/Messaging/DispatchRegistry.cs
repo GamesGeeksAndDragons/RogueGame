@@ -6,7 +6,7 @@ using Utils.Dispatching;
 
 namespace Assets.Messaging
 {
-    public class DispatchRegistry : IDispatchRegistry
+    internal class DispatchRegistry : IDispatchRegistry
     {
         private readonly Dictionary<string, IDispatchee> _uniquelyNamedDispatchees = new Dictionary<string, IDispatchee>();
         private readonly Dictionary<string, uint> _dispatcheeCounts = new Dictionary<string, uint>();
@@ -24,7 +24,7 @@ namespace Assets.Messaging
             return dispatchee.Name + count;
         }
 
-        internal string Register(IDispatchee dispatchee)
+        public string Register(IDispatchee dispatchee)
         {
             dispatchee.ThrowIfNull(nameof(dispatchee));
 
@@ -54,7 +54,7 @@ namespace Assets.Messaging
             }
         }
 
-        private void Unregister(IDispatchee dispatchee)
+        public void Unregister(IDispatchee dispatchee)
         {
             dispatchee.ThrowIfNull(nameof(dispatchee));
             dispatchee.UniqueId.ThrowIfEmpty(nameof(dispatchee.UniqueId));
@@ -62,7 +62,7 @@ namespace Assets.Messaging
             _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
         }
 
-        internal void Unregister(string uniqueId)
+        public void Unregister(string uniqueId)
         {
             uniqueId.ThrowIfEmpty(nameof(uniqueId));
 

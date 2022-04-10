@@ -8,7 +8,7 @@ namespace Assets.Deeds
     {
         private void UseImpl(Parameters parameters)
         {
-            var dispatchee = parameters.ToString("Dispatchee");
+            //var dispatchee = parameters.ToString("Dispatchee");
             //if (dispatchee != UniqueId) return;
 
             //var direction = parameters.ToValue<Compass8Points>("Direction");

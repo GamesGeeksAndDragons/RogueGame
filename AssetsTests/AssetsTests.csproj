@@ -41,8 +41,6 @@
 
   <ItemGroup>
     <Folder Include="DoorPlacementTests\" />
-    <Folder Include="MazeBuilderTests\" />
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

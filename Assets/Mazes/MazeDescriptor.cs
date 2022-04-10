@@ -26,9 +26,9 @@ namespace Assets.Mazes
         // the idea here is to have increasing number of rooms and bigger blocks until level thirty and then just have small blocks and larger bock count per room
         internal readonly Dictionary<int, MazeDetail> MazeDetailByLevel = new Dictionary<int, MazeDetail>
         {
-            { 1, new MazeDetail(2,  3)},
-            { 2, new MazeDetail(2,  3)},
-            { 3, new MazeDetail(2,  4)},
+            { 1, new MazeDetail(1,  1)},
+            { 2, new MazeDetail(2,  2)},
+            { 3, new MazeDetail(3,  3)},
             { 4, new MazeDetail(2,  4)},
             { 5, new MazeDetail(2,  5)},
             { 6, new MazeDetail(3,  5)},

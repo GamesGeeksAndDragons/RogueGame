@@ -1,12 +1,13 @@
 ﻿using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Coordinates;
+using Utils.Dispatching;
 
 namespace Assets.Actors
 {
     internal class Rock : Dispatchee<Rock>
     {
-        internal Rock(Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry) 
+        internal Rock(Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
             : base(coordinate, dispatchRegistry, actionRegistry)
         {
         }
@@ -22,7 +23,7 @@ namespace Assets.Actors
 
         public override string ToString()
         {
-            return ActorDisplay.Rock.ToString();
+            return this.ToDisplayChar();
         }
     }
 }

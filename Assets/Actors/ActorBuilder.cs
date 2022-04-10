@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Deeds;
-using Assets.Messaging;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
@@ -10,8 +9,8 @@ namespace Assets.Actors
     internal static class ActorBuilder
     {
         private static readonly Dictionary<Type, Func<IDispatchee, IDispatchee>> CloneBuilderMethods;
-        private static readonly Dictionary<Type, Func<Coordinate, DispatchRegistry, ActionRegistry, string, IDispatchee>> BuilderMethods;
-        private static readonly Dictionary<char, Func<char, Coordinate, DispatchRegistry, ActionRegistry, IDispatchee>> ActorBuilderMethods;
+        private static readonly Dictionary<Type, Func<Coordinate, IDispatchRegistry, IActionRegistry, string, IDispatchee>> BuilderMethods;
+        private static readonly Dictionary<string, Func<string, Coordinate, IDispatchRegistry, IActionRegistry, IDispatchee>> ActorBuilderMethods;
 
         static ActorBuilder()
         {
@@ -24,7 +23,7 @@ namespace Assets.Actors
                 {typeof(Null), CloneBuilder.BuildNull},
             };
 
-            BuilderMethods = new Dictionary<Type, Func<Coordinate, DispatchRegistry, ActionRegistry, string, IDispatchee>>
+            BuilderMethods = new Dictionary<Type, Func<Coordinate, IDispatchRegistry, IActionRegistry, string, IDispatchee>>
             {
                 {typeof(Door), Builder.BuildDoor},
                 {typeof(Rock), Builder.BuildRock},
@@ -33,7 +32,7 @@ namespace Assets.Actors
                 {typeof(Null), Builder.BuildNull},
             };
 
-            ActorBuilderMethods = new Dictionary<char, Func<char, Coordinate, DispatchRegistry, ActionRegistry, IDispatchee>>
+            ActorBuilderMethods = new Dictionary<string, Func<string, Coordinate, IDispatchRegistry, IActionRegistry, IDispatchee>>
             {
                 {ActorDisplay.Rock,  CharacterBuilder.BuildRock},
                 {ActorDisplay.Floor, CharacterBuilder.BuildFloor},
@@ -46,6 +45,12 @@ namespace Assets.Actors
                 {ActorDisplay.Door7, CharacterBuilder.BuildDoor},
                 {ActorDisplay.Door8, CharacterBuilder.BuildDoor},
                 {ActorDisplay.Door9, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door10, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door11, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door12, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door13, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door14, CharacterBuilder.BuildDoor},
+                {ActorDisplay.Door15, CharacterBuilder.BuildDoor},
                 {ActorDisplay.WallHorizontal, CharacterBuilder.BuildWall},
                 {ActorDisplay.WallVertical, CharacterBuilder.BuildWall},
                 {ActorDisplay.WallTopLeftCorner, CharacterBuilder.BuildWall},
@@ -103,27 +108,27 @@ namespace Assets.Actors
 
         internal static class Builder
         {
-            internal static IDispatchee BuildWall(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state)
+            internal static IDispatchee BuildWall(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
                 return new Wall(coordinates, dispatchRegistry, actionRegistry, state);
             }
 
-            internal static IDispatchee BuildFloor(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state)
+            internal static IDispatchee BuildFloor(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
                 return new Floor(coordinates, dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildDoor(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state)
+            internal static IDispatchee BuildDoor(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
-                return new Door(coordinates, dispatchRegistry, actionRegistry, state);
+                return new Door(coordinates, dispatchRegistry,actionRegistry, state);
             }
 
-            internal static IDispatchee BuildRock(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string _)
+            internal static IDispatchee BuildRock(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
             {
                 return new Rock(coordinates, dispatchRegistry, actionRegistry);
             }
 
-            public static IDispatchee BuildNull(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string _)
+            public static IDispatchee BuildNull(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
             {
                 return new Null(coordinates, dispatchRegistry, actionRegistry);
             }
@@ -131,37 +136,36 @@ namespace Assets.Actors
 
         internal static class CharacterBuilder
         {
-            internal static IDispatchee BuildFloor(char actor, Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+            internal static IDispatchee BuildFloor(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
                 return new Floor(coordinates, dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildDoor(char actor, Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+            internal static IDispatchee BuildDoor(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
-                var state = actor.ToString();
-                return new Door(coordinates, dispatchRegistry, actionRegistry, state);
+                return new Door(coordinates, dispatchRegistry, actionRegistry, actor);
             }
 
-            internal static IDispatchee BuildRock(char actor, Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+            internal static IDispatchee BuildRock(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
                 return new Rock(coordinates, dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildWall(char actor, Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+            internal static IDispatchee BuildWall(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
                 var direction = Wall.GetDirection(actor);
 
                 return new Wall(coordinates, dispatchRegistry, actionRegistry, direction.ToString());
             }
 
-            public static IDispatchee BuildNull(char actor, Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+            public static IDispatchee BuildNull(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
                 return new Null(coordinates, dispatchRegistry, actionRegistry);
             }
         }
 
-        public static T Build<T>(Type type, Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state)
-            where T : IDispatchee, ICloner<T>
+        public static T Build<T>(Type type, Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
+            where T : IDispatchee
         {
             if (BuilderMethods.TryGetValue(type, out var builder))
             {
@@ -171,15 +175,15 @@ namespace Assets.Actors
             throw new TypeInitializationException(typeof(T).FullName, null);
         }
 
-        public static T Build<T>(Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state)
-            where T : IDispatchee, ICloner<T>
+        public static T Build<T>(Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
+            where T : IDispatchee
         {
             var type = typeof(T);
 
             return Build<T>(type, coordinate, dispatchRegistry, actionRegistry, state);
         }
 
-        public static IDispatchee Build(char actor, Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+        public static IDispatchee Build(string actor, Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
             if (ActorBuilderMethods.TryGetValue(actor, out var builder))
             {
@@ -190,7 +194,7 @@ namespace Assets.Actors
         }
 
         public static T Build<T>(T t)
-            where T : IDispatchee, ICloner<T>
+            where T : IDispatchee
         {
             var type = typeof(T);
             if (CloneBuilderMethods.TryGetValue(type, out var builder))

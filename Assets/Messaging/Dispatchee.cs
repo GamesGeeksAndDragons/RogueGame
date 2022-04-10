@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using Assets.Actors;
 using Assets.Deeds;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 // ReSharper disable VirtualMemberCallInConstructor
 
 namespace Assets.Messaging
 {
-    internal abstract class Dispatchee<T> : IDispatchee, ICloner<T>
+    internal abstract class Dispatchee<T> : IDispatchee
         where T : class
     {
-        protected Dispatchee(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+        protected Dispatchee(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
             Coordinates = coordinates;
             DispatchRegistry = dispatchRegistry;
@@ -36,49 +36,45 @@ namespace Assets.Messaging
             }
         }
 
+        public override string ToString()
+        {
+            return this.ToDisplayChar();
+        }
+
         protected internal virtual void RegisterActions() { }
 
         public Coordinate Coordinates { get; protected set; }
-        public DispatchRegistry DispatchRegistry { get; }
-        public ActionRegistry ActionRegistry { get; }
+        public IDispatchRegistry DispatchRegistry { get; }
+        public IActionRegistry ActionRegistry { get; }
 
         public static readonly string DispatcheeName = typeof(T).Name;
         public string Name => DispatcheeName;
         public string UniqueId { get; protected internal set; }
 
-        public virtual void UpdateState(T t, Parameters state)
+        public virtual void UpdateState(Parameters state)
         {
-            var dispatchee = t as Dispatchee<T>;
-            dispatchee.ThrowIfNull(nameof(t));
-
-            if (state.HasValue(nameof(Coordinates))) dispatchee.Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
+            if (state.HasValue(nameof(Coordinates)))
+            {
+                Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
+            }
         }
 
-        protected internal static string FormatState(Coordinate? coordinates = null, string uniqueId = null)
+        public virtual Parameters CurrentState()
         {
-            var state = string.Empty;
-
-            if (coordinates.HasValue) state += coordinates.Value.FormatParameter();
-            if (! uniqueId.IsNullOrEmpty()) state += nameof(UniqueId).FormatParameter(uniqueId);
-
-            return state;
+            return new Parameters
+            {
+                (Name: nameof(UniqueId), Value: UniqueId),
+                (Name: nameof(Coordinates), Value: Coordinates.ToString()),
+            };
         }
 
-        public IDispatchee CloneDispatchee(string stateChange = null)
+        protected bool IsZero(double num)
         {
-            return (IDispatchee)Clone(stateChange);
+            const double floatingTolerance = 0.00001;
+
+            return Math.Abs(num) > floatingTolerance;
         }
 
-        public T Clone(string stateChange = null)
-        {
-            var clone = Create();
-            if (stateChange.IsNullOrEmpty()) return clone;
-
-            var stateParameters = stateChange.ToParameters();
-            UpdateState(clone, stateParameters);
-
-            return clone;
-        }
 
         public abstract T Create();
     }

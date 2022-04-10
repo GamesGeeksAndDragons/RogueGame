@@ -53,9 +53,9 @@ namespace Assets.Tiles
             }
         }
 
-        public override Assets.Tiles.Tiles Create()
-        {
-            return new RoomTiles(this);
-        }
+        //public override Assets.Tiles.Tiles Create()
+        //{
+        //    return new RoomTiles(this);
+        //}
     }
 }

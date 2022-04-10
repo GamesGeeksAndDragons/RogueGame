@@ -3,38 +3,37 @@ using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
     internal abstract class Character<T> : Dispatchee<T> 
-        where T : class, IDispatchee, ICloner<T>
+        where T : class, IDispatchee
     {
-        protected Character(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+        protected Character(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(coordinates, dispatchRegistry, actionRegistry)
         {
             var extracted = state.ToParameters();
 
-            UpdateState(this as T, extracted);
-        }
-        
-        public override void UpdateState(T t, Parameters state)
-        {
-            var character = t as Character<T>;
-            if (state.HasValue(nameof(HitPoints))) character.HitPoints = state.ToValue<int>(nameof(HitPoints));
-            if (state.HasValue(nameof(ArmourClass))) character.ArmourClass = state.ToValue<int>(nameof(ArmourClass));
-
-            base.UpdateState(t, state);
+            UpdateState(extracted);
         }
 
-        public static string FormatState(int? hitPoints = null, int? armourClass = null, Coordinate? coordinates = null, string uniqueId = null)
+        public override void UpdateState(Parameters state)
         {
-            var state = string.Empty;
+            if (state.HasValue(nameof(HitPoints))) HitPoints = state.ToValue<int>(nameof(HitPoints));
+            if (state.HasValue(nameof(ArmourClass))) ArmourClass = state.ToValue<int>(nameof(ArmourClass));
 
-            if (hitPoints.HasValue) state += nameof(HitPoints).FormatParameter(hitPoints.Value);
-            if (armourClass.HasValue) state += nameof(ArmourClass).FormatParameter(armourClass.Value);
+            base.UpdateState(state);
+        }
 
-            return state + FormatState(coordinates, uniqueId);
+        public override Parameters CurrentState()
+        {
+            var state = base.CurrentState();
+
+            if (!IsZero(HitPoints)) state.AppendParameter(nameof(HitPoints), HitPoints);
+            if (!IsZero(ArmourClass)) state.AppendParameter(nameof(ArmourClass), ArmourClass);
+
+            return state;
         }
 
         public int ArmourClass { get; protected internal set; }

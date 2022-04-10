@@ -18,7 +18,7 @@ namespace Assets.Deeds
 
             // below was commented out before above
 
-            //var newState = FormatState(hitPoints: newHitPoints);
+            //var newState = CurrentState(hitPoints: newHitPoints);
             //var newCharacter = Clone(newState);
 
             //DispatchRegistry.Register(newCharacter);

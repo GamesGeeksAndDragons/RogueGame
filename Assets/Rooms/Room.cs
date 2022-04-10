@@ -24,11 +24,7 @@ namespace Assets.Rooms
 
     internal class Room : IRoom
     {
-        private readonly IDieBuilder _dieBuilder;
-        private readonly List<Door> _doors = new List<Door>();
-        private static uint _counter;
-
-        internal Room(string name, IDispatchee[,] tiles, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        internal Room(string name, IDispatchee[,] tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
         {
             _dieBuilder = dieBuilder;
             DispatchRegistry = dispatchRegistry;
@@ -48,7 +44,7 @@ namespace Assets.Rooms
             LoadFolder = room.LoadFolder;
             Name = room.Name;
 
-            _doors.AddRange( room.Doors.Select(door => door.Clone()) );
+            _doors.AddRange( room.Doors.Select(door => new Door(door)) );
             if(newDoor != null) _doors.Add(newDoor);
 
             _tiles = newTiles;
@@ -67,8 +63,13 @@ namespace Assets.Rooms
             return new Room(this, newTiles, null);
         }
 
-        internal DispatchRegistry DispatchRegistry { get; }
-        public ActionRegistry ActionRegistry { get; }
+        private readonly IDieBuilder _dieBuilder;
+        private readonly List<Door> _doors = new List<Door>();
+        private static uint _counter;
+
+        internal IDispatchRegistry DispatchRegistry { get; }
+        internal IActionRegistry ActionRegistry { get; }
+
         public string LoadFolder { get; internal set; }
         public string Name { get; private set; }
         public int NumberColumns { get; private set; }

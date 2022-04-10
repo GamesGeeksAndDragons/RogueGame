@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Utils
 {
@@ -17,7 +17,12 @@ namespace Utils
         private const char NameParameterTerminator = ';';
         private const string EmptyString = "string.Empty";
 
-        public static string ToParameter(this Coordinate coordinate, string name = null)
+        public static (string Name, string Value) ToParameter(this string name, string value)
+        {
+            return (Name: name, Value: value);
+        }
+
+        public static string FormatParameter(this Coordinate coordinate, string name = null)
         {
             if (name.IsNullOrEmpty())
             {
@@ -39,6 +44,20 @@ namespace Utils
             where T : struct
         {
             return FormatParameter(name, value.ToString());
+        }
+
+        public static Parameters AppendParameter(this Parameters parameters, string name, string value)
+        {
+            var appended = ToParameter(name, value);
+            parameters.Add(appended);
+            return parameters;
+        }
+
+        public static Parameters AppendParameter<T>(this Parameters parameters, string name, T value)
+            where T : struct
+        {
+            var str = value.ToString();
+            return parameters.AppendParameter(name, str);
         }
 
         public static string AppendParameter(this string parameter, string name, string value)
@@ -121,7 +140,7 @@ namespace Utils
         public static bool HasValue(this Parameters parameters, string name)
         {
             var value = parameters.SingleOrDefault(param => param.Name == name);
-            return ! value.Name.IsNullOrEmpty() && ! value.Value.IsNullOrEmpty();
+            return value != default;
         }
 
         public static T ToValue<T>(this Parameters parameters, string name) where T : struct
@@ -137,19 +156,6 @@ namespace Utils
             }
 
             throw new ArgumentException($"Unable to convert [{name}:{value}] to type [{typeof(T).Name}]");
-        }
-
-        public static string ToStateChange(this IList<(string Name, Coordinate Coordinate)> changes)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var change in changes)
-            {
-                var tile = change.Coordinate.ToParameter(change.Name);
-                sb.Append(tile);
-            }
-
-            return sb.ToString();
         }
     }
 }

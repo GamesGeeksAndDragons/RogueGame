@@ -1,41 +1,23 @@
 ﻿using Assets.Actors;
 using Assets.Mazes;
+using Assets.Tiles;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Deeds
 {
     internal class TeleportAction : IAction
     {
-        internal Maze Maze;
-        private readonly IDispatchRegistry _dispatchRegistry;
-
-        public TeleportAction()
-        {
-        }
-
-        public void TeleportImpl(Parameters parameters)
-        {
-        }
+        internal ITiles Tiles;
 
         public void Act(IDispatchee dispatchee, string actionValue)
         {
-            var floorTile = RandomFloorTile();
-            while (! IsEmpty(floorTile))
-            {
-                floorTile = RandomFloorTile();
-            }
+            var floorTile = RandomEmptyFloorTile();
 
-            //PlaceInMaze(dispatchee, coordinates);
+            Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Coordinates);
 
-            bool IsEmpty(Floor floor)
+            Floor RandomEmptyFloorTile()
             {
-                return floor.OnFloor == null;
-            }
-
-            Floor RandomFloorTile()
-            {
-                return (Floor) Maze.RandomFloorTile();
+                return (Floor) Tiles.RandomFloorTile(false);
             }
         }
     }

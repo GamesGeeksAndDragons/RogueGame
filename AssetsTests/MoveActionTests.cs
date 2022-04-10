@@ -98,7 +98,8 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
             builder.Build(GetLevel(testNum));
-            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, dispatchRegistry, actionRegistry, Me.FormatState(10, 10));
+            var coordinates = new Coordinate(10, 10);
+            var me = ActorBuilder.Build<Me>(coordinates, dispatchRegistry, actionRegistry, "");
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
@@ -129,7 +130,7 @@ namespace AssetsTests
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
             builder.Build(GetLevel(testNum));
-            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, dispatchRegistry, actionRegistry, Me.FormatState(10, 10));
+            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, dispatchRegistry, actionRegistry, new Coordinate(10, 10).ToString());
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

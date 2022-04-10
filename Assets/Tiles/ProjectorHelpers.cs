@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Actors;
-using Assets.Messaging;
+﻿using System.Collections.Generic;
 using Utils.Coordinates;
+using Utils.Dispatching;
 using Utils.Enums;
 using Line = System.Collections.Generic.List<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
 
@@ -11,7 +8,7 @@ namespace Assets.Tiles
 {
     internal static class ProjectorHelpers
     {
-        internal static bool ShouldProject(this Tiles tiles, Coordinate coordinate, DispatchRegistry registry)
+        internal static bool ShouldProject(this ITiles tiles, Coordinate coordinate, IDispatchRegistry registry)
         {
             if (!tiles.IsInside(coordinate)) return false;
 
@@ -20,7 +17,7 @@ namespace Assets.Tiles
                    tiles.IsFloor(coordinate, registry);
         }
 
-        internal static Line ProjectLine(this Tiles tiles, Coordinate coordinate, DispatchRegistry registry, Compass4Points direction)
+        internal static Line ProjectLine(this ITiles tiles, Coordinate coordinate, IDispatchRegistry registry, Compass4Points direction)
         {
             var line = new List<(string Id, Coordinate Coordinates)>();
             if (tiles.ShouldProject(coordinate, registry)) line.Add((tiles[coordinate], coordinate));

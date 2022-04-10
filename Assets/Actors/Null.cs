@@ -1,12 +1,13 @@
 ﻿using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Coordinates;
+using Utils.Dispatching;
 
 namespace Assets.Actors
 {
     class Null : Dispatchee<Null>
     {
-        public Null(Coordinate coordinates, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry) 
+        public Null(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
             : base(coordinates, dispatchRegistry, actionRegistry)
         {
         }
@@ -22,7 +23,7 @@ namespace Assets.Actors
 
         public override string ToString()
         {
-            return ActorDisplay.Null.ToString();
+            return this.ToDisplayChar();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Utils.Coordinates;
 
@@ -102,17 +103,21 @@ namespace Utils
 
         private static string PrintRow(string[,] intermediate, List<string> yAxis, int row, int axisLength, int itemLength)
         {
-            var toPrint = PrintItem(yAxis[row], axisLength, true) + "|";
             var sb = new StringBuilder();
-            sb.Append(toPrint);
+
+            var prefix = PrintItem(yAxis[row], axisLength, true) + "|";
+            sb.Append(prefix);
 
             var colMax = intermediate.ColumnUpperBound();
             for (int col = 0; col <= colMax; col++)
             {
                 var item = intermediate[row, col];
-                toPrint = PrintItem(item, itemLength, true);
-                sb.Append(toPrint);
+                var line = PrintItem(item, itemLength, true);
+                sb.Append(line);
             }
+
+            var suffix = "|" + PrintItem(yAxis[row], axisLength, true);
+            sb.Append(suffix);
 
             return sb.ToString();
         }
@@ -137,14 +142,18 @@ namespace Utils
                 sb.Append(row);
             }
 
+            sb.AppendLine();
+            sb.AppendLine('-'.ToPaddedString(axis.Length));
+            sb.Append(axis);
+
             return sb.ToString();
         }
 
         private static string PrintColumnHeader(List<string> axis, int axisLength, int maxItemLength)
         {
-            var toPrint = ' '.ToPaddedString(axisLength) + "|";
             var sb = new StringBuilder();
-            sb.Append(toPrint);
+            var prefix = ' '.ToPaddedString(axisLength) + "|";
+            sb.Append(prefix);
 
             foreach (var item in axis)
             {
@@ -156,6 +165,9 @@ namespace Utils
 
                 sb.Append(printed);
             }
+
+            var suffix = "|" + ' '.ToPaddedString(axisLength);
+            sb.Append(suffix);
 
             return sb.ToString();
         }

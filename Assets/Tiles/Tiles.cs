@@ -1,28 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Actors;
 using Assets.Deeds;
-using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Random;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Tiles
 {
-    public class Tiles : ICloner<Tiles>
+    public interface ITiles
     {
-        protected internal readonly DispatchRegistry DispatchRegistry;
-        protected internal readonly ActionRegistry ActionRegistry;
+        (int Row, int Column) UpperBounds { get; }
+        bool IsInside(Coordinate coordinate);
+        IDispatchee RandomTile(Predicate<IDispatchee> tileCondition);
+        bool TileExists(string name);
+        IList<string> GetTilesOfType<TTileType>();
+        string this[Coordinate point] { get; set; }
+        void Replace(TileChanges state);
+        bool MoveOnto(string name, Coordinate coordinates);
+    }
 
-        protected readonly IDieBuilder DieBuilder;
-        protected string[,] TilesRegistryOfDispatcheeNames;
+    internal class Tiles : ITiles
+    {
+        protected internal readonly IDispatchRegistry DispatchRegistry;
+        protected internal readonly IActionRegistry ActionRegistry;
+        protected internal readonly IDieBuilder DieBuilder;
+
+        protected internal string[,] TilesRegistryOfDispatcheeNames;
 
         public (int Row, int Column) UpperBounds => TilesRegistryOfDispatcheeNames.UpperBounds();
 
-        internal Tiles(int maxRows, int maxColumns, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        internal Tiles(int maxRows, int maxColumns, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
@@ -38,7 +50,7 @@ namespace Assets.Tiles
             DefaultTilesToRock(maxRows, maxColumns);
         }
 
-        internal Tiles(string[,] registryOfDispatcheeNames, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        internal Tiles(string[,] registryOfDispatcheeNames, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
@@ -51,12 +63,32 @@ namespace Assets.Tiles
             TilesRegistryOfDispatcheeNames = registryOfDispatcheeNames;
         }
 
-        protected Tiles(Tiles tiles)
+        internal Tiles(ITiles toCopy)
         {
+            var tiles = (Tiles)toCopy;
             DispatchRegistry = tiles.DispatchRegistry;
             ActionRegistry = tiles.ActionRegistry;
             DieBuilder = tiles.DieBuilder;
             TilesRegistryOfDispatcheeNames = tiles.TilesRegistryOfDispatcheeNames.CloneStrings();
+        }
+
+        public void Replace(TileChanges state)
+        {
+            foreach (var (name, coordinates) in state)
+            {
+                this[coordinates] = name;
+            }
+        }
+
+        public bool MoveOnto(string name, Coordinate coordinates)
+        {
+            var floorName = this[coordinates];
+            var floor = (Floor) DispatchRegistry.GetDispatchee(floorName);
+            if (floor.Contains != null) return false;
+
+            var mover = DispatchRegistry.GetDispatchee(name);
+            floor.Contains = mover;
+            return true;
         }
 
         private void DefaultTilesToRock(int maxRows, int maxColumns)
@@ -86,33 +118,35 @@ namespace Assets.Tiles
             return TilesRegistryOfDispatcheeNames.IsInside(coordinate);
         }
 
-        public Coordinate RandomTile(Predicate<Coordinate> tileCondition)
+        //public Coordinate RandomTile(Predicate<Coordinate> tileCondition)
+        //{
+        //    var (maxRows, maxColumns) = UpperBounds;
+
+        //    Coordinate coordinates;
+
+        //    bool found;
+
+        //    do
+        //    {
+        //        var row = DieBuilder.Dice(maxRows).Random;
+        //        var col = DieBuilder.Dice(maxColumns).Random;
+
+        //        coordinates = new Coordinate(row, col);
+        //        found = TilesRegistryOfDispatcheeNames.IsInside(coordinates);
+        //        if (found)
+        //        {
+        //            found = tileCondition(coordinates);
+        //        }
+        //    } while (! found);
+
+        //    return coordinates;
+        //}
+
+        public IDispatchee RandomTile(Predicate<IDispatchee> tileCondition)
         {
-            var (maxRows, maxColumns) = UpperBounds;
-
-            Coordinate coordinates;
-
-            bool found;
-
-            do
-            {
-                var row = DieBuilder.Dice(maxRows).Random;
-                var col = DieBuilder.Dice(maxColumns).Random;
-
-                coordinates = new Coordinate(row, col);
-                found = TilesRegistryOfDispatcheeNames.IsInside(coordinates);
-                if (found)
-                {
-                    found = tileCondition(coordinates);
-                }
-            } while (! found);
-
-            return coordinates;
-        }
-
-        public bool IsEmptyTile(Coordinate coordinates)
-        {
-            return this[coordinates].IsNullOrEmpty();
+            var floorTiles = DispatchRegistry.Dispatchees.Where(dispatchee => tileCondition(dispatchee)).ToList();
+            var randomIndex = DieBuilder.Dice(floorTiles.Count).Random - 1;
+            return floorTiles[randomIndex];
         }
 
         public bool TileExists(string name)
@@ -130,23 +164,13 @@ namespace Assets.Tiles
             return false;
         }
 
-        public Coordinate RandomEmptyTile()
-        {
-            return RandomTile(IsEmptyTile);
-        }
-
-        public Coordinate RandomRockTile()
-        {
-            return RandomTile(coordinates => !IsEmptyTile(coordinates) && this.IsRock(coordinates, DispatchRegistry));
-        }
-
         public IList<string> GetTilesOfType<TTileType>()
         {
             var tiles = TilesRegistryOfDispatcheeNames.GetTilesOfType<TTileType>(DispatchRegistry.GetDispatchee);
             return tiles;
         }
 
-        public (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) GetCorners()
+        private (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight) GetCorners()
         {
             var (maxRow, maxColumn) = TilesRegistryOfDispatcheeNames.UpperBounds();
 
@@ -164,18 +188,6 @@ namespace Assets.Tiles
             set => TilesRegistryOfDispatcheeNames[point.Row, point.Column] = value;
         }
 
-        public override string ToString()
-        {
-            return TilesRegistryOfDispatcheeNames.Print(uniqueId =>
-            {
-                if (uniqueId == null) return "";
-
-                var dispatchee = DispatchRegistry.GetDispatchee(uniqueId);
-
-                return dispatchee.ToString();
-            });
-        }
-
         internal static Tiles Grow(Tiles tiles)
         {
             var (maxRow, maxColumn) = tiles.UpperBounds;
@@ -191,31 +203,6 @@ namespace Assets.Tiles
             }
 
             return grown;
-        }
-
-        public Tiles Clone(string stateChange = null)
-        {
-            var clone = Create();
-            if (stateChange.IsNullOrEmpty()) return clone;
-
-            var state = stateChange.ToParameters();
-            UpdateState(clone, state);
-
-            return clone;
-        }
-
-        public virtual Tiles Create()
-        {
-            return new Tiles(this);
-        }
-
-        public virtual void UpdateState(Tiles tiles, ExtractedParameters state)
-        {
-            foreach (var (name, pos) in state)
-            {
-                var coordinates = pos.ToCoordinates();
-                tiles[coordinates] = name;
-            }
         }
     }
 }

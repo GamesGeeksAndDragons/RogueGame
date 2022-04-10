@@ -1,12 +1,12 @@
 ﻿using Assets.Deeds;
-using Assets.Messaging;
 using Utils.Coordinates;
+using Utils.Dispatching;
 
 namespace Assets.Actors
 {
     internal class Monster : Character<Monster>
     {
-        public Monster(Coordinate coordinate, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string state) 
+        public Monster(Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(coordinate, dispatchRegistry, actionRegistry, state)
         {
         }
@@ -17,7 +17,7 @@ namespace Assets.Actors
 
         public override string ToString()
         {
-            return "M";
+            return this.ToDisplayChar();
         }
 
         public override Monster Create()

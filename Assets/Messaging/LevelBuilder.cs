@@ -37,16 +37,14 @@ namespace Assets.Messaging
             _dispatchRegistry.Register(maze);
         }
 
-        internal Maze Build(int level, bool connectTunnels=true)
+        internal Maze Build(int level)
         {
             var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry);
             var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry);
 
-            var maze = connectTunnels ? 
-                mazeBuilder.BuildMaze(level) :
-                mazeBuilder.BuildMazeWithRoomsAndDoors(level);
+            var maze = mazeBuilder.BuildMazeWithRoomsAndDoors(level);
 
-            //Compact(maze, level);
+            Compact(maze, level);
 
             return maze;
         }

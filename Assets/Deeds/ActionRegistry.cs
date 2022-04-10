@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Mazes;
+using Assets.Tiles;
 using Utils.Dispatching;
 
 namespace Assets.Deeds
 {
-    public class ActionRegistry
+    public interface IActionRegistry
+    {
+        void RegisterAction(IDispatchee dispatchee, string action);
+        void RegisterTiles(ITiles tiles);
+        IAction GetAction(string dispatcheeName, string actionName);
+    }
+
+    internal class ActionRegistry : IActionRegistry
     {
         private readonly Dictionary<string, IAction> _actionImpl;
         private readonly Dictionary<string, IAction> _characterActions = new Dictionary<string, IAction>();
@@ -31,10 +39,10 @@ namespace Assets.Deeds
             _characterActions[action] = _actionImpl[action];
         }
 
-        internal void RegisterMaze(Maze maze)
+        public void RegisterTiles(ITiles tiles)
         {
             var teleport = (TeleportAction) _actionImpl[Deed.Teleport];
-            teleport.Maze = maze;
+            teleport.Tiles = tiles;
         }
 
         public IAction GetAction(string dispatcheeName, string actionName)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Rooms;
@@ -8,15 +7,24 @@ using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Utils.Enums;
 using Utils.Random;
-using ExtractedParameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Mazes
 {
-    internal class Maze : Dispatchee<Maze>
+    public interface IMaze
     {
-        internal Maze(DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder, int rows, int columns) 
+        IDispatchee this[Coordinate coordinate] { get; }
+        string Name { get; }
+        string UniqueId { get; }
+        IDispatchee RandomTile(Predicate<IDispatchee> condition);
+        void Update(TileChanges state);
+        bool IsInMaze(string uniqueId);
+    }
+
+    internal class Maze : Dispatchee<Maze>, IMaze
+    {
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, int rows, int columns) 
             : base(Coordinate.NotSet, dispatchRegistry, actionRegistry)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
@@ -25,26 +33,26 @@ namespace Assets.Mazes
 
             Tiles = new Tiles.Tiles(rows, columns, DispatchRegistry, ActionRegistry, _dieBuilder);
 
-            ActionRegistry.RegisterMaze(this);
+            ActionRegistry.RegisterTiles(Tiles);
         }
 
         private Maze(Maze maze) : base(maze.Coordinates, maze.DispatchRegistry, maze.ActionRegistry)
         {
             _dieBuilder = maze._dieBuilder;
-            Tiles = maze.Tiles.Clone();
-            ActionRegistry.RegisterMaze(this);
+            Tiles = maze.Tiles;
+            ActionRegistry.RegisterTiles(Tiles);
         }
 
-        private Maze(DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder, Tiles.Tiles tiles) 
+        private Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, ITiles tiles) 
             : base(Coordinate.NotSet, dispatchRegistry, actionRegistry)
         {
             _dieBuilder = dieBuilder;
-            Tiles = tiles.Clone();
-            ActionRegistry.RegisterMaze(this);
+            Tiles = tiles;
+            ActionRegistry.RegisterTiles(Tiles);
         }
 
         private readonly IDieBuilder _dieBuilder;
-        private Tiles.Tiles Tiles { get; }
+        internal ITiles Tiles { get; private set; }
 
         public IDispatchee this[Coordinate coordinate]
         {
@@ -65,33 +73,15 @@ namespace Assets.Mazes
             return Tiles.ToString();
         }
 
-        internal Maze PlaceInMaze(IDispatchee dispatchee, Coordinate coordinates)
-        {
-            var cloner = (ICloner<Maze>) dispatchee;
-
-            var state = FormatState(coordinates);
-            var actor = cloner.Clone(state);
-
-            var newState = coordinates.ToParameter(actor.UniqueId);
-
-            return Clone(newState);
-        }
-
         public bool IsInMaze(string uniqueId) => Tiles.TileExists(uniqueId);
 
         protected internal override void RegisterActions()
         {
         }
 
-        public override void UpdateState(Maze clone, ExtractedParameters state)
+        public void Update(TileChanges state)
         {
-            foreach (var change in state)
-            {
-                var coordinate = change.Value.ToCoordinates();
-                clone.Tiles[coordinate] = change.Name;
-            }
-
-            base.UpdateState(clone, state);
+            Tiles.Replace(state);
         }
 
         internal Maze GrowMaze()
@@ -111,22 +101,22 @@ namespace Assets.Mazes
             return maze;
         }
 
-        public void MoveImpl(ExtractedParameters parameters)
+        //public void MoveImpl(Parameters parameters)
+        //{
+        //    var dispatchee = parameters.GetDispatchee("Dispatchee", DispatchRegistry);
+        //    var direction = parameters.ToValue<Compass8Points>("Direction");
+        //    var newCoordinates = dispatchee.Coordinates.Move(direction);
+
+        //    if (!Tiles.IsInside(newCoordinates)) return;
+        //    if (!Tiles[newCoordinates].IsNullOrEmpty()) return;
+
+        //    //PlaceInMaze(dispatchee, newCoordinates);
+        //}
+
+        public void PositionRoomsInMaze(IList<Room> roomsWithDoors)
         {
-            var dispatchee = parameters.GetDispatchee("Dispatchee", DispatchRegistry);
-            var direction = parameters.ToValue<Compass8Points>("Direction");
-            var newCoordinates = dispatchee.Coordinates.Move(direction);
-
-            if (!Tiles.IsInside(newCoordinates)) return;
-            if (!Tiles[newCoordinates].IsNullOrEmpty()) return;
-
-            PlaceInMaze(dispatchee, newCoordinates);
-        }
-
-        public Maze PositionRoomsInMaze(IList<Room> roomsWithDoors)
-        {
-            var tiles = Tiles.PositionRoomsInTiles(roomsWithDoors);
-            return new Maze(DispatchRegistry, ActionRegistry, _dieBuilder, tiles);
+            Tiles = Tiles.PositionRoomsInTiles(roomsWithDoors);
+            ActionRegistry.RegisterTiles(Tiles);
         }
 
         public Maze ConnectDoorsWithCorridors()
@@ -135,10 +125,9 @@ namespace Assets.Mazes
             return new Maze(DispatchRegistry, ActionRegistry, _dieBuilder, tiles);
         }
 
-        internal IDispatchee RandomTile(Predicate<Coordinate> condition)
+        public IDispatchee RandomTile(Predicate<IDispatchee> condition)
         {
-            var randomCoordinates = Tiles.RandomTile(condition);
-            return this[randomCoordinates];
+            return Tiles.RandomTile(condition);
         }
     }
 }

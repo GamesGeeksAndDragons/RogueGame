@@ -52,6 +52,8 @@ namespace Assets.Mazes
 
         private IList<Room> AddDoors(IList<Room> rooms)
         {
+            if (rooms.Count == 1) return rooms;
+
             var roomsWithDoors = new List<Room>(rooms);
 
             for (var index = 0; index < roomsWithDoors.Count; index++)
@@ -92,9 +94,9 @@ namespace Assets.Mazes
             var maxTileCols = rooms.Sum(room => room.NumberColumns) * rooms.Count;
 
             var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, maxTileRows, maxTileCols);
-            var mazeWithDisconnectedRooms = mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
+            mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
 
-            return mazeWithDisconnectedRooms;
+            return mazeOfRocks;
         }
 
         internal Maze BuildMaze(int level)

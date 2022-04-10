@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Actors;
-using Assets.Messaging;
 using Utils.Coordinates;
+using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Random;
 using Line = System.Collections.Generic.List<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
@@ -13,9 +13,9 @@ namespace Assets.Tiles
 {
     internal class DoorProjector
     {
-        private readonly DispatchRegistry _registry;
+        private readonly IDispatchRegistry _registry;
         private readonly IDieBuilder _dieBuilder;
-        private readonly Tiles _tiles;
+        private readonly ITiles _tiles;
 
         public ILine FindProjection(Door start, Compass4Points startDirection, Door target, Compass4Points targetDirection)
         {
@@ -53,7 +53,7 @@ namespace Assets.Tiles
             }
         }
 
-        public DoorProjector(Tiles tiles, DispatchRegistry registry, IDieBuilder dieBuilder)
+        public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
         {
             _tiles = tiles;
 

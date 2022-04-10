@@ -1,9 +1,11 @@
-﻿using Assets.Deeds;
+﻿using System;
+using System.Globalization;
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Random;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
@@ -22,14 +24,7 @@ namespace Assets.Actors
             _dispatcher = dispatcher;
 
             var parameters = state.ToParameters();
-            UpdateState(this, parameters);
-        }
-
-        private MeleeWeapon(MeleeWeapon weapon)
-            : this(weapon._randomNumbers, weapon.DispatchRegistry, weapon.ActionRegistry, weapon._dispatcher, 
-                FormatState(weapon.WeaponName, weapon.Owner, weapon.NumRolls, weapon.MaxPoints,
-                    weapon.Hit, weapon.Damage, weapon.Weight, weapon.Level, weapon.OriginalCost, weapon.Coordinates))
-        {
+            UpdateState(parameters);
         }
 
         public string WeaponName { get; private set; }
@@ -62,54 +57,54 @@ namespace Assets.Actors
             return ActorBuilder.Build(this);
         }
 
-        public override void UpdateState(MeleeWeapon weapon, Parameters state)
+        public override void UpdateState(Parameters state)
         {
-            if (state.HasValue(nameof(WeaponName))) weapon.WeaponName = state.ToString(nameof(WeaponName));
-            if (state.HasValue(nameof(Owner))) weapon.Owner = state.ToString(nameof(Owner));
-            if (state.HasValue(nameof(Weight))) weapon.Weight = state.ToValue<double>(nameof(Weight));
-            if (state.HasValue(nameof(Level))) weapon.Level = state.ToValue<int>(nameof(Level));
-            if (state.HasValue(nameof(OriginalCost))) weapon.OriginalCost = state.ToValue<double>(nameof(OriginalCost));
+            if (state.HasValue(nameof(WeaponName))) WeaponName = state.ToString(nameof(WeaponName));
+            if (state.HasValue(nameof(Owner))) Owner = state.ToString(nameof(Owner));
+            if (state.HasValue(nameof(Weight))) Weight = state.ToValue<double>(nameof(Weight));
+            if (state.HasValue(nameof(Level))) Level = state.ToValue<int>(nameof(Level));
+            if (state.HasValue(nameof(OriginalCost))) OriginalCost = state.ToValue<double>(nameof(OriginalCost));
 
             if (state.HasValue(nameof(Dice)))
             {
-                weapon.Dice = state.ToString(nameof(Dice));
-                (weapon.NumRolls, weapon.MaxPoints) = weapon.Dice.FromDice();
+                Dice = state.ToString(nameof(Dice));
+                (NumRolls, MaxPoints) = Dice.FromDice();
             }
             else
             {
-                if (state.HasValue(nameof(NumRolls))) weapon.NumRolls = state.ToValue<int>(nameof(NumRolls));
-                if (state.HasValue(nameof(MaxPoints))) weapon.MaxPoints = state.ToValue<int>(nameof(MaxPoints));
+                if (state.HasValue(nameof(NumRolls))) NumRolls = state.ToValue<int>(nameof(NumRolls));
+                if (state.HasValue(nameof(MaxPoints))) MaxPoints = state.ToValue<int>(nameof(MaxPoints));
             }
 
             if (state.HasValue(nameof(MagicBonuses)))
             {
-                weapon.MagicBonuses = state.ToString(nameof(MagicBonuses));
-                (weapon.Hit, weapon.Damage) = MagicBonuses.FromBrackets();
+                MagicBonuses = state.ToString(nameof(MagicBonuses));
+                (Hit, Damage) = MagicBonuses.FromBrackets();
             }
             else
             {
-                if (state.HasValue(nameof(Hit))) weapon.Hit = state.ToValue<int>(nameof(Hit));
-                if (state.HasValue(nameof(Damage))) weapon.Damage = state.ToValue<int>(nameof(Damage));
+                if (state.HasValue(nameof(Hit))) Hit = state.ToValue<int>(nameof(Hit));
+                if (state.HasValue(nameof(Damage))) Damage = state.ToValue<int>(nameof(Damage));
             }
 
-            base.UpdateState(weapon, state);
+            base.UpdateState(state);
         }
 
-        public static string FormatState(string weaponName = null, string owner = null, int? numRolls = null, int? maxPoints = null, int? hit = null, int? damage = null, double? weight = null, int? level = null, double? cost = null, Coordinate? coordinates = null, string uniqueId = null)
+        public override Parameters CurrentState()
         {
-            var state = string.Empty;
+            var state = base.CurrentState();
 
-            if (!weaponName.IsNullOrEmpty()) state += nameof(WeaponName).FormatParameter(weaponName);
-            if (!owner.IsNullOrEmpty()) state += nameof(Owner).FormatParameter(owner);
-            if (weight.HasValue) state += nameof(Weight).FormatParameter(weight.Value);
-            if (level.HasValue) state += nameof(Level).FormatParameter(level.Value);
-            if (cost.HasValue) state += nameof(OriginalCost).FormatParameter(cost.Value);
-            if (numRolls.HasValue) state += nameof(NumRolls).FormatParameter(numRolls.Value);
-            if (maxPoints.HasValue) state += nameof(MaxPoints).FormatParameter(maxPoints.Value);
-            if (hit.HasValue) state += nameof(Hit).FormatParameter(hit.Value);
-            if (damage.HasValue) state += nameof(Damage).FormatParameter(damage.Value);
+            if (!WeaponName.IsNullOrEmpty()) state.AppendParameter(nameof(WeaponName), WeaponName);
+            if (!Owner.IsNullOrEmpty()) state.AppendParameter(nameof(Owner), Owner);
+            if (!IsZero(Weight)) state.AppendParameter(nameof(Weight), Weight);
+            if (Level != 0) state.AppendParameter(nameof(Level), Level);
+            if (!IsZero(Cost)) state.AppendParameter(nameof(OriginalCost), Cost);
+            if (!IsZero(NumRolls)) state.AppendParameter(nameof(NumRolls), NumRolls.ToString());
+            if (!IsZero(MaxPoints)) state.AppendParameter(nameof(MaxPoints), MaxPoints);
+            if (!IsZero(Hit)) state.AppendParameter(nameof(Hit), Hit);
+            if (!IsZero(Damage)) state.AppendParameter(nameof(Damage), Damage);
 
-            return state + Dispatchee<MeleeWeapon>.FormatState(coordinates, uniqueId);
+            return state;
         }
 
         protected internal override void RegisterActions()
