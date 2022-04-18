@@ -4,7 +4,7 @@ using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string
 
 namespace Assets.Deeds
 {
-    class UseAction : IAction
+    class UseAction : Action
     {
         private void UseImpl(Parameters parameters)
         {
@@ -20,7 +20,7 @@ namespace Assets.Deeds
             //_dispatcher.EnqueueStrike(Owner, hit, damage);
         }
 
-        public void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatchee dispatchee, string actionValue)
         {
             throw new System.NotImplementedException();
         }

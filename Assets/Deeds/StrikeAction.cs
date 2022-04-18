@@ -3,9 +3,9 @@ using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string
 
 namespace Assets.Deeds
 {
-    class StrikeAction : IAction
+    class StrikeAction : Action
     {
-        public void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatchee dispatchee, string actionValue)
         {
             //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
             //if (coordindates != Coordinates) return;

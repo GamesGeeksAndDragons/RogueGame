@@ -1,5 +1,4 @@
 ﻿using Assets.Deeds;
-using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Actors

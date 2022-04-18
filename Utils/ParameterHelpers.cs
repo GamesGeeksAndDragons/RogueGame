@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;

@@ -1,20 +1,23 @@
 ﻿using Assets.Actors;
-using Assets.Mazes;
 using Assets.Tiles;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Deeds
 {
-    internal class TeleportAction : IAction
+    internal class TeleportAction : Action
     {
-        internal ITiles Tiles;
-
-        public void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatchee dispatchee, string actionValue)
         {
             var floorTile = RandomEmptyFloorTile();
 
-            Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Floor);
+            var moved = Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Floor);
+
+            if (moved)
+            {
+                var character = (ICharacter)dispatchee;
+                character.Position = floorTile.Coordinates;
+            }
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {

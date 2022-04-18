@@ -7,7 +7,15 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    internal abstract class Character<T> : Dispatchee<T> 
+    internal interface ICharacter
+    {
+        Parameters CurrentState();
+        int ArmourClass { get; set; }
+        int HitPoints { get; set; }
+        Coordinate Position { get; set; }
+    }
+
+    internal abstract class Character<T> : Dispatchee<T>, ICharacter
         where T : class, IDispatchee
     {
         protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
@@ -36,8 +44,9 @@ namespace Assets.Actors
             return state;
         }
 
-        public int ArmourClass { get; protected internal set; }
-        public int HitPoints { get; protected internal set; }
+        public int ArmourClass { get; set; }
+        public int HitPoints { get; set; }
+        public Coordinate Position { get; set; }
 
         protected internal override void RegisterActions()
         {

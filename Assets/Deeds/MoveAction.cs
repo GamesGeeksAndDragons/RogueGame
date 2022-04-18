@@ -1,13 +1,41 @@
-﻿using Utils.Dispatching;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
+﻿using System.Linq;
+using Assets.Actors;
+using Assets.Messaging;
+using Assets.Tiles;
+using Utils;
+using Utils.Coordinates;
+using Utils.Dispatching;
+using Utils.Enums;
 
 namespace Assets.Deeds
 {
-    class MoveAction : IAction
+    internal abstract class Action : IAction
     {
-        public void Act(IDispatchee dispatchee, string actionValue)
+        internal ITiles Tiles { get; set; }
+
+        public abstract void Act(IDispatchee dispatchee, string actionValue);
+    }
+
+    class MoveAction : Action
+    {
+        public override void Act(IDispatchee dispatchee, string actionValue)
         {
-            throw new System.NotImplementedException();
+            var character = (ICharacter)dispatchee;
+
+            var oldCoordinates = character.Position;
+            var direction = actionValue.ToEnum<Compass8Points>();
+            var newCoordinates = oldCoordinates.Move(direction);
+
+            var newTile = Tiles.GetDispatchee(newCoordinates);
+            if (!newTile.IsFloor()) return;
+            var to = (Floor)newTile;
+
+            var moved = Tiles.MoveOnto(dispatchee.UniqueId, to);
+            if (moved)
+            {
+                var from = (Floor)Tiles.GetDispatchee(oldCoordinates);
+                from.Contains = null;
+            }
         }
     }
 }

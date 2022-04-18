@@ -33,6 +33,7 @@ namespace Assets.Actors
                 {typeof(Wall), Builder.BuildWall},
                 {typeof(Floor), Builder.BuildFloor},
                 {typeof(Null), Builder.BuildNull},
+                {typeof(Me), Builder.BuildMe},
             };
 
             _actorBuilderMethods = new Dictionary<string, ActorMethodType>
@@ -89,6 +90,11 @@ namespace Assets.Actors
             public static IDispatchee BuildNull(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
             {
                 return new Null(dispatchRegistry, actionRegistry);
+            }
+
+            internal static IDispatchee BuildMe(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
+            {
+                return new Me(dispatchRegistry, actionRegistry, state);
             }
         }
 

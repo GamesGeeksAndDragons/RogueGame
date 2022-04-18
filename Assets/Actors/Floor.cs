@@ -18,11 +18,6 @@ namespace Assets.Actors
         {
         }
 
-        internal Floor(Floor floor) 
-            : base(floor.DispatchRegistry, floor.ActionRegistry)
-        {
-        }
-
         public override string ToString()
         {
             var display = Contains?.ToDisplayChar() ?? this.ToDisplayChar();

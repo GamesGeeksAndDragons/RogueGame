@@ -15,12 +15,12 @@ namespace Assets.Deeds
 
     internal class ActionRegistry : IActionRegistry
     {
-        private readonly Dictionary<string, IAction> _actionImpl;
-        private readonly Dictionary<string, IAction> _characterActions = new Dictionary<string, IAction>();
+        private readonly Dictionary<string, Action> _actionImpl;
+        private readonly Dictionary<string, Action> _characterActions = new Dictionary<string, Action>();
 
         internal ActionRegistry()
         {
-            _actionImpl = new Dictionary<string, IAction>
+            _actionImpl = new Dictionary<string, Action>
             {
                 {Deed.Hit, new StrikeAction()},
                 {Deed.Strike, new StrikeAction()},
@@ -41,8 +41,10 @@ namespace Assets.Deeds
 
         public void RegisterTiles(ITiles tiles)
         {
-            var teleport = (TeleportAction) _actionImpl[Deed.Teleport];
-            teleport.Tiles = tiles;
+            foreach (var action in _actionImpl)
+            {
+                action.Value.Tiles = tiles;
+            }
         }
 
         public IAction GetAction(string dispatcheeName, string actionName)
