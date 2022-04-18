@@ -59,25 +59,7 @@ namespace Assets.Actors
             throw new ArgumentException($"Unexpected actor [{actor}]");
         }
 
-        public bool IsCorner
-        {
-            get
-            {
-                switch (WallType)
-                {
-                    case WallDirection.Horizontal:
-                    case WallDirection.Vertical:
-                        return false;
-                    case WallDirection.TopLeftCorner:
-                    case WallDirection.TopRightCorner:
-                    case WallDirection.BottomLeftCorner:
-                    case WallDirection.BottomRightCorner:
-                        return true;
-                    default:
-                        throw new ArgumentException($"Unexpected WallType [{WallType}]");
-                }
-            }
-        }
+        public bool IsCorner => WallType.HasDirection(WallDirection.Corner);
 
         public Wall Rotate()
         {

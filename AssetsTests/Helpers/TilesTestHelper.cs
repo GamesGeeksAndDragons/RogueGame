@@ -35,7 +35,7 @@ namespace AssetsTests.Helpers
             {
                 var dispatchees = DispatchRegistry.Register(ActorBuilder, maze);
                 var tilesRegistry = dispatchees.ExtractTilesRegistry();
-                var tiles = new Tiles(tilesRegistry, DispatchRegistry, ActionRegistry, DieBuilder);
+                var tiles = new Tiles(tilesRegistry, DispatchRegistry, ActionRegistry, DieBuilder, ActorBuilder);
                 return tiles;
             }
         }

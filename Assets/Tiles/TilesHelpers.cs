@@ -90,6 +90,17 @@ namespace Assets.Tiles
             return tiles.RandomTile(dispatchee => dispatchee.IsRock());
         }
 
+        public static (IDispatchee Dispatchee, Coordinate Coordinates) RandomWallTile(this ITiles tiles, WallDirection onlyThese = WallDirection.All)
+        {
+            return tiles.RandomTile(dispatchee =>
+            {
+                if (!dispatchee.IsWall()) return false;
+
+                var wall = (Wall)dispatchee;
+                return onlyThese.HasDirection(wall.WallType);
+            });
+        }
+
         public static (IDispatchee Dispatchee, Coordinate Coordinates) RandomFloorTile(this ITiles tiles, bool isOccupied = true)
         {
             return tiles.RandomTile(dispatchee =>

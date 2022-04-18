@@ -1,10 +1,8 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using Assets.Tiles;
+﻿using Assets.Tiles;
 using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
-using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace AssetsTests.MazeTests
 {

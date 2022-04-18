@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
@@ -39,24 +38,9 @@ namespace Assets.Mazes
             ActionRegistry.RegisterTiles(Tiles);
         }
 
-        private Maze(Maze maze) : base(maze.DispatchRegistry, maze.ActionRegistry)
-        {
-            _dieBuilder = maze._dieBuilder;
-            Tiles = maze.Tiles;
-            ActionRegistry.RegisterTiles(Tiles);
-        }
-
-        private Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, ITiles tiles) 
-            : base(dispatchRegistry, actionRegistry)
-        {
-            _dieBuilder = dieBuilder;
-            Tiles = tiles;
-            ActionRegistry.RegisterTiles(Tiles);
-        }
-
         private readonly IDieBuilder _dieBuilder;
         private readonly IActorBuilder _actorBuilder;
-        internal ITiles Tiles { get; private set; }
+        internal ITiles Tiles { get; }
 
         public IDispatchee this[Coordinate coordinate]
         {

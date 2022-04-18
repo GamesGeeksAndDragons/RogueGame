@@ -8,9 +8,14 @@ namespace AssetsTests.Helpers
     {
         public static string Print(this ITiles tiles, IDispatchRegistry dispatchRegistry)
         {
-            var t = (Tiles)tiles;
+            var tileMatrix = (Tiles)tiles;
 
-            return t.TilesRegistryOfDispatcheeNames.Print(uniqueId =>
+            return tileMatrix.TilesRegistry.Print(dispatchRegistry);
+        }
+
+        public static string Print(this string[,] tiles, IDispatchRegistry dispatchRegistry)
+        {
+            return tiles.Print(uniqueId =>
             {
                 if (uniqueId == null) return "";
 

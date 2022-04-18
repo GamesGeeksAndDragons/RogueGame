@@ -1,10 +1,12 @@
 ﻿using Assets.Rooms;
+using AssetsTests.Helpers;
+using Utils;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class RotateRoomTests
+    public class RotateRoomTests : RoomTestHelpers
     {
         private readonly ITestOutputHelper _output;
         private readonly string _testName;
@@ -17,168 +19,193 @@ namespace AssetsTests.RoomTests
 
         static class RotatedExpectedResults
         {
-            public const string RectangleRotated = @"╔════════╗
-║        ║
-║        ║
-║        ║
-║        ║
-║        ║
-╚════════╝";
+            public const string RectangleRotated = @"
+ |0123456789| 
+--------------
+0|╔════════╗|0
+1|║        ║|1
+2|║        ║|2
+3|║        ║|3
+4|║        ║|4
+5|║        ║|5
+6|╚════════╝|6
+--------------
+ |0123456789| 
+";
 
-            public const string LShapedRotatedOnce = @"╔════════╗
-║        ║
-║        ║
-║        ║
-║        ║
-║     ╔══╝
-║     ║###
-║     ║###
-║     ║###
-╚═════╝###";
+            public const string LShapedRotatedOnce = @"
+ |0123456789| 
+--------------
+0|╔════════╗|0
+1|║        ║|1
+2|║        ║|2
+3|║        ║|3
+4|║        ║|4
+5|║     ╔══╝|5
+6|║     ║###|6
+7|║     ║###|7
+8|║     ║###|8
+9|╚═════╝###|9
+--------------
+ |0123456789| 
+";
 
-            public const string LShapedRotatedTwice = @"╔════════╗
-║        ║
-║        ║
-║        ║
-║        ║
-║        ║
-╚═══╗    ║
-####║    ║
-####║    ║
-####╚════╝";
+            public const string LShapedRotatedTwice = @"
+ |0123456789| 
+--------------
+0|╔════════╗|0
+1|║        ║|1
+2|║        ║|2
+3|║        ║|3
+4|║        ║|4
+5|║        ║|5
+6|╚═══╗    ║|6
+7|####║    ║|7
+8|####║    ║|8
+9|####╚════╝|9
+--------------
+ |0123456789| 
+";
 
-            public const string LShapedRotatedThreeTimes = @"###╔═════╗
-###║     ║
-###║     ║
-###║     ║
-╔══╝     ║
-║        ║
-║        ║
-║        ║
-║        ║
-╚════════╝";
+            public const string LShapedRotatedThreeTimes = @"
+ |0123456789| 
+--------------
+0|###╔═════╗|0
+1|###║     ║|1
+2|###║     ║|2
+3|###║     ║|3
+4|╔══╝     ║|4
+5|║        ║|5
+6|║        ║|6
+7|║        ║|7
+8|║        ║|8
+9|╚════════╝|9
+--------------
+ |0123456789| 
+";
 
-            public const string OShapedRotatedOnce = @"╔═════════╗
-║         ║
-║         ║
-║         ║
-║  ╔═══╗  ║
-║  ║   ║  ║
-║  ║   ║  ║
-║  ╚═ ═╝  ║
-║         ║
-║         ║
-║         ║
-╚═════════╝";
+            public const string OShapedRotatedOnce = @"
+  |01234567890|  
+-----------------
+0 |╔═════════╗|0 
+1 |║         ║|1 
+2 |║         ║|2 
+3 |║         ║|3 
+4 |║  ╔═══╗  ║|4 
+5 |║  ║   ║  ║|5 
+6 |║  ║   ║  ║|6 
+7 |║  ╚═ ═╝  ║|7 
+8 |║         ║|8 
+9 |║         ║|9 
+10|║         ║|10
+11|╚═════════╝|11
+-----------------
+  |01234567890|  
+";
 
-            public const string OShapedRotatedTwice = @"╔══════════╗
-║          ║
-║          ║
-║   ╔══╗   ║
-║   ║  ║   ║
-║      ║   ║
-║   ║  ║   ║
-║   ╚══╝   ║
-║          ║
-║          ║
-╚══════════╝";
+            public const string OShapedRotatedTwice = @"
+  |012345678901|  
+------------------
+0 |╔══════════╗|0 
+1 |║          ║|1 
+2 |║          ║|2 
+3 |║   ╔══╗   ║|3 
+4 |║   ║  ║   ║|4 
+5 |║      ║   ║|5 
+6 |║   ║  ║   ║|6 
+7 |║   ╚══╝   ║|7 
+8 |║          ║|8 
+9 |║          ║|9 
+10|╚══════════╝|10
+------------------
+  |012345678901|  
+";
 
-            public const string OShapedRotatedThreeTimes = @"╔═════════╗
-║         ║
-║         ║
-║         ║
-║  ╔═ ═╗  ║
-║  ║   ║  ║
-║  ║   ║  ║
-║  ╚═══╝  ║
-║         ║
-║         ║
-║         ║
-╚═════════╝";
+            public const string OShapedRotatedThreeTimes = @"
+  |01234567890|  
+-----------------
+0 |╔═════════╗|0 
+1 |║         ║|1 
+2 |║         ║|2 
+3 |║         ║|3 
+4 |║  ╔═ ═╗  ║|4 
+5 |║  ║   ║  ║|5 
+6 |║  ║   ║  ║|6 
+7 |║  ╚═══╝  ║|7 
+8 |║         ║|8 
+9 |║         ║|9 
+10|║         ║|10
+11|╚═════════╝|11
+-----------------
+  |01234567890|  
+";
+        }
+
+        private void RotateTestImpl(string roomSetup, int rotateTimes, string roomExpectation)
+        {
+            var room = ArrangeTest(roomSetup, _testName, _output);
+
+            var before = room.Tiles.Print(room.DispatchRegistry);
+            _output.WriteLine(Divider + " before " + Divider);
+            _output.WriteLine(before);
+
+            room = Builder.BuildRotatedRoom(room, rotateTimes);
+
+            AssertTest(room, _output, roomExpectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]
         public void RotateSquareRoomOnce_ShouldMakeNoDifference()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.Square, _testName, _output);
-            room = room.Rotate(1);
-
-            RoomTestHelpers.AssertTest(room, _output, RoomBuilderTests.RoomBuilderExpectations.Square);
+            RotateTestImpl(KnownRooms.Square, 1, RoomBuilderTests.RoomBuilderExpectations.Square);
         }
 
         [Fact]
         public void RotateRectangleRoomOnce_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.Rectangle, _testName, _output);
-            room = room.Rotate(1);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.RectangleRotated);
+            RotateTestImpl(KnownRooms.Rectangle, 1, RotatedExpectedResults.RectangleRotated);
         }
 
         [Fact]
         public void RotateRectangleRoomTwice_ShouldMakeNoDifference()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.Rectangle, _testName, _output);
-            room = room.Rotate(2);
-
-            RoomTestHelpers.AssertTest(room, _output, RoomBuilderTests.RoomBuilderExpectations.Rectangle);
+            RotateTestImpl(KnownRooms.Rectangle, 2, RoomBuilderTests.RoomBuilderExpectations.Rectangle);
         }
 
         [Fact]
         public void RotateLShapedRoomOnce_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.LShaped, _testName, _output);
-
-            room = room.Rotate(1);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.LShapedRotatedOnce);
+            RotateTestImpl(KnownRooms.LShaped, 1, RotatedExpectedResults.LShapedRotatedOnce);
         }
 
         [Fact]
         public void RotateLShapedRoomTwice_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.LShaped, _testName, _output);
-
-            room = room.Rotate(2);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.LShapedRotatedTwice);
+            RotateTestImpl(KnownRooms.LShaped, 2, RotatedExpectedResults.LShapedRotatedTwice);
         }
 
         [Fact]
         public void RotateLShapedRoomThreeTimes_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.LShaped, _testName, _output);
-
-            room = room.Rotate(3);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.LShapedRotatedThreeTimes);
+            RotateTestImpl(KnownRooms.LShaped, 3, RotatedExpectedResults.LShapedRotatedThreeTimes);
         }
 
         [Fact]
         public void RotateOShapedRoomOnce_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.OShaped, _testName, _output);
-            room = room.Rotate(1);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.OShapedRotatedOnce);
+            RotateTestImpl(KnownRooms.OShaped, 1, RotatedExpectedResults.OShapedRotatedOnce);
         }
 
         [Fact]
         public void RotateOShapedTwice_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.OShaped, _testName, _output);
-            room = room.Rotate(2);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.OShapedRotatedTwice);
+            RotateTestImpl(KnownRooms.OShaped, 2, RotatedExpectedResults.OShapedRotatedTwice);
         }
 
         [Fact]
         public void RotateOShapedRoomThreeTimes_ShouldRotateTheRoom()
         {
-            var room = RoomTestHelpers.BuildTestRoom(KnownRooms.OShaped, _testName, _output);
-            room = room.Rotate(3);
-
-            RoomTestHelpers.AssertTest(room, _output, RotatedExpectedResults.OShapedRotatedThreeTimes);
+            RotateTestImpl(KnownRooms.OShaped, 3, RotatedExpectedResults.OShapedRotatedThreeTimes);
         }
     }
 }

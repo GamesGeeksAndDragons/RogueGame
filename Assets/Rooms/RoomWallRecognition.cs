@@ -1,8 +1,4 @@
 ﻿using System.Collections.Generic;
-using Assets.Mazes;
-using Assets.Tiles;
-using Utils;
-using Utils.Coordinates;
 using Utils.Enums;
 
 namespace Assets.Rooms
@@ -62,59 +58,6 @@ namespace Assets.Rooms
             Compass8Points.West | Compass8Points.NorthWest | Compass8Points.SouthWest;
 
         private static readonly Compass8Points ExcludeWesterly = AllDirections ^ WesterlyDirection;
-
-        private static bool CanConvertToWall(this RoomTiles tiles, Coordinate coordinate)
-        {
-            if (!tiles.IsInside(coordinate)) return false;
-
-            return tiles[coordinate].IsNullOrEmpty();
-        }
-
-        public static Compass8Points DiscoverSurroundingSpace(this RoomTiles tiles, Coordinate coordinate)
-        {
-            var surroundingSpace = Compass8Points.Undefined;
-
-            var below = CanConvertToWall(tiles, coordinate.Down());
-            if (below) surroundingSpace |= Compass8Points.South;
-
-            var above = CanConvertToWall(tiles, coordinate.Up());
-            if (above) surroundingSpace |= Compass8Points.North;
-
-            var right = CanConvertToWall(tiles, coordinate.Right());
-            if (right) surroundingSpace |= Compass8Points.East;
-
-            var left = CanConvertToWall(tiles, coordinate.Left());
-            if (left) surroundingSpace |= Compass8Points.West;
-
-            var topLeft = CanConvertToWall(tiles, coordinate.Up().Left());
-            if (topLeft) surroundingSpace |= Compass8Points.NorthWest;
-
-            var topRight = CanConvertToWall(tiles, coordinate.Up().Right());
-            if (topRight) surroundingSpace |= Compass8Points.NorthEast;
-
-            var bottomLeft = CanConvertToWall(tiles, coordinate.Down().Left());
-            if (bottomLeft) surroundingSpace |= Compass8Points.SouthWest;
-
-            var bottomRight = CanConvertToWall(tiles, coordinate.Down().Right());
-            if (bottomRight) surroundingSpace |= Compass8Points.SouthEast;
-
-            return surroundingSpace;
-        }
-
-        public static bool IsCorner(this Compass8Points surroundingTiles)
-        {
-            if (surroundingTiles == Compass8Points.Undefined) return false;
-
-            return OutsideCorners.ContainsKey(surroundingTiles) || 
-                   InsideCorners.ContainsKey(surroundingTiles);
-        }
-
-        public static WallDirection ToWallDirection(this Compass8Points direction)
-        {
-            if (InsideCorners.ContainsKey(direction)) return InsideCorners[direction];
-
-            return OutsideCorners[direction];
-        }
 
         private static bool DoesNotHaveTheseDirections(this Compass8Points source, Compass8Points compare)
         {

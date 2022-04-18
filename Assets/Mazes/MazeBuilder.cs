@@ -90,8 +90,8 @@ namespace Assets.Mazes
             var rooms = BuildRooms(mazeDetail);
             AddDoors(rooms);
 
-            var maxTileRows = rooms.Sum(room => room.NumberRows) * rooms.Count;
-            var maxTileCols = rooms.Sum(room => room.NumberColumns) * rooms.Count;
+            var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
+            var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
 
             var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
             mazeOfRocks.PositionRoomsInMaze(rooms);

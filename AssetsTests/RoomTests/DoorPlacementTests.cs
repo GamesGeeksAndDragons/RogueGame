@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class DoorPlacementTests
+    public class DoorPlacementTests : RoomTestHelpers
     {
         private readonly ITestOutputHelper _output;
         private readonly string _testName;
@@ -20,72 +20,102 @@ namespace AssetsTests.RoomTests
 
         internal static class DoorPlacementExpectations
         {
-            public const string RectangleWithOneDoor = @"╔═════╗
-║     ║
-║     ║
-║     1
-║     ║
-║     ║
-║     ║
-║     ║
-║     ║
-╚═════╝";
+            public const string RectangleWithOneDoor = @"
+ |0123456| 
+-----------
+0|╔══1══╗|0
+1|║     ║|1
+2|║     ║|2
+3|║     ║|3
+4|║     ║|4
+5|║     ║|5
+6|║     ║|6
+7|║     ║|7
+8|║     ║|8
+9|╚═════╝|9
+-----------
+ |0123456| 
+";
 
-            public const string SquareWithTwoDoors = @"╔════════╗
-║        ║
-║        ║
-║        ║
-1        ║
-║        ║
-║        ║
-║        ║
-║        ║
-╚════2═══╝";
+            public const string SquareWithTwoDoors = @"
+ |0123456789| 
+--------------
+0|╔══2═════╗|0
+1|║        ║|1
+2|║        ║|2
+3|1        ║|3
+4|║        ║|4
+5|║        ║|5
+6|║        ║|6
+7|║        ║|7
+8|║        ║|8
+9|╚════════╝|9
+--------------
+ |0123456789| 
+";
 
-            public const string LShapedWithThreeDoors = @"╔════╗####
-║    ║####
-║    ║####
-║    ╚═══╗
-║        ║
-║        ║
-║        3
-2        ║
-║        ║
-╚══1═════╝";
-            public const string LShapedWithDoorsCappedAt12 = @"╔C═6═╗####
-B    ║####
-║    ║####
-║    ╚═══╗
-5        4
-║        ║
-║        3
-2        ║
-║        9
-╚8═1═A═7═╝";
+            public const string LShapedWithThreeDoors = @"
+ |0123456789| 
+--------------
+0|╔══2═╗####|0
+1|║    ║####|1
+2|3    ║####|2
+3|1    ╚═══╗|3
+4|║        ║|4
+5|║        ║|5
+6|║        ║|6
+7|║        ║|7
+8|║        ║|8
+9|╚════════╝|9
+--------------
+ |0123456789| 
+";
+            public const string LShapedWithDoorsCappedAt12 = @"
+ |0123456789| 
+--------------
+0|╔B729╗####|0
+1|4    ║####|1
+2|3    ║####|2
+3|1    ╚══C╗|3
+4|8        ║|4
+5|5        ║|5
+6|A        ║|6
+7|6        ║|7
+8|D        ║|8
+9|╚════════╝|9
+--------------
+ |0123456789| 
+";
 
-            public const string OShapedWithFifteenDoors = @"╔══E═4═3══2╗
-║          ║
-║          B
-9   ╔══╗   ║
-║   ║  ║   A
-8   ║      ║
-║   ║  ║   7
-1   ╚══╝   ║
-║          ║
-║          C
-╚═6═F═D═5══╝";
+            public const string OShapedWithFifteenDoors = @"
+  |012345678901|  
+------------------
+0 |╔2══DFBC567╗|0 
+1 |║          ║|1 
+2 |3          ║|2 
+3 |1   ╔══╗   ║|3 
+4 |9   ║  ║   ║|4 
+5 |4   ║      ║|5 
+6 |║   ║  ║   ║|6 
+7 |E   ╚══╝   ║|7 
+8 |8          ║|8 
+9 |A          ║|9 
+10|╚══════════╝|10
+------------------
+  |012345678901|  
+";
         }
 
         public void DoorPlacementTest(string roomName, int numDoors, string expectation)
         {
-            var room = RoomTestHelpers.BuildTestRoom(roomName, _testName, _output, Die.RandomiserReset.Index);
+            var room = ArrangeTest(roomName, _testName, _output, Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {
                 room.AddDoor(i);
             }
 
-            RoomTestHelpers.AssertTest(room, _output, expectation);
+            AssertTest(room, _output, expectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

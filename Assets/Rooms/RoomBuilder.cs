@@ -74,7 +74,7 @@ namespace Assets.Rooms
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
 
-            var tiles = new IDispatchee[maxRows, maxCols];
+            var tiles = new Tiles.Tiles(maxRows, maxCols, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
 
             for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
             {
@@ -85,11 +85,60 @@ namespace Assets.Rooms
                     var actor = row[colIndex].ToString();
                     var dispatchee = _actorBuilder.Build(actor);
 
-                    tiles[rowIndex,colIndex] = dispatchee;
+                    var coordinates = new Coordinate(rowIndex, colIndex);
+                    tiles[coordinates] = dispatchee.UniqueId;
                 }
             }
 
             return new Room(roomName, tiles, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
+        }
+
+        string[,] BuildRotatedTiles(string[,] tilesToRotate, int maxRows, int maxColumns)
+        {
+            var (rotatedNumberRows, rotatedNumberColumns) = (maxColumns + 1, maxRows + 1);
+            var rotated = new string[rotatedNumberRows, rotatedNumberColumns];
+
+            for (int rowIndex = 0; rowIndex <= maxRows; rowIndex++)
+            {
+                var row = tilesToRotate.SliceRow(rowIndex).ToArray();
+
+                rotatedNumberColumns--;
+                for (int columnIndex = 0; columnIndex < row.Length; columnIndex++)
+                {
+                    var uniqueId = row[columnIndex];
+                    var tile = _dispatchRegistry.GetDispatchee(uniqueId);
+
+                    if (tile.IsWall())
+                    {
+                        var rotatedTile = (Wall)tile;
+                        tile = rotatedTile.Rotate();
+                    }
+
+                    rotated[columnIndex, rotatedNumberColumns] = tile.UniqueId;
+                }
+            }
+
+            return rotated;
+        }
+
+        internal Room BuildRotatedRoom(Room room, int numTimes = 1)
+        {
+            numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
+
+            var originalTiles = (Tiles.Tiles) room.Tiles;
+            var tiles = originalTiles.TilesRegistry;
+            var (maxRow, maxColumn) = tiles.UpperBounds();
+
+            var rotatedTiles = BuildRotatedTiles(tiles, maxRow, maxColumn);
+            for (int i = 0; i < numTimes-1; i++)
+            {
+                (maxRow, maxColumn) = rotatedTiles.UpperBounds();
+                rotatedTiles = BuildRotatedTiles(rotatedTiles, maxRow, maxColumn);
+            }
+
+            var newTiles = new Tiles.Tiles(originalTiles, rotatedTiles);
+
+            return new Room(room, newTiles);
         }
     }
 }

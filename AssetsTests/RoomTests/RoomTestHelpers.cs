@@ -3,6 +3,7 @@ using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Rooms;
 using AssetsTests.Fakes;
+using AssetsTests.Helpers;
 using Utils;
 using Utils.Random;
 using Xunit;
@@ -10,11 +11,12 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public static class RoomTestHelpers
+    public class RoomTestHelpers
     {
-        public static string Divider = '='.ToPaddedString(10);
+        public static readonly string Divider = '='.ToPaddedString(10);
+        public RoomBuilder Builder = null;
 
-        internal static Room BuildTestRoom(string roomName, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
+        internal Room ArrangeTest(string roomName, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
@@ -22,13 +24,13 @@ namespace AssetsTests.RoomTests
             var logger = new FakeLogger(output);
             var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
 
-            var builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
-            return builder.BuildRoom(roomName);
+            Builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
+            return Builder.BuildRoom(roomName);
         }
 
-        internal static void AssertTest(Room room, ITestOutputHelper output, string expected = "")
+        internal void AssertTest(Room room, ITestOutputHelper output, string expected = "")
         {
-            var actual = room.ToString();
+            var actual = room.Tiles.Print(room.DispatchRegistry);
 
             output.WriteLine(Divider + " expected " + Divider);
             output.WriteLine(expected);

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Actors;
-using Assets.Messaging;
 using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
-using Utils.Dispatching;
-using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
+using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Tiles
 {
@@ -141,14 +139,13 @@ namespace Assets.Tiles
 
         private static TileChanges PositionRoom(Room room, Coordinate topLeft)
         {
-            var rows = room.NumberRows;
-            var columns = room.NumberColumns;
+            var (rows, columns) = room.UpperBounds;
 
             var tileChanges = new List<(string Name, Coordinate coordinates)>();
 
-            for (var row = 0; row < rows; row++)
+            for (var row = 0; row <= rows; row++)
             {
-                for (var column = 0; column < columns; column++)
+                for (var column = 0; column <= columns; column++)
                 {
                     var change = GetTileChange(row, column);
                     tileChanges.Add(change);
@@ -157,13 +154,13 @@ namespace Assets.Tiles
 
             return tileChanges;
 
-            (string Name, Coordinate Coordinates) GetTileChange(int row, int column)
+            (string UniqueId, Coordinate Coordinates) GetTileChange(int row, int column)
             {
                 var roomCoordinates = new Coordinate(row, column);
-                var roomTile = room[roomCoordinates];
+                var uniqueId = room[roomCoordinates];
 
                 var mazeCoordinates = topLeft + roomCoordinates;
-                return (roomTile.UniqueId, mazeCoordinates);
+                return (uniqueId, mazeCoordinates);
             }
         }
     }
