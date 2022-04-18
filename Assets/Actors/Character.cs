@@ -10,8 +10,8 @@ namespace Assets.Actors
     internal abstract class Character<T> : Dispatchee<T> 
         where T : class, IDispatchee
     {
-        protected Character(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(coordinates, dispatchRegistry, actionRegistry)
+        protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
+            : base(dispatchRegistry, actionRegistry)
         {
             var extracted = state.ToParameters();
 

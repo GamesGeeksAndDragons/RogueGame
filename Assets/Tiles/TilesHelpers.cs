@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Assets.Actors;
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Exceptions;
-using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
+using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Tiles
 {
     internal static class TilesHelpers
     {
-        internal static IList<string> GetTilesOfType<TTileType>(this string[,] tiles, Func<string, IDispatchee> getDispatchee)
+        internal static TileChanges GetTilesOfType<TTileType>(this string[,] tiles, Func<string, IDispatchee> getDispatchee)
         {
-            var tilesType = new List<string>();
+            var tilesOfType = new TileChanges();
             var tileType = typeof(TTileType).Name;
 
             var (rowMax, colMax) = tiles.UpperBounds();
@@ -23,15 +24,18 @@ namespace Assets.Tiles
             {
                 for (var col = 0; col <= colMax; col++)
                 {
-                    var name = tiles[row, col];
-                    if (name.IsNullOrEmpty()) continue;
+                    var uniqueId = tiles[row, col];
+                    if (uniqueId.IsNullOrEmpty()) continue;
 
-                    var tile = getDispatchee(name);
-                    if (tile.Name == tileType) tilesType.Add(tile.UniqueId);
+                    var dispatchee = getDispatchee(uniqueId);
+                    if(dispatchee.Name != tileType) continue;
+
+                    var tile = (UniqueId: uniqueId, Coordinates: new Coordinate(row, col));
+                    tilesOfType.Add( tile );
                 }
             }
 
-            return tilesType;
+            return tilesOfType;
         }
 
         internal static IDispatchee GetDispatchee(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
@@ -59,32 +63,34 @@ namespace Assets.Tiles
             throw new UnexpectedTileException($"Attempting to find the direction through rock for coordinates [{searchFrom}]");
         }
 
-        internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry) 
+        internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates) 
             where T : Dispatchee<T>
         {
-            var name = tiles[coordinates];
-            if (name.IsNullOrEmpty()) return false;
-
-            var dispatchee = registry.GetDispatchee(name);
+            var dispatchee = tiles.GetDispatchee(coordinates);
             return dispatchee.IsTypeof<T>();
         }
 
-        internal static bool IsDoor(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
+        internal static bool IsDoor(this ITiles tiles, Coordinate coordinates)
         {
-            return tiles.IsTileType<Door>(coordinates, registry);
+            return tiles.IsTileType<Door>(coordinates);
         }
 
-        internal static bool IsRock(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
+        internal static bool IsRock(this ITiles tiles, Coordinate coordinates)
         {
-            return tiles.IsTileType<Rock>(coordinates, registry);
+            return tiles.IsTileType<Rock>(coordinates);
         }
 
-        internal static bool IsFloor(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
+        internal static bool IsFloor(this ITiles tiles, Coordinate coordinates)
         {
-            return tiles.IsTileType<Floor>(coordinates, registry);
+            return tiles.IsTileType<Floor>(coordinates);
         }
 
-        public static IDispatchee RandomFloorTile(this ITiles tiles, bool isOccupied = true)
+        public static (IDispatchee Dispatchee, Coordinate Coordinates) RandomRockTile(this ITiles tiles)
+        {
+            return tiles.RandomTile(dispatchee => dispatchee.IsRock());
+        }
+
+        public static (IDispatchee Dispatchee, Coordinate Coordinates) RandomFloorTile(this ITiles tiles, bool isOccupied = true)
         {
             return tiles.RandomTile(dispatchee =>
             {
@@ -98,6 +104,29 @@ namespace Assets.Tiles
                     return floor.Contains != null;
                 }
             });
+        }
+
+        public static void ConnectDoorsWithCorridors(this ITiles tiles, TileChanges changes, IDispatchRegistry dispatchRegistry, IActorBuilder builder)
+        {
+            var tunnel = BuildTunnelTiles(changes);
+
+            var replaced = tiles.Replace(tunnel);
+
+            dispatchRegistry.Unregister(replaced);
+
+            TileChanges BuildTunnelTiles(TileChanges projectedLine)
+            {
+                var extracted = projectedLine.Where(tile => IsTileType<Rock>(tiles, tile.Coordinates)).ToList();
+                return extracted
+                    .Select(Tunnel)
+                    .ToList();
+            }
+
+            (string UniqueId, Coordinate Coordinates) Tunnel((string UniqueId, Coordinate Coordinates) tile)
+            {
+                var actor = builder.Build<Floor>("");
+                return (actor.UniqueId, tile.Coordinates);
+            }
         }
     }
 }

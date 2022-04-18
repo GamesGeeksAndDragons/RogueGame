@@ -21,8 +21,7 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterTiles(Tiles);
 
-            var coordinates = Coordinate.NotSet;
-            var me = new Me(coordinates, DispatchRegistry, ActionRegistry, "");
+            var me = new Me(DispatchRegistry, ActionRegistry, "");
 
             Dispatcher.EnqueueTeleport(me);
         }
@@ -59,10 +58,10 @@ namespace AssetsTests.ActionTests
             ActionRegistry.RegisterTiles(Tiles);
 
             var coordinates = Coordinate.NotSet;
-            var monster = new Monster(coordinates, DispatchRegistry, ActionRegistry, "");
+            var monster = new Monster(DispatchRegistry, ActionRegistry, "");
             Dispatcher.EnqueueTeleport(monster);
 
-            var me = new Me(coordinates, DispatchRegistry, ActionRegistry, "");
+            var me = new Me(DispatchRegistry, ActionRegistry, "");
             Dispatcher.EnqueueTeleport(me);
         }
 

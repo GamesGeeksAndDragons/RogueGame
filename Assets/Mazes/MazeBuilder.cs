@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Rooms;
+using Assets.Tiles;
 using log4net;
 using Utils;
+using Utils.Dispatching;
 using Utils.Random;
 
 namespace Assets.Mazes
@@ -16,10 +19,11 @@ namespace Assets.Mazes
         private readonly RoomBuilder _roomBuilder;
         private readonly IMazeDescriptor _descriptor;
         private readonly ILog _logger;
-        private readonly DispatchRegistry _dispatchRegistry;
-        private readonly ActionRegistry _actionRegistry;
+        private readonly IDispatchRegistry _dispatchRegistry;
+        private readonly IActionRegistry _actionRegistry;
+        private readonly IActorBuilder _actorBuilder;
 
-        internal MazeBuilder(IDieBuilder dieBuilder, RoomBuilder roomBuilder, ILog logger, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+        internal MazeBuilder(IDieBuilder dieBuilder, RoomBuilder roomBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             roomBuilder.ThrowIfNull(nameof(roomBuilder));
@@ -32,6 +36,7 @@ namespace Assets.Mazes
             _logger = logger;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
+            _actorBuilder = actorBuilder;
         }
 
         private IList<Room> BuildRooms(MazeDetail detail)
@@ -50,9 +55,9 @@ namespace Assets.Mazes
             return rooms;
         }
 
-        private IList<Room> AddDoors(IList<Room> rooms)
+        private void AddDoors(IList<Room> rooms)
         {
-            if (rooms.Count == 1) return rooms;
+            if (rooms.Count == 1) return;
 
             var roomsWithDoors = new List<Room>(rooms);
 
@@ -61,16 +66,11 @@ namespace Assets.Mazes
                 var room = roomsWithDoors[index];
 
                 var doorNumber = index + 1;
-                var roomWithDoor = room.AddDoor(doorNumber);
-                roomsWithDoors[index] = roomWithDoor;
+                room.AddDoor(doorNumber);
 
-                var connectedRoom = GetRoomToConnectTo(roomWithDoor);
-                var connectedRoomIndex = roomsWithDoors.IndexOf(connectedRoom);
-                connectedRoom = connectedRoom.AddDoor(doorNumber);
-                roomsWithDoors[connectedRoomIndex] = connectedRoom;
+                var connectedRoom = GetRoomToConnectTo(room);
+                connectedRoom.AddDoor(doorNumber);
             }
-
-            return roomsWithDoors;
 
             Room GetRoomToConnectTo(Room toConnect)
             {
@@ -88,23 +88,27 @@ namespace Assets.Mazes
             var mazeDetail = _descriptor[level];
 
             var rooms = BuildRooms(mazeDetail);
-            var roomsWithDoors = AddDoors(rooms);
+            AddDoors(rooms);
 
             var maxTileRows = rooms.Sum(room => room.NumberRows) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.NumberColumns) * rooms.Count;
 
-            var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, maxTileRows, maxTileCols);
-            mazeOfRocks.PositionRoomsInMaze(roomsWithDoors);
+            var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
+            mazeOfRocks.PositionRoomsInMaze(rooms);
+
+            var tunnel = mazeOfRocks.Tiles.GetTunnelToConnectDoors(_dispatchRegistry, _actionRegistry, _dieBuilder);
+
+            mazeOfRocks.Tiles.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _actorBuilder);
 
             return mazeOfRocks;
         }
 
         internal Maze BuildMaze(int level)
         {
-            var mazeWithDisconnectedRooms = BuildMazeWithRoomsAndDoors(level);
-            var mazeWithConnectedRooms = mazeWithDisconnectedRooms.ConnectDoorsWithCorridors();
+            var maze = BuildMazeWithRoomsAndDoors(level);
+            maze.ConnectDoorsWithCorridors();
 
-            return mazeWithConnectedRooms;
+            return maze;
         }
     }
 }

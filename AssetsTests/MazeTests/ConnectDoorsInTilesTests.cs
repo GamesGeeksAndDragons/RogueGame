@@ -1,8 +1,10 @@
-﻿using Assets.Tiles;
+﻿using System.Runtime.InteropServices.ComTypes;
+using Assets.Tiles;
 using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
+using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace AssetsTests.MazeTests
 {
@@ -14,7 +16,8 @@ namespace AssetsTests.MazeTests
 
         protected override void TestAct()
         {
-            Tiles = Tiles.ConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
+            var changes = Tiles.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
+            Tiles.ConnectDoorsWithCorridors(changes, DispatchRegistry, ActorBuilder);
         }
 
         private void ConnectDoorTestsImpl(IMazeExpectations expectations)
@@ -75,7 +78,7 @@ namespace AssetsTests.MazeTests
         [InlineData(4)]
         public void ConnectDoorsWithFiveLines(int testNumber)
         {
-            var expectations =FiveConnectingLinesTestDefinitions.GetExpectations(testNumber);
+            var expectations = FiveConnectingLinesTestDefinitions.GetExpectations(testNumber);
 
             ConnectDoorTestsImpl(expectations);
         }

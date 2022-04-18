@@ -6,19 +6,13 @@ namespace Assets.Actors
 {
     internal class Me : Character<Me>
     {
-        internal Me(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry,
-            string state)
-            : base(coordinates, dispatchRegistry, actionRegistry, state)
+        internal Me(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
+            : base(dispatchRegistry, actionRegistry, state)
         {
         }
 
-        private Me(Me me) : base(me.Coordinates, me.DispatchRegistry, me.ActionRegistry, "")
+        private Me(Me me) : base(me.DispatchRegistry, me.ActionRegistry, "")
         {
-        }
-
-        public override Me Create()
-        {
-            return ActorBuilder.Build(this);
         }
     }
 }

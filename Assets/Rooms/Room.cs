@@ -8,6 +8,7 @@ using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Enums;
 using Utils.Random;
 
 namespace Assets.Rooms
@@ -19,14 +20,15 @@ namespace Assets.Rooms
         int NumberRows { get; }
         Room Rotate(int times);
         IEnumerable<Door> Doors { get; }
-        Room AddDoor(int doorNumber);
+        void AddDoor(int doorNumber);
     }
 
     internal class Room : IRoom
     {
-        internal Room(string name, IDispatchee[,] tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        internal Room(string name, IDispatchee[,] tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
         {
             _dieBuilder = dieBuilder;
+            _actorBuilder = actorBuilder;
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
             Name = $"{name}{++_counter}";
@@ -64,6 +66,7 @@ namespace Assets.Rooms
         }
 
         private readonly IDieBuilder _dieBuilder;
+        private readonly IActorBuilder _actorBuilder;
         private readonly List<Door> _doors = new List<Door>();
         private static uint _counter;
 
@@ -137,67 +140,62 @@ namespace Assets.Rooms
             return rotated;
         }
 
-        public Room AddDoor(int doorNumber)
+        public void AddDoor(int doorNumber)
         {
             var walls = WallsWhichCanHaveDoors().ToList();
 
             var wallToReplaceWithDoor = SelectWall();
-            if (wallToReplaceWithDoor == null) return this;
+            if (wallToReplaceWithDoor == default) return;
 
-            var newDoor = ActorBuilder.Build<Door>(wallToReplaceWithDoor.Coordinates, DispatchRegistry, ActionRegistry, doorNumber.ToString());
+            var newDoor = _actorBuilder.Build<Door>(doorNumber.ToString());
 
-            var newTiles = _tiles.Duplicate();
-            newTiles[newDoor.Coordinates.Row, newDoor.Coordinates.Column] = newDoor;
+            _tiles[wallToReplaceWithDoor.Coordinates.Row, wallToReplaceWithDoor.Coordinates.Column] = newDoor;
 
-            return new Room(this, newTiles, newDoor);
-
-            bool IsOutsideWall(Wall wall)
+            bool IsOutsideWall(Coordinate coordinates)
             {
-                var coordinates = wall.Coordinates;
                 return coordinates.Row == 0 ||
                        coordinates.Row == NumberRows - 1 ||
                        coordinates.Column == 0 ||
                        coordinates.Column == NumberColumns - 1;
             }
 
-            bool IsNextToDoor(Wall wall)
+            bool IsNextToDoor(Coordinate coordinates)
             {
-                var coordinates = wall.Coordinates;
-                var neighbouringCoordinates = new[]
-                {
-                    new Coordinate(coordinates.Row + 1, coordinates.Column),
-                    new Coordinate(coordinates.Row - 1, coordinates.Column),
-                    new Coordinate(coordinates.Row, coordinates.Column + 1),
-                    new Coordinate(coordinates.Row, coordinates.Column - 1),
-                };
+                var neighbouringCoordinates = coordinates.Surrounding4Coordinates();
 
-                return Doors.Any(door => neighbouringCoordinates.Any(neighbour => neighbour == door.Coordinates));
+                return Doors.Any(door => neighbouringCoordinates.Any(neighbour => neighbour == coordinates));
             }
 
-            IEnumerable<Wall> WallsWhichCanHaveDoors()
+            IEnumerable<(Coordinate Coordinates, Wall Wall)> WallsWhichCanHaveDoors()
             {
-                var outerWallsWithoutCorners = new List<Wall>();
+                var wallsWhichCanHaveDoors = new List<(Coordinate Coordinates, Wall Wall)>();
 
-                foreach (var dispatchee in _tiles)
+                var (maxRow, maxColumns) = _tiles.UpperBounds();
+                for (int row = 0; row < maxRow; row++)
                 {
-                    if (!dispatchee.Name.IsSame(Wall.DispatcheeName)) continue;
+                    for (int column = 0; column < maxColumns; column++)
+                    {
+                        var coordinates = new Coordinate(row, column);
+                        var dispatchee = this[coordinates];
 
-                    var wall = (Wall)dispatchee;
-                    if (wall.IsCorner) continue;
+                        if (!dispatchee.IsWall()) continue;
 
-                    if (!IsOutsideWall(wall)) continue;
+                        var wall = (Wall)dispatchee;
+                        if (wall.IsCorner) continue;
 
-                    if (IsNextToDoor(wall)) continue;
+                        if (!IsOutsideWall(coordinates)) continue;
+                        if (IsNextToDoor(coordinates)) continue;
 
-                    outerWallsWithoutCorners.Add(wall);
+                        wallsWhichCanHaveDoors.Add((coordinates, wall));
+                    }
                 }
 
-                return outerWallsWithoutCorners;
+                return wallsWhichCanHaveDoors;
             }
 
-            Wall SelectWall()
+            (Coordinate Coordinates, Wall Wall) SelectWall()
             {
-                if (walls.Count == 0) return null;
+                if (walls.Count == 0) return default;
 
                 var index = walls.Count == 1 ? 0 : _dieBuilder.Dice(walls.Count - 1).Random;
                 var selectedWall = walls[index];
@@ -209,10 +207,10 @@ namespace Assets.Rooms
 
         public (Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight) GetSize()
         {
-            Coordinate topLeft = _tiles[0, 0].Coordinates;
-            Coordinate topRight = _tiles[0, NumberColumns - 1].Coordinates;
-            Coordinate bottomLeft = _tiles[NumberRows - 1, 0].Coordinates;
-            Coordinate bottomRight = _tiles[NumberRows - 1, NumberColumns - 1].Coordinates;
+            var topLeft = new Coordinate(0, 0);
+            var topRight = new Coordinate(0, NumberColumns - 1);
+            var bottomLeft = new Coordinate(NumberRows - 1, 0);
+            var bottomRight = new Coordinate(NumberRows - 1, NumberColumns - 1);
 
             return (topLeft, topRight, bottomLeft, bottomRight);
         }

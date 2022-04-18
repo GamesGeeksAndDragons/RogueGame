@@ -16,9 +16,9 @@ namespace Assets.Tiles
         public const int TilesToCheckIfRoomTooClose = 4;
         public const int TilesToCheckIfEdgeTooClose = 3;
 
-        internal static ITiles PositionRoomsInTiles(this ITiles tiles, IEnumerable<Room> rooms)
+        internal static string[] PositionRoomsInTiles(this ITiles tiles, IEnumerable<Room> rooms)
         {
-            var tilesWithRooms = new Tiles(tiles);
+            var removedTiles = new List<string>();
 
             foreach (var room in rooms)
             {
@@ -27,27 +27,28 @@ namespace Assets.Tiles
                 var tilesChange = new List<(string Name, Coordinate coordinates)>();
                 while (!roomIsPositioned)
                 {
-                    var (topLeft, topRight, bottomLeft, bottomRight) = AttemptToPositionRoomInsideTiles(tilesWithRooms, room);
+                    var (topLeft, topRight, bottomLeft, bottomRight) = AttemptToPositionRoomInsideTiles(tiles, room);
 
                     var bigEnough = AreTilesBigEnough(topLeft, topRight, bottomLeft, bottomRight);
                     if (!bigEnough)
                     {
-                        tilesWithRooms = Tiles.Grow(tilesWithRooms);
+                        tiles.Grow();
                         continue;
                     }
 
-                    if (IsTooCloseToEdge(tilesWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
-                    if (IsTooCloseToARoom(tilesWithRooms, topLeft, topRight, bottomLeft, bottomRight)) continue;
+                    if (IsTooCloseToEdge(tiles, topLeft, topRight, bottomLeft, bottomRight)) continue;
+                    if (IsTooCloseToARoom(tiles, topLeft, topRight, bottomLeft, bottomRight)) continue;
 
                     var changes = PositionRoom(room, topLeft);
                     tilesChange.AddRange(changes);
                     roomIsPositioned = true;
                 }
 
-                tilesWithRooms.Replace(tilesChange);
+                var removed = tiles.Replace(tilesChange);
+                removedTiles.AddRange(removed);
             }
 
-            return tilesWithRooms;
+            return removedTiles.ToArray();
         }
 
         private static bool AreTilesBigEnough(Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
@@ -55,7 +56,7 @@ namespace Assets.Tiles
             return topLeft != topRight && topRight != bottomLeft && bottomLeft != bottomRight && bottomRight != Coordinate.NotSet;
         }
 
-        private static bool IsSurroundedByRock(Coordinate coordinate, Tiles tiles, int tilesToCheck, int boundaryRow, int boundaryColumn, IDispatchRegistry registry)
+        private static bool IsSurroundedByRock(Coordinate coordinate, ITiles tiles, int tilesToCheck, int boundaryRow, int boundaryColumn)
         {
             var minRow = Math.Max(coordinate.Row - tilesToCheck, 0);
             var maxRow = Math.Min(coordinate.Row + tilesToCheck, boundaryRow);
@@ -72,7 +73,7 @@ namespace Assets.Tiles
                     if (name.IsNullOrEmpty()) return false;
 
                     // really want isPaper and isScissors
-                    var isRock = tiles.IsTileType<Rock>(checkCoordinate, registry);
+                    var isRock = tiles.IsTileType<Rock>(checkCoordinate);
                     if (!isRock) return false;
                 }
             }
@@ -80,7 +81,7 @@ namespace Assets.Tiles
             return true;
         }
 
-        private static bool IsTooCloseToEdge(Tiles tiles, Coordinate coordinates, int tilesToCheck)
+        private static bool IsTooCloseToEdge(ITiles tiles, Coordinate coordinates, int tilesToCheck)
         {
             if (coordinates.Row - tilesToCheck < 0) return true;
             if (coordinates.Column - tilesToCheck < 0) return true;
@@ -92,7 +93,7 @@ namespace Assets.Tiles
             return false;
         }
 
-        private static bool IsTooCloseToEdge(Tiles tiles, Coordinate topLeft, Coordinate topRight,
+        private static bool IsTooCloseToEdge(ITiles tiles, Coordinate topLeft, Coordinate topRight,
             Coordinate bottomLeft, Coordinate bottomRight)
         {
             if (IsTooCloseToEdge(tiles, topLeft, TilesToCheckIfEdgeTooClose)) return true;
@@ -101,22 +102,21 @@ namespace Assets.Tiles
             return IsTooCloseToEdge(tiles, bottomRight, TilesToCheckIfEdgeTooClose);
         }
 
-        private static bool IsTooCloseToARoom(Tiles tiles, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
+        private static bool IsTooCloseToARoom(ITiles tiles, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
         {
-            var dispatchRegistry = tiles.DispatchRegistry;
             var (row, column) = tiles.UpperBounds;
-            if (!IsSurroundedByRock(topLeft, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
-            if (!IsSurroundedByRock(topRight, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
-            if (!IsSurroundedByRock(bottomLeft, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry)) return true;
-            return !IsSurroundedByRock(bottomRight, tiles, TilesToCheckIfRoomTooClose, row, column, dispatchRegistry);
+            if (!IsSurroundedByRock(topLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
+            if (!IsSurroundedByRock(topRight, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
+            if (!IsSurroundedByRock(bottomLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
+            return !IsSurroundedByRock(bottomRight, tiles, TilesToCheckIfRoomTooClose, row, column);
         }
 
         private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight)
-            AttemptToPositionRoomInsideTiles(Tiles tiles, Room room)
+            AttemptToPositionRoomInsideTiles(ITiles tiles, Room room)
         {
             for (var attempts = 0; attempts < NumAttemptTillGrowMaze; ++attempts)
             {
-                var start = RandomRockTile(tiles).Coordinates;
+                var start = tiles.RandomRockTile().Coordinates;
 
                 var (topLeft, topRight, bottomLeft, bottomRight) = room.GetSize();
                 topLeft += start;
@@ -137,11 +137,6 @@ namespace Assets.Tiles
             }
 
             return (Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet);
-
-            IDispatchee RandomRockTile(ITiles maze)
-            {
-                return maze.RandomTile(dispatchee => dispatchee.IsFloor());
-            }
         }
 
         private static TileChanges PositionRoom(Room room, Coordinate topLeft)

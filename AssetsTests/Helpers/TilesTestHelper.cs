@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿using Assets.Actors;
+using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Tiles;
 using Utils.Dispatching;
@@ -12,6 +13,7 @@ namespace AssetsTests.Helpers
     {
         public IDispatchRegistry DispatchRegistry = new DispatchRegistry();
         public IActionRegistry ActionRegistry = new ActionRegistry();
+        public IActorBuilder ActorBuilder;
         public IDieBuilder DieBuilder = new DieBuilder();
 
         public ITiles Tiles { get; protected set; }
@@ -21,6 +23,7 @@ namespace AssetsTests.Helpers
         protected TilesTestHelper(ITestOutputHelper output)
         {
             Output = output;
+            ActorBuilder = new ActorBuilder(DispatchRegistry, ActionRegistry);
         }
 
         protected virtual void TestArrange(IMazeExpectations expectations)
@@ -30,7 +33,7 @@ namespace AssetsTests.Helpers
 
             ITiles LoadTiles(string maze)
             {
-                var dispatchees = DispatchRegistry.Register(ActionRegistry, maze);
+                var dispatchees = DispatchRegistry.Register(ActorBuilder, maze);
                 var tilesRegistry = dispatchees.ExtractTilesRegistry();
                 var tiles = new Tiles(tilesRegistry, DispatchRegistry, ActionRegistry, DieBuilder);
                 return tiles;

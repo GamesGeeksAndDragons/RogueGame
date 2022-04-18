@@ -13,21 +13,16 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; private set; }
 
-        internal Wall(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(coordinates, dispatchRegistry, actionRegistry)
+        internal Wall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
+            : base(dispatchRegistry, actionRegistry)
         {
             WallType = state.ToEnum<WallDirection>();
         }
 
         internal Wall(Wall wall) 
-            : base(wall.Coordinates, wall.DispatchRegistry, wall.ActionRegistry)
+            : base(wall.DispatchRegistry, wall.ActionRegistry)
         {
             WallType = wall.WallType;
-        }
-
-        public override Wall Create()
-        {
-            return ActorBuilder.Build(this);
         }
 
         public override void UpdateState(Parameters state)
@@ -102,7 +97,7 @@ namespace Assets.Actors
             }
 
             var newDirection = GetRotatedDirection().ToString();
-            return new Wall(Coordinates, DispatchRegistry, ActionRegistry, newDirection);
+            return new Wall(DispatchRegistry, ActionRegistry, newDirection);
         }
     }
 }

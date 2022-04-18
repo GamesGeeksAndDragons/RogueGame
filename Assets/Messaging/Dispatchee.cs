@@ -14,9 +14,8 @@ namespace Assets.Messaging
     internal abstract class Dispatchee<T> : IDispatchee
         where T : class
     {
-        protected Dispatchee(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+        protected Dispatchee(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
-            Coordinates = coordinates;
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
 
@@ -43,7 +42,6 @@ namespace Assets.Messaging
 
         protected internal virtual void RegisterActions() { }
 
-        public Coordinate Coordinates { get; protected set; }
         public IDispatchRegistry DispatchRegistry { get; }
         public IActionRegistry ActionRegistry { get; }
 
@@ -53,10 +51,6 @@ namespace Assets.Messaging
 
         public virtual void UpdateState(Parameters state)
         {
-            if (state.HasValue(nameof(Coordinates)))
-            {
-                Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
-            }
         }
 
         public virtual Parameters CurrentState()
@@ -64,7 +58,6 @@ namespace Assets.Messaging
             return new Parameters
             {
                 (Name: nameof(UniqueId), Value: UniqueId),
-                (Name: nameof(Coordinates), Value: Coordinates.ToString()),
             };
         }
 
@@ -74,8 +67,5 @@ namespace Assets.Messaging
 
             return Math.Abs(num) > floatingTolerance;
         }
-
-
-        public abstract T Create();
     }
 }

@@ -8,26 +8,26 @@ namespace Assets.Tiles
 {
     internal static class ProjectorHelpers
     {
-        internal static bool ShouldProject(this ITiles tiles, Coordinate coordinate, IDispatchRegistry registry)
+        internal static bool ShouldProject(this ITiles tiles, Coordinate coordinate)
         {
             if (!tiles.IsInside(coordinate)) return false;
 
-            return tiles.IsRock(coordinate, registry) ||
-                   tiles.IsDoor(coordinate, registry) ||
-                   tiles.IsFloor(coordinate, registry);
+            return tiles.IsRock(coordinate) ||
+                   tiles.IsDoor(coordinate) ||
+                   tiles.IsFloor(coordinate);
         }
 
         internal static Line ProjectLine(this ITiles tiles, Coordinate coordinate, IDispatchRegistry registry, Compass4Points direction)
         {
             var line = new List<(string Id, Coordinate Coordinates)>();
-            if (tiles.ShouldProject(coordinate, registry)) line.Add((tiles[coordinate], coordinate));
+            if (tiles.ShouldProject(coordinate)) line.Add((tiles[coordinate], coordinate));
 
             bool continueProjection;
             do
             {
                 coordinate = coordinate.Move(direction);
 
-                continueProjection = tiles.ShouldProject(coordinate, registry);
+                continueProjection = tiles.ShouldProject(coordinate);
                 if (continueProjection)
                 {
                     line.Add((tiles[coordinate], coordinate));

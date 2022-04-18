@@ -62,15 +62,18 @@ namespace Assets.Messaging
             _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
         }
 
-        public void Unregister(string uniqueId)
+        public void Unregister(params string[] uniqueIds)
         {
-            uniqueId.ThrowIfEmpty(nameof(uniqueId));
+            uniqueIds.Length.ThrowIfBelow(0, nameof(uniqueIds));
 
-            if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Unregister [{uniqueId}] which is not registered.");
+            foreach (var uniqueId in uniqueIds)
+            {
+                if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Unregister [{uniqueId}] which is not registered.");
 
-            var dispatchee = GetDispatchee(uniqueId);
+                var dispatchee = GetDispatchee(uniqueId);
 
-            Unregister(dispatchee);
+                Unregister(dispatchee);
+            }
         }
 
         public IDispatchee GetDispatchee(string uniqueId)
@@ -83,62 +86,5 @@ namespace Assets.Messaging
         public IReadOnlyList<IDispatchee> Dispatchees => _uniquelyNamedDispatchees.Values.ToList();
 
         public IDispatchee[][] Tiles { get; private set; }
-
-        internal void NewLevel()
-        {
-            var tiles = Dispatchees.Where(dispatchee => dispatchee.IsTile());
-
-            var tilesRegistry = new List<List<IDispatchee>>();
-
-            foreach (var tile in tiles)
-            {
-                if (!tile.IsTile()) continue;
-
-                var row = GetRow(tile);
-                AddTile(tile, row);
-            }
-
-            Tiles = tilesRegistry.Select(list => list.ToArray()).ToArray();
-
-            void Grow<T>(List<T> list, Func<T> create, int newSize)
-            {
-                var growBy = newSize - list.Count + 1;
-
-                for (int i = 0; i < growBy; i++)
-                {
-                    list.Add(create());
-                }
-            }
-
-            List<IDispatchee> GetRow(IDispatchee tile)
-            {
-                var row = tile.Coordinates.Row;
-
-                if (tilesRegistry.Count < row - 1)
-                {
-                    Grow(tilesRegistry, () => new List<IDispatchee>(), row);
-                    var growBy = row - tilesRegistry.Count + 1;
-
-                    for (int i = 0; i < growBy; i++)
-                    {
-                        tilesRegistry.Add(new List<IDispatchee>());
-                    }
-                }
-
-                return tilesRegistry[row];
-            }
-
-            void AddTile(IDispatchee tile, List<IDispatchee> row)
-            {
-                var column = tile.Coordinates.Column;
-
-                if (row.Count < column - 1)
-                {
-                    Grow(row, () => null, column);
-                }
-
-                row[column] = tile;
-            }
-        }
     }
 }

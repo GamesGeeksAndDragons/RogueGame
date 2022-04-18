@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿using Assets.Actors;
+using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Rooms;
 using AssetsTests.Fakes;
@@ -19,8 +20,9 @@ namespace AssetsTests.RoomTests
             var actionRegistry = new ActionRegistry();
             var random = new DieBuilder(loadFolder: testName, reset: reset);
             var logger = new FakeLogger(output);
+            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
 
-            var builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry);
+            var builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
             return builder.BuildRoom(roomName);
         }
 

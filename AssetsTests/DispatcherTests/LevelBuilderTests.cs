@@ -20,9 +20,16 @@ namespace AssetsTests.DispatcherTests
             _output = output;
         }
 
+        [Fact]
+        public void Test()
+        {
+            WhenBuiltDispatcher_ShouldHaveMeInMaze(2);
+        }
+
         [Theory]
         [InlineData(1)]
-        //[InlineData(2, 3)]
+        [InlineData(2)]
+        [InlineData(3)]
         public void WhenBuiltDispatcher_ShouldHaveMeInMaze(int level)
         {
             var dispatchRegistry = new DispatchRegistry();
@@ -30,17 +37,19 @@ namespace AssetsTests.DispatcherTests
             var dispatcher = new Dispatcher(dispatchRegistry);
             var fakeRandomNumbers = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);
+            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             var maze = builder.Build(level);
-            var coordinates = new Coordinate(10, 10);
-            var me = new Me(coordinates, dispatchRegistry, actionRegistry, "");
+            var actual = maze.Tiles.Print(dispatchRegistry);
+            _output.OutputMazes(actual);
+
+            var me = new Me(dispatchRegistry, actionRegistry, "");
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
             //var maze = dispatchRegistry.GetDispatchee("Maze1");
-            var actual = maze.ToString();
-
+            actual = maze.Tiles.Print(dispatchRegistry);
             _output.OutputMazes(actual);
         }
     }

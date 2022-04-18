@@ -25,17 +25,6 @@ namespace AssetsTests
         {
             var generator = new DieBuilder();
 
-            //switch (testNum)
-            //{
-            //    case 1:
-            //    case 2:
-            //        generator.PopulateEnum(Compass4Points.South, Compass4Points.North);
-            //        generator.PopulateDice(1, 0, 1, 1, 1);
-            //        break;
-
-            //    default: throw new ArgumentException($"Didn't have Generator for [{testNum}]");
-            //}
-
             return generator;
         }
 
@@ -92,14 +81,14 @@ namespace AssetsTests
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry);
+            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             builder.Build(GetLevel(testNum));
-            var coordinates = new Coordinate(10, 10);
-            var me = ActorBuilder.Build<Me>(coordinates, dispatchRegistry, actionRegistry, "");
+            var me = actorBuilder.Build<Me>();
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
@@ -124,13 +113,14 @@ namespace AssetsTests
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry);
+            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
 
             var fakeRandomNumbers = GetGenerator(testNum);
             var fakeLogger = new FakeLogger(_output);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             builder.Build(GetLevel(testNum));
-            var me = ActorBuilder.Build<Me>(Coordinate.NotSet, dispatchRegistry, actionRegistry, new Coordinate(10, 10).ToString());
+            var me = actorBuilder.Build<Me>();
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

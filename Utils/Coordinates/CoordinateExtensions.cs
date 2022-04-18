@@ -124,5 +124,18 @@ namespace Utils.Coordinates
 
             return Compass4Points.Undefined;
         }
+
+        public static Coordinate[] Surrounding4Coordinates(this Coordinate coordinates)
+        {
+            return new[]
+            {
+                new Coordinate(coordinates.Row + 1, coordinates.Column),
+                new Coordinate(coordinates.Row - 1, coordinates.Column),
+                new Coordinate(coordinates.Row, coordinates.Column + 1),
+                new Coordinate(coordinates.Row, coordinates.Column - 1),
+            };
+        }
+
+
     }
 }

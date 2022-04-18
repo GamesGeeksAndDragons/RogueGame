@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Rooms;
@@ -13,8 +14,8 @@ namespace Assets.Tiles
     {
         internal readonly int TilesPerBlock;
 
-        public RoomTiles(int blockRows, int blockColumns, int tilesPerBlock, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder)
-        : base((blockRows + 1) * tilesPerBlock + 2, (blockColumns + 1) * tilesPerBlock + 2, dispatchRegistry, actionRegistry, dieBuilder)
+        public RoomTiles(int blockRows, int blockColumns, int tilesPerBlock, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
+        : base((blockRows + 1) * tilesPerBlock + 2, (blockColumns + 1) * tilesPerBlock + 2, dispatchRegistry, actionRegistry, dieBuilder, actorBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
@@ -24,11 +25,6 @@ namespace Assets.Tiles
 
             TilesPerBlock = tilesPerBlock;
        }
-
-        private RoomTiles(RoomTiles tiles) : base(tiles)
-        {
-            TilesPerBlock = tiles.TilesPerBlock;
-        }
 
         private WallDirection? GetWallDirection(Coordinate coordinate)
         {

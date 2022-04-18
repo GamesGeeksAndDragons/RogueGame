@@ -9,7 +9,7 @@ namespace Assets.Messaging
 {
     public static class DispatchRegistryHelpers
     {
-        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string[] dispatchees)
+        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatchees)
         {
             var noRows = dispatchees.Length;
             var noColumns = dispatchees.Max(row => row.Length);
@@ -23,19 +23,18 @@ namespace Assets.Messaging
                 for (int colIndex = 0; colIndex < noColumns; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    var coordinate = new Coordinate(rowIndex, colIndex);
-                    tiles[rowIndex, colIndex] = ActorBuilder.Build(actor, coordinate, dispatchRegistry, actionRegistry);
+                    tiles[rowIndex, colIndex] = builder.Build(actor);
                 }
             }
 
             return tiles;
         }
 
-        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string dispatchees)
+        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatchees)
         {
             var dispatcheeArray = dispatchees.SplitIntoLines();
 
-            return dispatchRegistry.Register(actionRegistry, dispatcheeArray);
+            return dispatchRegistry.Register(builder, dispatcheeArray);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Assets.Actors
         private readonly Dispatcher _dispatcher;
 
         public MeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, Dispatcher dispatcher, string state) 
-            : base(Coordinate.NotSet, dispatchRegistry, actionRegistry)
+            : base(dispatchRegistry, actionRegistry)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             dispatcher.ThrowIfNull(nameof(dispatcher));
@@ -51,11 +51,6 @@ namespace Assets.Actors
 
         internal int NumRolls { get; private set; }
         internal int MaxPoints { get; private set; }
-
-        public override MeleeWeapon Create()
-        {
-            return ActorBuilder.Build(this);
-        }
 
         public override void UpdateState(Parameters state)
         {

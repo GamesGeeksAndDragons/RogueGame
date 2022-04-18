@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Utils.Coordinates;
+using Utils.Random;
 
 namespace Utils
 {
@@ -93,6 +95,39 @@ namespace Utils
             }
 
             return duplicate;
+        }
+
+        public static Coordinate Locate<T>(this T[,] matrix, Predicate<T> locator)
+        {
+            var maxRow = matrix.RowUpperBound();
+            var maxCol = matrix.ColumnUpperBound();
+
+            for (var row = 0; row <= maxRow; row++)
+            {
+                for (var col = 0; col <= maxCol; col++)
+                {
+                    var value = matrix[row, col];
+
+                    if(locator(value)) return new Coordinate(row, col);
+                }
+            }
+
+            return Coordinate.NotSet;
+        }
+
+        public static Coordinate RandomCoordinates<T>(this T[,] matrix, IDieBuilder dieBuilder, int maxRows, int maxColumns)
+        {
+            var randomRow = dieBuilder.Dice(maxRows).Random - 1;
+            var randomColumn = dieBuilder.Dice(maxColumns).Random - 1;
+
+            return new Coordinate(randomRow, randomColumn);
+        }
+
+        public static Coordinate RandomCoordinates<T>(this T[,] matrix, DieBuilder dieBuilder)
+        {
+            var (maxRows, maxColumns) = matrix.UpperBounds();
+
+            return matrix.RandomCoordinates(dieBuilder, maxRows, maxColumns);
         }
     }
 }

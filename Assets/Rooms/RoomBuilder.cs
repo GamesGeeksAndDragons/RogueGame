@@ -26,9 +26,10 @@ namespace Assets.Rooms
         private readonly ILog _logger;
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
+        private readonly IActorBuilder _actorBuilder;
         private readonly Dictionary<string, string[]> _rooms;
 
-        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             logger.ThrowIfNull(nameof(logger));
@@ -39,6 +40,7 @@ namespace Assets.Rooms
             _logger = logger;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
+            _actorBuilder = actorBuilder;
 
             _rooms = LoadRooms();
 
@@ -81,14 +83,13 @@ namespace Assets.Rooms
                 for (int colIndex = 0; colIndex < maxCols; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    var coordinates = new Coordinate(rowIndex, colIndex);
-                    var dispatchee = ActorBuilder.Build(actor, coordinates, _dispatchRegistry, _actionRegistry);
+                    var dispatchee = _actorBuilder.Build(actor);
 
                     tiles[rowIndex,colIndex] = dispatchee;
                 }
             }
 
-            return new Room(roomName, tiles, _dispatchRegistry, _actionRegistry, _dieBuilder);
+            return new Room(roomName, tiles, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
         }
     }
 }

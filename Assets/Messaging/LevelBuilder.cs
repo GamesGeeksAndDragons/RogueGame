@@ -1,7 +1,9 @@
-﻿using Assets.Deeds;
+﻿using Assets.Actors;
+using Assets.Deeds;
 using Assets.Mazes;
 using Assets.Rooms;
 using log4net;
+using Utils.Dispatching;
 using Utils.Random;
 
 namespace Assets.Messaging
@@ -11,40 +13,26 @@ namespace Assets.Messaging
         private readonly IDieBuilder _randomNumberGenerator;
         private readonly ILog _logger;
         private readonly Dispatcher _dispatcher;
-        private readonly DispatchRegistry _dispatchRegistry;
-        private readonly ActionRegistry _actionRegistry;
+        private readonly IDispatchRegistry _dispatchRegistry;
+        private readonly IActionRegistry _actionRegistry;
+        private readonly IActorBuilder _actorBuilder;
 
-        public LevelBuilder(IDieBuilder randomNumberGenerator, ILog logger, Dispatcher dispatcher, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry)
+        public LevelBuilder(IDieBuilder randomNumberGenerator, ILog logger, Dispatcher dispatcher, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
         {
             _randomNumberGenerator = randomNumberGenerator;
             _logger = logger;
             _dispatcher = dispatcher;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
-        }
-
-        internal void Compact(Maze maze, int level)
-        {
-            foreach (var dispatchee in _dispatchRegistry.Dispatchees)
-            {
-                var uniqueId = dispatchee.UniqueId;
-                if (maze.IsInMaze(uniqueId)) continue;
-
-                _dispatchRegistry.Unregister(uniqueId);
-            }
-
-            maze.UniqueId = Maze.DispatcheeName + level;
-            _dispatchRegistry.Register(maze);
+            _actorBuilder = actorBuilder;
         }
 
         internal Maze Build(int level)
         {
-            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry);
-            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry);
+            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);
+            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);
 
             var maze = mazeBuilder.BuildMazeWithRoomsAndDoors(level);
-
-            Compact(maze, level);
 
             return maze;
         }

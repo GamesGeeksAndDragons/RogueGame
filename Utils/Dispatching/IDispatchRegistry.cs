@@ -6,7 +6,7 @@ namespace Utils.Dispatching
     {
         string Register(IDispatchee dispatchee);
         void Unregister(IDispatchee dispatchee);
-        void Unregister(string uniqueId);
+        void Unregister(params string[] uniqueIds);
 
         IDispatchee GetDispatchee(string uniqueId);
         IReadOnlyList<IDispatchee> Dispatchees { get; }

@@ -1,6 +1,7 @@
 ﻿using Assets.Actors;
 using Assets.Mazes;
 using Assets.Tiles;
+using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Deeds
@@ -13,11 +14,13 @@ namespace Assets.Deeds
         {
             var floorTile = RandomEmptyFloorTile();
 
-            Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Coordinates);
+            Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Floor);
 
-            Floor RandomEmptyFloorTile()
+            (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {
-                return (Floor) Tiles.RandomFloorTile(false);
+                var tile = Tiles.RandomFloorTile(false);
+
+                return ((IFloor) tile.Dispatchee, tile.Coordinates);
             }
         }
     }

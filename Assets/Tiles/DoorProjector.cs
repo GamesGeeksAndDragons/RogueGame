@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Actors;
+using Assets.Messaging;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Utils.Random;
-using Line = System.Collections.Generic.List<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
-using ILine = System.Collections.Generic.IList<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
+using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Tiles
 {
@@ -15,17 +15,50 @@ namespace Assets.Tiles
     {
         private readonly IDispatchRegistry _registry;
         private readonly IDieBuilder _dieBuilder;
-        private readonly ITiles _tiles;
+        private readonly Tiles _tiles;
 
-        public ILine FindProjection(Door start, Compass4Points startDirection, Door target, Compass4Points targetDirection)
+        public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
         {
-            var startProjection = ProjectDirectionForDoor(start.Coordinates, startDirection);
-            if (HasCoordinates(startProjection, target.Coordinates))
+            _tiles = new Tiles(tiles);
+            _registry = registry;
+            _dieBuilder = dieBuilder;
+        }
+
+        public TileChanges FindProjection(Door start, Door target)
+        {
+            var (startCoordinates, startDirection) = GetDirectionOutside(start);
+            var (targetCoordinates, targetDirection) = GetDirectionOutside(target);
+
+            var startProjection = ProjectDirectionForDoor(startCoordinates, startDirection);
+            if (HasCoordinates(startProjection, targetCoordinates))
             {
                 return startProjection;
             }
 
-            var targetProjection = ProjectDirectionForDoor(target.Coordinates, targetDirection);
+            var targetProjection = ProjectDirectionForDoor(targetCoordinates, targetDirection);
+
+            (Coordinate Coordinates, Compass4Points Direction) GetDirectionOutside(Door door)
+            {
+                var coordinates = _tiles.Locate(door.UniqueId);
+                var òutside = GetOutsideDoorCoordinates(coordinates);
+                var direction = coordinates.GetDirectionOfTravel(òutside);
+
+                return (coordinates, direction);
+            }
+
+            Coordinate GetOutsideDoorCoordinates(Coordinate doorCoordinates)
+            {
+                var neighbouringCoordinates = doorCoordinates.Surrounding4Coordinates();
+
+                foreach (var coordinates in neighbouringCoordinates)
+                {
+                    var dispatchee = _tiles.GetDispatchee(coordinates);
+
+                    if (dispatchee.IsRock()) return coordinates;
+                }
+
+                return Coordinate.NotSet;
+            }
 
             if (HasIntersection(startProjection, targetProjection))
             {
@@ -34,7 +67,7 @@ namespace Assets.Tiles
 
             return Search(startProjection, startDirection, targetProjection, targetDirection);
 
-            Line Join()
+            TileChanges Join()
             {
                 var intersectionTile = FindIntersection(startProjection, targetProjection);
 
@@ -45,7 +78,7 @@ namespace Assets.Tiles
                 return projection;
             }
 
-            Line ProjectDirectionForDoor(Coordinate coordinate, Compass4Points direction)
+            TileChanges ProjectDirectionForDoor(Coordinate coordinate, Compass4Points direction)
             {
                 var startingTile = coordinate.Move(direction);
                 var projection = _tiles.ProjectLine(startingTile, _registry, direction);
@@ -53,21 +86,12 @@ namespace Assets.Tiles
             }
         }
 
-        public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
-        {
-            _tiles = tiles;
-
-            _registry = registry;
-            _dieBuilder = dieBuilder;
-
-        }
-
-        private Line TakeUpToCoordinates(Line line, Coordinate stopCoordinates)
+        private TileChanges TakeUpToCoordinates(TileChanges line, Coordinate stopCoordinates)
         {
             return line.TakeWhile(startTile => startTile.Coordinates != stopCoordinates).ToList();
         }
 
-        private Line TakeBetweenCoordinates(Line line, Coordinate startCoordinates, Coordinate stopCoordinates, Compass4Points direction)
+        private TileChanges TakeBetweenCoordinates(TileChanges line, Coordinate startCoordinates, Coordinate stopCoordinates, Compass4Points direction)
         {
             var startCheck = GetDirectionCheck(direction);
             var truncated = line.Where(tile => startCheck(tile, startCoordinates)).ToList();
@@ -95,35 +119,35 @@ namespace Assets.Tiles
             }
         }
 
-        private (string Id, Coordinate Coordinates) FindIntersection(Line line1, Line line2)
+        private (string Id, Coordinate Coordinates) FindIntersection(TileChanges line1, TileChanges line2)
         {
             return line1.Single(tile =>
                 line2.Any(targetTile => tile.Coordinates == targetTile.Coordinates));
         }
 
-        Line GetRandomLine(List<Line> lines)
+        TileChanges GetRandomLine(List<TileChanges> lines)
         {
             var random = _dieBuilder.Between(1, lines.Count).Random - 1;
             return lines[random];
         }
 
-        Line GetLongestLine(List<Line> lines)
+        TileChanges GetLongestLine(List<TileChanges> lines)
         {
             var longest = lines.Max(line => line.Count);
             var longestLines = lines.Where(line => line.Count == longest).ToList();
             return GetRandomLine(longestLines);
         }
 
-        private List<Line> GetIntersections(List<Line> startIntersections, List<Line> endIntersections)
+        private List<TileChanges> GetIntersections(List<TileChanges> startIntersections, List<TileChanges> endIntersections)
         {
-            return startIntersections.Where(startLine => endIntersections.Any(endLine => HasIntersection(startLine, endLine))).ToList();
+            return startIntersections.Where(startTileChanges => endIntersections.Any(endTileChanges => HasIntersection(startTileChanges, endTileChanges))).ToList();
         }
 
-        private ILine Search(Line start, Compass4Points startDirection, Line target, Compass4Points targetDirection)
+        private TileChanges Search(TileChanges start, Compass4Points startDirection, TileChanges target, Compass4Points targetDirection)
         {
             var startProjections = BuildProjections(start, startDirection);
 
-            Line projectionFromStart;
+            TileChanges projectionFromStart;
             var startIntersections = GetIntersections(startProjections, target).ToList();
             if (DoThreeLinesIntersect(startIntersections))
             {
@@ -136,7 +160,7 @@ namespace Assets.Tiles
             var targetIntersections = GetIntersections(targetProjections, startProjections).ToList();
             startIntersections = GetIntersections(startProjections, targetProjections).ToList();
 
-            Line projectionToTarget;
+            TileChanges projectionToTarget;
             if (DoFourLinesIntersect(startIntersections, targetIntersections))
             {
                 projectionFromStart = GetRandomLine(startIntersections);
@@ -151,15 +175,15 @@ namespace Assets.Tiles
             return Search(start, startDirection, projectionFromStart, projectionToTarget, target); ;
         }
 
-        bool DoThreeLinesIntersect(List<Line> intersections) => intersections.Count != 0;
-        bool DoFourLinesIntersect(List<Line> intersections1, List<Line> intersections2) => intersections1.Count != 0 && intersections2.Count != 0;
+        bool DoThreeLinesIntersect(List<TileChanges> intersections) => intersections.Count != 0;
+        bool DoFourLinesIntersect(List<TileChanges> intersections1, List<TileChanges> intersections2) => intersections1.Count != 0 && intersections2.Count != 0;
 
-        List<Line> GetIntersections(List<Line> intersections, Line target)
+        List<TileChanges> GetIntersections(List<TileChanges> intersections, TileChanges target)
         {
             return intersections.Where(line => HasIntersection(line, target)).ToList();
         }
 
-        private ILine Search(Line start, Compass4Points startDirection, Line projectionFromStart, Line projectionFromTarget, Line target)
+        private TileChanges Search(TileChanges start, Compass4Points startDirection, TileChanges projectionFromStart, TileChanges projectionFromTarget, TileChanges target)
         {
             var projectionFromStartDirection = startDirection.Rotate();
             var startProjections = BuildProjections(projectionFromStart, projectionFromStartDirection);
@@ -175,12 +199,12 @@ namespace Assets.Tiles
             return Join(start, projectionFromStart, connectingProjection, projectionFromTarget, target);
         }
 
-        private List<Line> BuildProjections(Line line, Compass4Points direction)
+        private List<TileChanges> BuildProjections(TileChanges line, Compass4Points direction)
         {
             direction = direction.Rotate();
             var oppositeDirection = direction.Rotate(2);
 
-            var newProjections = new List<Line>();
+            var newProjections = new List<TileChanges>();
 
             foreach (var tile in line)
             {
@@ -190,7 +214,7 @@ namespace Assets.Tiles
 
             return newProjections;
 
-            Line ProjectLine((string Id, Coordinate Coordinates) tile)
+            TileChanges ProjectLine((string Id, Coordinate Coordinates) tile)
             {
                 var projection = _tiles.ProjectLine(tile.Coordinates, _registry, direction);
 
@@ -212,7 +236,7 @@ namespace Assets.Tiles
             throw new ArgumentException($"Unable to find a direction for start {start} and end {end}. Expected either the row or column to be the same.");
         }
 
-        private ((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) GetIntersection(Line startProjection, Line joiningProjection, Line endProjection)
+        private ((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) GetIntersection(TileChanges startProjection, TileChanges joiningProjection, TileChanges endProjection)
         {
             var intersectionStart = FindIntersection(startProjection, joiningProjection);
             var intersectionEnd = FindIntersection(endProjection, joiningProjection);
@@ -220,7 +244,7 @@ namespace Assets.Tiles
             return (intersectionStart, intersectionEnd);
         }
 
-        private (((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) intersection, Line projection) Populate(Line start, Line connecting, Line target)
+        private (((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) intersection, TileChanges projection) Populate(TileChanges start, TileChanges connecting, TileChanges target)
         {
             var intersection = GetIntersection(start, connecting, target);
 
@@ -234,7 +258,7 @@ namespace Assets.Tiles
             return (intersection, projection);
         }
 
-        private Line TruncateOutsideOfIntersection(Line connecting, ((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) intersection)
+        private TileChanges TruncateOutsideOfIntersection(TileChanges connecting, ((string Id, Coordinate Coordinates) Start, (string Id, Coordinate Coordinates) End) intersection)
         {
             var intersectionDirection = GetIntersectionDirection(intersection.Start.Coordinates, intersection.End.Coordinates);
 
@@ -243,7 +267,7 @@ namespace Assets.Tiles
                 intersection.End.Coordinates, intersectionDirection);
         }
 
-        private Line Join(Line start, Line connecting, Line target)
+        private TileChanges Join(TileChanges start, TileChanges connecting, TileChanges target)
         {
             var (intersection, projection) = Populate(start, connecting, target);
 
@@ -252,7 +276,7 @@ namespace Assets.Tiles
             return projection;
         }
 
-        private Line Join(Line start, Line connectingStart, Line connectingTarget, Line target)
+        private TileChanges Join(TileChanges start, TileChanges connectingStart, TileChanges connectingTarget, TileChanges target)
         {
             var (_, projection) = Populate(start, connectingStart, connectingTarget);
             var (_, targetProjection) = Populate(target, connectingTarget, connectingStart);
@@ -262,7 +286,7 @@ namespace Assets.Tiles
             return projection;
         }
 
-        private Line Join(Line start, Line connectingStart, Line connectingBetween, Line connectingTarget, Line target)
+        private TileChanges Join(TileChanges start, TileChanges connectingStart, TileChanges connectingBetween, TileChanges connectingTarget, TileChanges target)
         {
             var (_, projection) = Populate(start, connectingStart, connectingBetween);
             var (_, targetProjection) = Populate(target, connectingTarget, connectingBetween);
@@ -276,7 +300,7 @@ namespace Assets.Tiles
             return projection;
         }
 
-        private Line OrderProjection(Line projection, Compass4Points projectionDirection)
+        private TileChanges OrderProjection(TileChanges projection, Compass4Points projectionDirection)
         {
             var orderBy = GetOrderBy();
             return projection.OrderBy(tile => orderBy(tile)).ToList();
@@ -300,12 +324,12 @@ namespace Assets.Tiles
             }
         }
 
-        bool HasCoordinates(ILine line, Coordinate coordinate)
+        bool HasCoordinates(TileChanges line, Coordinate coordinate)
         {
             return line.Any(tile => tile.Coordinates == coordinate);
         }
 
-        bool HasIntersection(ILine line1, ILine line2)
+        bool HasIntersection(TileChanges line1, TileChanges line2)
         {
             return line1.Any(tile => HasCoordinates(line2, tile.Coordinates));
         }

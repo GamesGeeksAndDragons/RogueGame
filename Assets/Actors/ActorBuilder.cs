@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Deeds;
-using Utils.Coordinates;
 using Utils.Dispatching;
+using BuilderMethodType= System.Func<Utils.Dispatching.IDispatchRegistry, Assets.Deeds.IActionRegistry, string, Utils.Dispatching.IDispatchee>;
+using ActorMethodType= System.Func<string, Utils.Dispatching.IDispatchRegistry, Assets.Deeds.IActionRegistry, Utils.Dispatching.IDispatchee>;
 
 namespace Assets.Actors
 {
-    internal static class ActorBuilder
+    public interface IActorBuilder
     {
-        private static readonly Dictionary<Type, Func<IDispatchee, IDispatchee>> CloneBuilderMethods;
-        private static readonly Dictionary<Type, Func<Coordinate, IDispatchRegistry, IActionRegistry, string, IDispatchee>> BuilderMethods;
-        private static readonly Dictionary<string, Func<string, Coordinate, IDispatchRegistry, IActionRegistry, IDispatchee>> ActorBuilderMethods;
+        T Build<T>(string state="") where T : IDispatchee;
 
-        static ActorBuilder()
+        IDispatchee Build(string actor, string state = "");
+    }
+
+    internal class ActorBuilder : IActorBuilder
+    {
+        private readonly IDispatchRegistry _dispatchRegistry;
+        private readonly IActionRegistry _actionRegistry;
+        private readonly Dictionary<Type, BuilderMethodType> _builderMethods;
+        private readonly Dictionary<string, ActorMethodType> _actorBuilderMethods;
+
+        public ActorBuilder(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
-            CloneBuilderMethods = new Dictionary<Type, Func<IDispatchee, IDispatchee>>
-            {
-                {typeof(Door), CloneBuilder.BuildDoor},
-                {typeof(Rock), CloneBuilder.BuildRock},
-                {typeof(Wall), CloneBuilder.BuildWall},
-                {typeof(Floor), CloneBuilder.BuildFloor},
-                {typeof(Null), CloneBuilder.BuildNull},
-            };
+            _dispatchRegistry = dispatchRegistry;
+            _actionRegistry = actionRegistry;
 
-            BuilderMethods = new Dictionary<Type, Func<Coordinate, IDispatchRegistry, IActionRegistry, string, IDispatchee>>
+            _builderMethods = new Dictionary<Type, BuilderMethodType>
             {
                 {typeof(Door), Builder.BuildDoor},
                 {typeof(Rock), Builder.BuildRock},
@@ -32,7 +35,7 @@ namespace Assets.Actors
                 {typeof(Null), Builder.BuildNull},
             };
 
-            ActorBuilderMethods = new Dictionary<string, Func<string, Coordinate, IDispatchRegistry, IActionRegistry, IDispatchee>>
+            _actorBuilderMethods = new Dictionary<string, ActorMethodType>
             {
                 {ActorDisplay.Rock,  CharacterBuilder.BuildRock},
                 {ActorDisplay.Floor, CharacterBuilder.BuildFloor},
@@ -61,148 +64,85 @@ namespace Assets.Actors
             };
         }
 
-        private static void CheckType(this IDispatchee dispatchee, string expectedDispatcheeType)
+        private static class Builder
         {
-            if (dispatchee.Name != expectedDispatcheeType)
+            internal static IDispatchee BuildWall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
-                throw new ArgumentException($"Expected a type of [{expectedDispatcheeType}] and got [{dispatchee.Name}]");
-            }
-        }
-
-        internal static class CloneBuilder
-        {
-            internal static IDispatchee BuildWall(IDispatchee wall)
-            {
-                wall.CheckType(Wall.DispatcheeName);
-                return new Wall((Wall)wall);
+                return new Wall(dispatchRegistry, actionRegistry, state);
             }
 
-            internal static IDispatchee BuildFloor(IDispatchee floor)
+            internal static IDispatchee BuildFloor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
-                floor.CheckType(Floor.DispatcheeName);
-
-                return new Floor((Floor)floor);
+                return new Floor(dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildDoor(IDispatchee door)
+            internal static IDispatchee BuildDoor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
             {
-                door.CheckType(Door.DispatcheeName);
-
-                return new Door((Door)door);
+                return new Door(dispatchRegistry, actionRegistry, state);
             }
 
-            internal static IDispatchee BuildRock(IDispatchee rock)
+            internal static IDispatchee BuildRock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
             {
-                rock.CheckType(Rock.DispatcheeName);
-
-                return new Rock((Rock)rock);
+                return new Rock(dispatchRegistry, actionRegistry);
             }
 
-            public static IDispatchee BuildNull(IDispatchee tile)
+            public static IDispatchee BuildNull(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
             {
-                tile.CheckType(Null.DispatcheeName);
-
-                return new Null((Null)tile);
-            }
-        }
-
-        internal static class Builder
-        {
-            internal static IDispatchee BuildWall(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
-            {
-                return new Wall(coordinates, dispatchRegistry, actionRegistry, state);
-            }
-
-            internal static IDispatchee BuildFloor(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
-            {
-                return new Floor(coordinates, dispatchRegistry, actionRegistry);
-            }
-
-            internal static IDispatchee BuildDoor(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
-            {
-                return new Door(coordinates, dispatchRegistry,actionRegistry, state);
-            }
-
-            internal static IDispatchee BuildRock(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
-            {
-                return new Rock(coordinates, dispatchRegistry, actionRegistry);
-            }
-
-            public static IDispatchee BuildNull(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string _)
-            {
-                return new Null(coordinates, dispatchRegistry, actionRegistry);
+                return new Null(dispatchRegistry, actionRegistry);
             }
         }
 
         internal static class CharacterBuilder
         {
-            internal static IDispatchee BuildFloor(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+            internal static IDispatchee BuildFloor(string actor, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
-                return new Floor(coordinates, dispatchRegistry, actionRegistry);
+                return new Floor(dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildDoor(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+            internal static IDispatchee BuildDoor(string actor, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
-                return new Door(coordinates, dispatchRegistry, actionRegistry, actor);
+                return new Door(dispatchRegistry, actionRegistry, actor);
             }
 
-            internal static IDispatchee BuildRock(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+            internal static IDispatchee BuildRock(string actor, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
-                return new Rock(coordinates, dispatchRegistry, actionRegistry);
+                return new Rock(dispatchRegistry, actionRegistry);
             }
 
-            internal static IDispatchee BuildWall(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+            internal static IDispatchee BuildWall(string actor, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
                 var direction = Wall.GetDirection(actor);
 
-                return new Wall(coordinates, dispatchRegistry, actionRegistry, direction.ToString());
+                return new Wall(dispatchRegistry, actionRegistry, direction.ToString());
             }
 
-            public static IDispatchee BuildNull(string actor, Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+            public static IDispatchee BuildNull(string actor, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
             {
-                return new Null(coordinates, dispatchRegistry, actionRegistry);
+                return new Null(dispatchRegistry, actionRegistry);
             }
         }
 
-        public static T Build<T>(Type type, Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
+        public T Build<T>(string state="")
             where T : IDispatchee
         {
-            if (BuilderMethods.TryGetValue(type, out var builder))
+            var type = typeof(T);
+
+            if (_builderMethods.TryGetValue(type, out var builder))
             {
-                return (T)builder(coordinate, dispatchRegistry, actionRegistry, state);
+                return (T) builder(_dispatchRegistry, _actionRegistry, state);
             }
 
             throw new TypeInitializationException(typeof(T).FullName, null);
         }
 
-        public static T Build<T>(Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
-            where T : IDispatchee
+        public IDispatchee Build(string actor, string state="")
         {
-            var type = typeof(T);
-
-            return Build<T>(type, coordinate, dispatchRegistry, actionRegistry, state);
-        }
-
-        public static IDispatchee Build(string actor, Coordinate coordinate, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
-        {
-            if (ActorBuilderMethods.TryGetValue(actor, out var builder))
+            if (_actorBuilderMethods.TryGetValue(actor, out var builder))
             {
-                return builder(actor, coordinate, dispatchRegistry, actionRegistry);
+                return builder(actor, _dispatchRegistry, _actionRegistry);
             }
 
             throw new ArgumentException($"Unable to find Actor Builder for [{actor}]");
-        }
-
-        public static T Build<T>(T t)
-            where T : IDispatchee
-        {
-            var type = typeof(T);
-            if (CloneBuilderMethods.TryGetValue(type, out var builder))
-            {
-                return (T)builder(t);
-            }
-
-            throw new TypeInitializationException(typeof(T).FullName, null);
         }
     }
 }

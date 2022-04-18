@@ -82,7 +82,7 @@ B    ║####
 
             for (int i = 1; i <= numDoors; i++)
             {
-                room = room.AddDoor(i);
+                room.AddDoor(i);
             }
 
             RoomTestHelpers.AssertTest(room, _output, expectation);

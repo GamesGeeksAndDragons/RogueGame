@@ -1,27 +1,26 @@
 ﻿using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    internal class Floor : Dispatchee<Floor>
+    public interface IFloor : IDispatchee
     {
-        internal Floor(Coordinate coordinates, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
-            : base(coordinates, dispatchRegistry, actionRegistry)
+        IDispatchee Contains { get; set; }
+    }
+
+    internal class Floor : Dispatchee<Floor>, IFloor
+    {
+        internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
+            : base(dispatchRegistry, actionRegistry)
         {
         }
 
         internal Floor(Floor floor) 
-            : base(floor.Coordinates, floor.DispatchRegistry, floor.ActionRegistry)
+            : base(floor.DispatchRegistry, floor.ActionRegistry)
         {
-        }
-
-        public override Floor Create()
-        {
-            return ActorBuilder.Build(this);
         }
 
         public override string ToString()
