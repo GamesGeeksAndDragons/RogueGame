@@ -16,6 +16,7 @@ namespace Utils.Random
         public const string CompassPrefix = "compass";
         public const string RandomExtension = "random";
         public const string IndexExtension = "index";
+        public const string FolderSuffix = "RandomNumbers";
 
         public IDice D2 { get; }
         public IDice D3 { get; }
@@ -35,12 +36,12 @@ namespace Utils.Random
 
         public DieBuilder(string loadFolder = FileAndDirectoryHelpers.LoadFolder, Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
-            _loadFolder = loadFolder;
+            _loadFolder = loadFolder + FolderSuffix;
             _reset = reset;
 
             if (reset != Die.RandomiserReset.None)
             {
-                FileAndDirectoryHelpers.CreateLoadFolder(loadFolder);
+                FileAndDirectoryHelpers.CreateLoadFolder(_loadFolder);
             }
 
             D2 = new Die(GetNormalDiceName(2), 1, 2, _loadFolder, _reset);

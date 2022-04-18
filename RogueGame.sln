@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assets", "Assets\Assets.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{2283CEE1-FEE3-4075-BB69-4633D6E55809}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilsTests", "UtilsTests\UtilsTests.csproj", "{A980D3CC-E0A3-4151-9946-28015186A63E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilsTests", "UtilsTests\UtilsTests.csproj", "{A980D3CC-E0A3-4151-9946-28015186A63E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomNumberCache", "RandomNumberCache\RandomNumberCache.csproj", "{58772E23-0868-4188-B9F8-41B25AEECB9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{A980D3CC-E0A3-4151-9946-28015186A63E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A980D3CC-E0A3-4151-9946-28015186A63E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A980D3CC-E0A3-4151-9946-28015186A63E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58772E23-0868-4188-B9F8-41B25AEECB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58772E23-0868-4188-B9F8-41B25AEECB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58772E23-0868-4188-B9F8-41B25AEECB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58772E23-0868-4188-B9F8-41B25AEECB9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C2E2FBB7-5A41-4701-8DE6-13A3B080CA3F} = {C7689751-7629-4E6B-9708-02CF338E7259}
 		{A980D3CC-E0A3-4151-9946-28015186A63E} = {C7689751-7629-4E6B-9708-02CF338E7259}
+		{58772E23-0868-4188-B9F8-41B25AEECB9F} = {C7689751-7629-4E6B-9708-02CF338E7259}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7D6DCB1F-195F-458C-B75C-70CE3D515502}

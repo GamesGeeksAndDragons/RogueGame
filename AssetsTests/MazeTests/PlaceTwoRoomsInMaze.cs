@@ -1,11 +1,4 @@
 ﻿using System;
-using Assets.Mazes;
-using Assets.Messaging;
-using AssetsTests.Fakes;
-using Utils;
-using Utils.Enums;
-using Utils.Random;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.MazeTests

@@ -23,7 +23,7 @@ namespace UtilsTests
 
             var rolls = new int[numRolls];
 
-            var generator = new DieBuilder(nameof(ARandomDice_ShouldHaveAGoodDistribution), Die.RandomiserReset.Full);
+            var generator = new DieBuilder(nameof(RandomNumberTests), Die.RandomiserReset.Full);
 
             for (int i = 0; i < numRolls; i++)
             {
@@ -72,7 +72,7 @@ namespace UtilsTests
 
             var rolls = new Compass8Points[numRolls];
 
-            var generator = new DieBuilder(nameof(ARandomCompassDirection_ShouldHaveAGoodDistribution), Die.RandomiserReset.Full);
+            var generator = new DieBuilder(nameof(RandomNumberTests), Die.RandomiserReset.Full);
 
             for (int i = 0; i < numRolls; i++)
             {
