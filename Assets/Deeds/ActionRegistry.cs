@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Mazes;
 using Assets.Tiles;
 using Utils.Dispatching;
 

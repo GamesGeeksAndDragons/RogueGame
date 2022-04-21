@@ -62,23 +62,6 @@ namespace Assets.Mazes
             Tiles.Replace(state);
         }
 
-        internal Maze GrowMaze()
-        {
-            var bounds = Tiles.UpperBounds;
-            var maze = new Maze(DispatchRegistry, ActionRegistry, _dieBuilder, _actorBuilder, bounds.Row*2, bounds.Column * 2);
-
-            for (var row = 0; row <= bounds.Row; row++)
-            {
-                for (var column = 0; column <= bounds.Column; column++)
-                {
-                    var coordinate = new Coordinate(row, column);
-                    maze.Tiles[coordinate] = Tiles[coordinate];
-                }
-            }
-
-            return maze;
-        }
-
         public void PositionRoomsInMaze(IList<Room> roomsWithDoors)
         {
             var removed = Tiles.PositionRoomsInTiles(roomsWithDoors);

@@ -68,12 +68,6 @@ namespace Utils.Coordinates
             return new Coordinate(row, column);
         }
 
-        public static bool IsOverlapping(this Coordinate point1, Coordinate point2)
-        {
-            return point1.Row == point2.Row ||
-                   point1.Column == point2.Column;
-        }
-
         public static string FormatParameter(this Coordinate coordinates)
         {
             return nameof(Coordinates).FormatParameter(coordinates);
@@ -89,21 +83,6 @@ namespace Utils.Coordinates
             if (point1.Column == point2.Column)
             {
                 return Math.Max(point1.Row, point2.Row);
-            }
-
-            throw new ArgumentException($"Points are not overlapping [{point1}], [{point2}]");
-        }
-
-        public static int GetOverlappingMin(this Coordinate point1, Coordinate point2)
-        {
-            if (point1.Row == point2.Row)
-            {
-                return Math.Min(point1.Column, point2.Column);
-            }
-
-            if (point1.Column == point2.Column)
-            {
-                return Math.Min(point1.Row, point2.Row);
             }
 
             throw new ArgumentException($"Points are not overlapping [{point1}], [{point2}]");

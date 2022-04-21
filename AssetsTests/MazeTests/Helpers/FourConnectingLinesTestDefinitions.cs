@@ -1,5 +1,4 @@
-﻿using System;
-using AssetsTests.Helpers;
+﻿using AssetsTests.Helpers;
 
 namespace AssetsTests.MazeTests.Helpers
 {

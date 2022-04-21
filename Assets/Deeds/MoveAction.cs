@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Assets.Actors;
+﻿using Assets.Actors;
 using Assets.Messaging;
 using Assets.Tiles;
 using Utils;

@@ -14,7 +14,7 @@ namespace AssetsTests.RoomTests
     public class RoomTestHelpers
     {
         public static readonly string Divider = '='.ToPaddedString(10);
-        public RoomBuilder Builder = null;
+        public RoomBuilder Builder;
 
         internal Room ArrangeTest(string roomName, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
         {

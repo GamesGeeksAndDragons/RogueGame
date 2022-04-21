@@ -1,6 +1,5 @@
 ﻿using Assets.Deeds;
 using Assets.Messaging;
-using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Actors

@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using Assets.Actors;
-using Assets.Deeds;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Messaging

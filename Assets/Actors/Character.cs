@@ -23,6 +23,7 @@ namespace Assets.Actors
         {
             var extracted = state.ToParameters();
 
+            // ReSharper disable once VirtualMemberCallInConstructor
             UpdateState(extracted);
         }
 

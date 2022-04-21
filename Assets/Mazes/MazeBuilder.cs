@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Actors;
 using Assets.Deeds;
-using Assets.Messaging;
 using Assets.Rooms;
 using Assets.Tiles;
 using log4net;
