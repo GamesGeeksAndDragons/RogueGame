@@ -31,11 +31,11 @@ namespace Assets.Deeds
             var to = (Floor)newTile;
 
             var moved = Tiles.MoveOnto(dispatchee.UniqueId, to);
-            if (moved)
-            {
-                var from = (Floor)Tiles.GetDispatchee(oldCoordinates);
-                from.Contains = null;
-            }
+            if (!moved) return;
+
+            character.Position = newCoordinates;
+            var from = (Floor)Tiles.GetDispatchee(oldCoordinates);
+            from.Contains = null;
         }
     }
 }

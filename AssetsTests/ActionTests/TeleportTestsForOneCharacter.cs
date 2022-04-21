@@ -1,7 +1,6 @@
 ﻿using Assets.Actors;
 using Assets.Messaging;
 using AssetsTests.Helpers;
-using Utils.Coordinates;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -57,7 +56,6 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterTiles(Tiles);
 
-            var coordinates = Coordinate.NotSet;
             var monster = new Monster(DispatchRegistry, ActionRegistry, "");
             Dispatcher.EnqueueTeleport(monster);
 
