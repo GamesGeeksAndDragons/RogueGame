@@ -283,7 +283,7 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        public void Move_Me_Test(int testNum, params Compass8Points[] directions)
+        private void Move_Me_Test(int testNum, params Compass8Points[] directions)
         {
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
