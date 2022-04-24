@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using System.IO;
-using System.Linq;
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
@@ -106,7 +105,7 @@ namespace Assets.Rooms
                 for (int columnIndex = 0; columnIndex < row.Length; columnIndex++)
                 {
                     var uniqueId = row[columnIndex];
-                    var tile = _dispatchRegistry.GetDispatchee(uniqueId);
+                    var tile = _dispatchRegistry.GetDispatched(uniqueId);
 
                     if (tile.IsWall())
                     {

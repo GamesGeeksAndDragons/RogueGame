@@ -1,4 +1,5 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Actors;
 using Assets.Messaging;
 using Assets.Tiles;
 using Utils;
@@ -10,31 +11,35 @@ namespace Assets.Deeds
 {
     internal abstract class Action : IAction
     {
-        internal ITiles Tiles { get; set; }
+        public void SetTiles(ITiles tiles) => Tiles = tiles;
 
-        public abstract void Act(IDispatchee dispatchee, string actionValue);
+        protected ITiles? Tiles { get; private set; }
+
+        public abstract void Act(IDispatched dispatched, string actionValue);
     }
 
     class MoveAction : Action
     {
-        public override void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatched dispatched, string actionValue)
         {
-            var character = (ICharacter)dispatchee;
+            var character = (ICharacter)dispatched;
 
             var oldCoordinates = character.Position;
             var direction = actionValue.ToEnum<Compass8Points>();
             var newCoordinates = oldCoordinates.Move(direction);
 
-            var newTile = Tiles.GetDispatchee(newCoordinates);
+            if (Tiles == null) throw new ArgumentException($"Tried to Move when Tiles is null");
+
+            var newTile = Tiles.GetDispatched(newCoordinates);
             if (!newTile.IsFloor()) return;
             var to = (Floor)newTile;
 
-            var moved = Tiles.MoveOnto(dispatchee.UniqueId, to);
+            var moved = Tiles.MoveOnto(dispatched.UniqueId, to);
             if (!moved) return;
 
             character.Position = newCoordinates;
-            var from = (Floor)Tiles.GetDispatchee(oldCoordinates);
-            from.Contains = null;
+            var from = (Floor)Tiles.GetDispatched(oldCoordinates);
+            from.SetEmpty();
         }
     }
 }

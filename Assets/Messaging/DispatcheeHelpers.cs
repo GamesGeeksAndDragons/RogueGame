@@ -1,4 +1,5 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Actors;
 using Utils;
 using Utils.Dispatching;
 
@@ -6,39 +7,44 @@ namespace Assets.Messaging
 {
     public static class DispatcheeHelpers
     {
-        internal static bool IsTypeof<T>(this IDispatchee dispatchee) 
-            where T : Dispatchee<T>
+        internal static bool IsTypeof<T>(this IDispatched? dispatchee) 
+            where T : Dispatched<T>
         {
             if (dispatchee == null) return false;
-            return dispatchee.Name == Dispatchee<T>.DispatcheeName;
+            return dispatchee.Name == Dispatched<T>.DispatcheeName;
         }
 
-        internal static bool IsWall(this IDispatchee dispatchee)
+        internal static bool IsWall(this IDispatched dispatched)
         {
-            return dispatchee.IsTypeof<Wall>();
+            return dispatched.IsTypeof<Wall>();
         }
 
-        internal static bool IsRock(this IDispatchee dispatchee)
+        internal static bool IsRock(this IDispatched dispatched)
         {
-            return dispatchee.IsTypeof<Rock>();
+            return dispatched.IsTypeof<Rock>();
         }
 
-        internal static bool IsFloor(this IDispatchee dispatchee)
+        internal static bool IsFloor(this IDispatched dispatched)
         {
-            return dispatchee.IsTypeof<Floor>();
+            return dispatched.IsTypeof<Floor>();
         }
 
-        internal static bool IsDoor(this IDispatchee dispatchee)
+        internal static bool IsDoor(this IDispatched dispatched)
         {
-            return dispatchee.IsTypeof<Door>();
+            return dispatched.IsTypeof<Door>();
         }
 
-        internal static bool IsTile(this IDispatchee dispatchee)
+        internal static bool IsNull(this IDispatched dispatched)
         {
-            return dispatchee.IsRock() || dispatchee.IsWall() || dispatchee.IsFloor() || dispatchee.IsDoor();
+            return dispatched.IsTypeof<Null>();
         }
 
-        internal static string[,] ExtractTilesRegistry(this IDispatchee[,] dispatchees)
+        internal static bool IsTile(this IDispatched dispatched)
+        {
+            return dispatched.IsRock() || dispatched.IsWall() || dispatched.IsFloor() || dispatched.IsDoor();
+        }
+
+        internal static string[,] ExtractTilesRegistry(this IDispatched[,] dispatchees)
         {
             var maxRows = dispatchees.RowUpperBound() + 1;
             var maxColumns = dispatchees.ColumnUpperBound() + 1;

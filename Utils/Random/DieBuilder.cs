@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
 using System.IO;
-using System.Linq;
 using Utils.Enums;
 
 namespace Utils.Random
@@ -83,12 +81,15 @@ namespace Utils.Random
 
         public void NextTurn()
         {
-            foreach (var die in _dice.Cast<Die>())
+            var dice = _dice.Values.Cast<Die>().ToList();
+
+            foreach (var die in dice)
             {
                 die.NextTurn();
             }
-            ((CompassDice<Compass4Points>)Compass4Die)?.NextTurn();
-            ((CompassDice<Compass8Points>)Compass8Die)?.NextTurn();
+
+            ((CompassDice<Compass4Points>)Compass4Die).NextTurn();
+            ((CompassDice<Compass8Points>)Compass8Die).NextTurn();
         }
 
         private void PopulateAllQueues()
@@ -111,16 +112,20 @@ namespace Utils.Random
             IEnumerable<string> GetFilenamesToLoad()
             {
                 var loadFolder = FileAndDirectoryHelpers.GetLoadDirectory(_loadFolder);
-                return Directory.EnumerateFiles(loadFolder)
-                    .Select(Path.GetFileName);
+                var files = Directory.EnumerateFiles(loadFolder);
+
+                return files.Select(filename => (Path.GetFileName(filename)));
             }
 
             IEnumerable<string> FilterByExtensionAndPrefix(string extension)
             {
                 var dottedExtension = "." + extension;
-                return filenames
-                    .Where(filename => Path.HasExtension(dottedExtension))
-                    .Select(Path.GetFileNameWithoutExtension)
+
+                var filesWithExtension = filenames.Where(filename => Path.HasExtension(filename) && Path.GetExtension(filename).IsSame(dottedExtension))
+                    .ToList();
+
+                return filesWithExtension
+                    .Select(filename => (Path.GetFileNameWithoutExtension(filename)))
                     .Where(filename => filename.StartsWith(prefix));
             }
         }
@@ -144,11 +149,11 @@ namespace Utils.Random
         {
             if (filename.IsSame(Compass4Die.Name))
             {
-                ((CompassDice<Compass4Points>)Compass4Die)?.Populate();
+                ((CompassDice<Compass4Points>)Compass4Die).Populate();
             }
             else if (filename.IsSame(Compass8Die.Name))
             {
-                ((CompassDice<Compass8Points>)Compass8Die)?.Populate();
+                ((CompassDice<Compass8Points>)Compass8Die).Populate();
             }
             else
             {

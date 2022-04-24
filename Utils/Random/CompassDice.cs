@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿#nullable enable
 namespace Utils.Random
 {
     internal class CompassDice<T> : ICompassDice<T> where T : struct

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
@@ -15,15 +14,15 @@ namespace Assets.Mazes
 {
     public interface IMaze
     {
-        IDispatchee this[Coordinate coordinate] { get; }
+        IDispatched this[Coordinate coordinate] { get; }
         string Name { get; }
         string UniqueId { get; }
-        (IDispatchee Dispatchee, Coordinate Coordinates) RandomTile(Predicate<IDispatchee> condition);
+        (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> condition);
         void Update(TileChanges state);
         bool IsInMaze(string uniqueId);
     }
 
-    internal class Maze : Dispatchee<Maze>, IMaze
+    internal class Maze : Dispatched<Maze>, IMaze
     {
         internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, int rows, int columns) 
             : base(dispatchRegistry, actionRegistry)
@@ -42,12 +41,12 @@ namespace Assets.Mazes
         private readonly IActorBuilder _actorBuilder;
         internal ITiles Tiles { get; }
 
-        public IDispatchee this[Coordinate coordinate]
+        public IDispatched this[Coordinate coordinate]
         {
             get
             {
                 var name = Tiles[coordinate];
-                return DispatchRegistry.GetDispatchee(name);
+                return DispatchRegistry.GetDispatched(name);
             }
         }
 
@@ -77,7 +76,7 @@ namespace Assets.Mazes
             Tiles.ConnectDoorsWithCorridors(changes, DispatchRegistry, _actorBuilder);
         }
 
-        public (IDispatchee Dispatchee, Coordinate Coordinates) RandomTile(Predicate<IDispatchee> condition)
+        public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> condition)
         {
             return Tiles.RandomTile(condition);
         }

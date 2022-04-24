@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
@@ -15,8 +16,8 @@ namespace Assets.Actors
         Coordinate Position { get; set; }
     }
 
-    internal abstract class Character<T> : Dispatchee<T>, ICharacter
-        where T : class, IDispatchee
+    internal abstract class Character<T> : Dispatched<T>, ICharacter
+        where T : class, IDispatched
     {
         protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(dispatchRegistry, actionRegistry)

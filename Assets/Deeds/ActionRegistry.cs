@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
 using Assets.Tiles;
 using Utils.Dispatching;
 
@@ -7,9 +6,9 @@ namespace Assets.Deeds
 {
     public interface IActionRegistry
     {
-        void RegisterAction(IDispatchee dispatchee, string action);
+        void RegisterAction(IDispatched dispatched, string action);
         void RegisterTiles(ITiles tiles);
-        IAction GetAction(string dispatcheeName, string actionName);
+        IAction GetAction(string dispatchedName, string actionName);
     }
 
     internal class ActionRegistry : IActionRegistry
@@ -29,9 +28,9 @@ namespace Assets.Deeds
             };
         }
 
-        public void RegisterAction(IDispatchee dispatchee, string action)
+        public void RegisterAction(IDispatched dispatched, string action)
         {
-            if(!Deed.IsValid(action)) throw new ArgumentNullException($"Unrecognised action [{action}] when registering for [{dispatchee.Name}]");
+            if(!Deed.IsValid(action)) throw new ArgumentNullException($"Unrecognised action [{action}] when registering for [{dispatched.Name}]");
 
             if (_characterActions.ContainsKey(action)) return;
 
@@ -42,11 +41,11 @@ namespace Assets.Deeds
         {
             foreach (var action in _actionImpl)
             {
-                action.Value.Tiles = tiles;
+                action.Value.SetTiles(tiles);
             }
         }
 
-        public IAction GetAction(string dispatcheeName, string actionName)
+        public IAction GetAction(string dispatchedName, string actionName)
         {
             if (_actionImpl.TryGetValue(actionName, out var action))
             {

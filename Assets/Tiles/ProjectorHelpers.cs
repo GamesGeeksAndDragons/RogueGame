@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;

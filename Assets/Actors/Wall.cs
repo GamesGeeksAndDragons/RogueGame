@@ -1,4 +1,4 @@
-﻿using System;
+﻿#nullable enable
 using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
@@ -9,7 +9,7 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    internal class Wall : Dispatchee<Wall>
+    internal class Wall : Dispatched<Wall>
     {
         public WallDirection WallType { get; private set; }
 

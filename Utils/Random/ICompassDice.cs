@@ -1,4 +1,5 @@
-﻿namespace Utils.Random
+﻿#nullable enable
+namespace Utils.Random
 {
     public interface ICompassDice<out T> where T : struct
     {

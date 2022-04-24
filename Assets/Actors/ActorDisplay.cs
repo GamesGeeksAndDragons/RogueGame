@@ -1,4 +1,4 @@
-﻿using System;
+﻿#nullable enable
 using Utils.Dispatching;
 using Utils.Enums;
 
@@ -33,14 +33,14 @@ namespace Assets.Actors
         public const string Door14 = "E";
         public const string Door15 = "F";
 
-        private static void UnknownDispatchee(IDispatchee dispatchee) => throw new ArgumentException($"Unknown dispatchee [{dispatchee.Name}] in ToDisplayChar");
+        private static ArgumentException UnknownDispatchee(IDispatched dispatched) => new ArgumentException($"Unknown dispatched [{dispatched.Name}] in ToDisplayChar");
 
 
-        public static string ToDisplayChar(this IDispatchee dispatchee)
+        public static string ToDisplayChar(this IDispatched dispatched)
         {
             //System.Diagnostics.Debugger.Break();
 
-            switch (dispatchee.Name)
+            switch (dispatched.Name)
             {
                 case "Null": return Null;
                 case "Floor": return Floor;
@@ -50,19 +50,18 @@ namespace Assets.Actors
                 case "Wall": return DisplayWall();
                 case "Door": return DisplayDoor();
                 default:
-                    UnknownDispatchee(dispatchee);
-                    return null;
+                    throw UnknownDispatchee(dispatched);
             }
 
             string DisplayDoor()
             {
-                var door = (Door)dispatchee;
+                var door = (Door)dispatched;
                 return door.DoorId.ToString("X1");
             }
 
             string DisplayWall()
             {
-                var wall = (Wall)dispatchee;
+                var wall = (Wall)dispatched;
 
                 switch (wall.WallType)
                 {
@@ -73,8 +72,7 @@ namespace Assets.Actors
                     case WallDirection.BottomLeftCorner: return WallBottomLeftCorner;
                     case WallDirection.BottomRightCorner: return WallBottomRightCorner;
                     default:
-                        UnknownDispatchee(dispatchee);
-                        return null;
+                        throw UnknownDispatchee(dispatched);
                 }
             }
         }

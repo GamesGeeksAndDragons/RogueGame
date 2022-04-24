@@ -1,4 +1,5 @@
-﻿namespace Utils.Random
+﻿#nullable enable
+namespace Utils.Random
 {
     public interface IDice
     {

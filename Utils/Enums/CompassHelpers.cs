@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿#nullable enable
 namespace Utils.Enums
 {
     public static class CompassHelpers

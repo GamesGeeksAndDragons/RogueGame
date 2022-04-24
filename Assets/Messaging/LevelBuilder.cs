@@ -1,4 +1,5 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Actors;
 using Assets.Deeds;
 using Assets.Mazes;
 using Assets.Rooms;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
 using Utils;
@@ -10,10 +9,10 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Messaging
 {
-    internal abstract class Dispatchee<T> : IDispatchee
+    internal abstract class Dispatched<T> : IDispatched
         where T : class
     {
-        protected Dispatchee(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+        protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using Assets.Deeds;
 using Utils;
 using Utils.Dispatching;
@@ -8,9 +8,9 @@ namespace Assets.Messaging
 {
     public interface IDispatcher
     {
-        void EnqueueTeleport(IDispatchee dispatchee);
-        void EnqueueMove(IDispatchee dispatchee, Compass8Points direction);
-        void EnqueueUse(IDispatchee dispatchee, Compass8Points direction);
+        void EnqueueTeleport(IDispatched dispatched);
+        void EnqueueMove(IDispatched dispatched, Compass8Points direction);
+        void EnqueueUse(IDispatched dispatched, Compass8Points direction);
         void EnqueueStrike(string name, int hit, int damage);
         void Dispatch();
     }
@@ -18,39 +18,39 @@ namespace Assets.Messaging
     internal class Dispatcher : IDispatcher
     {
         private readonly IDispatchRegistry _registry;
-        private readonly Queue<(IDispatchee Dispatchee, string Parameters)> _actionQueue = new Queue<(IDispatchee Dispatchee, string Parameters)>();
+        private readonly Queue<(IDispatched Dispatchee, string Parameters)> _actionQueue = new Queue<(IDispatched Dispatchee, string Parameters)>();
 
         public Dispatcher(IDispatchRegistry registry)
         {
             _registry = registry;
         }
 
-        private void Enqueue(IDispatchee who, string parameters)
+        private void Enqueue(IDispatched who, string parameters)
         {
             _actionQueue.Enqueue((who, parameters));
         }
 
 
-        public void EnqueueTeleport(IDispatchee dispatchee)
+        public void EnqueueTeleport(IDispatched dispatched)
         {
             var parameters = Deed.Teleport.FormatParameter("");
-            Enqueue(dispatchee, parameters);
+            Enqueue(dispatched, parameters);
         }
 
-        public void EnqueueMove(IDispatchee dispatchee, Compass8Points direction)
+        public void EnqueueMove(IDispatched dispatched, Compass8Points direction)
         {
             var parameters = Deed.Move.FormatParameter(direction);
-            Enqueue(dispatchee, parameters);
+            Enqueue(dispatched, parameters);
         }
 
-        public void EnqueueUse(IDispatchee dispatchee, Compass8Points direction)
+        public void EnqueueUse(IDispatched dispatched, Compass8Points direction)
         {
-            EnqueueMove(dispatchee, direction);
+            EnqueueMove(dispatched, direction);
         }
 
         public void EnqueueStrike(string name, int hit, int damage)
         {
-            var dispatchee = _registry.GetDispatchee(name);
+            var dispatchee = _registry.GetDispatched(name);
 
             var parameters = Deed.Hit.FormatParameter(hit)
 //                .AppendParameter("Damage", damage)

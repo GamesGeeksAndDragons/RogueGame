@@ -1,4 +1,5 @@
-﻿using Utils.Enums;
+﻿#nullable enable
+using Utils.Enums;
 
 namespace Utils.Random
 {

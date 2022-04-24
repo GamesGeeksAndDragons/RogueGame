@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#nullable enable
 using Utils;
 using Utils.Dispatching;
 
@@ -8,58 +6,58 @@ namespace Assets.Messaging
 {
     internal class DispatchRegistry : IDispatchRegistry
     {
-        private readonly Dictionary<string, IDispatchee> _uniquelyNamedDispatchees = new Dictionary<string, IDispatchee>();
-        private readonly Dictionary<string, uint> _dispatcheeCounts = new Dictionary<string, uint>();
+        private readonly Dictionary<string, IDispatched> _uniquelyNamedDispatched = new Dictionary<string, IDispatched>();
+        private readonly Dictionary<string, uint> _dispatchedCounts = new Dictionary<string, uint>();
 
-        private string GenerateUniqueId(IDispatchee dispatchee)
+        private string GenerateUniqueId(IDispatched dispatched)
         {
             uint count = 0;
-            if (_dispatcheeCounts.ContainsKey(dispatchee.Name))
+            if (_dispatchedCounts.ContainsKey(dispatched.Name))
             {
-                count = _dispatcheeCounts[dispatchee.Name];
+                count = _dispatchedCounts[dispatched.Name];
             }
 
-            _dispatcheeCounts[dispatchee.Name] = ++count;
+            _dispatchedCounts[dispatched.Name] = ++count;
 
-            return dispatchee.Name + count;
+            return dispatched.Name + count;
         }
 
-        public string Register(IDispatchee dispatchee)
+        public string Register(IDispatched dispatched)
         {
-            dispatchee.ThrowIfNull(nameof(dispatchee));
+            dispatched.ThrowIfNull(nameof(dispatched));
 
-            var uniqueId = dispatchee.UniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatchee) : dispatchee.UniqueId;
+            var uniqueId = dispatched.UniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatched) : dispatched.UniqueId;
 
-            EnsureToUnregisterExistingDispatchee(dispatchee, uniqueId);
+            EnsureToUnregisterExistingDispatched(dispatched, uniqueId);
 
-            _uniquelyNamedDispatchees[uniqueId] = dispatchee;
+            _uniquelyNamedDispatched[uniqueId] = dispatched;
 
             return uniqueId;
         }
 
-        private bool DispatcheeWithSameIdExists(string uniqueId)
+        private bool DoesDispatchedWithSameIdExists(string uniqueId)
         {
-            return _uniquelyNamedDispatchees.ContainsKey(uniqueId);
+            return _uniquelyNamedDispatched.ContainsKey(uniqueId);
         }
 
-        private void EnsureToUnregisterExistingDispatchee(IDispatchee dispatchee, string uniqueId)
+        private void EnsureToUnregisterExistingDispatched(IDispatched dispatched, string uniqueId)
         {
-            if (DispatcheeWithSameIdExists(uniqueId))
+            if (DoesDispatchedWithSameIdExists(uniqueId))
             {
-                var existing = _uniquelyNamedDispatchees[uniqueId];
-                if (!existing.IsSameInstance(dispatchee))
+                var existing = _uniquelyNamedDispatched[uniqueId];
+                if (!existing.IsSameInstance(dispatched))
                 {
                     Unregister(existing);
                 }
             }
         }
 
-        public void Unregister(IDispatchee dispatchee)
+        public void Unregister(IDispatched dispatched)
         {
-            dispatchee.ThrowIfNull(nameof(dispatchee));
-            dispatchee.UniqueId.ThrowIfEmpty(nameof(dispatchee.UniqueId));
+            dispatched.ThrowIfNull(nameof(dispatched));
+            dispatched.UniqueId.ThrowIfEmpty(nameof(dispatched.UniqueId));
 
-            _uniquelyNamedDispatchees.Remove(dispatchee.UniqueId);
+            _uniquelyNamedDispatched.Remove(dispatched.UniqueId);
         }
 
         public void Unregister(params string[] uniqueIds)
@@ -68,23 +66,21 @@ namespace Assets.Messaging
 
             foreach (var uniqueId in uniqueIds)
             {
-                if (!DispatcheeWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Unregister [{uniqueId}] which is not registered.");
+                if (!DoesDispatchedWithSameIdExists(uniqueId)) throw new ArgumentException($"Attempting to Unregister [{uniqueId}] which is not registered.");
 
-                var dispatchee = GetDispatchee(uniqueId);
+                var dispatched = GetDispatched(uniqueId);
 
-                Unregister(dispatchee);
+                Unregister(dispatched);
             }
         }
 
-        public IDispatchee GetDispatchee(string uniqueId)
+        public IDispatched GetDispatched(string uniqueId)
         {
             uniqueId.ThrowIfEmpty(nameof(uniqueId));
 
-            return _uniquelyNamedDispatchees[uniqueId];
+            return _uniquelyNamedDispatched[uniqueId];
         }
 
-        public IReadOnlyList<IDispatchee> Dispatchees => _uniquelyNamedDispatchees.Values.ToList();
-
-        public IDispatchee[][] Tiles { get; private set; }
+        public IReadOnlyList<IDispatched> Dispatched => _uniquelyNamedDispatched.Values.ToList();
     }
 }

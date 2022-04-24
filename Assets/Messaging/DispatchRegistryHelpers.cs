@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿#nullable enable
 using Assets.Actors;
 using Utils;
 using Utils.Dispatching;
@@ -7,12 +7,12 @@ namespace Assets.Messaging
 {
     public static class DispatchRegistryHelpers
     {
-        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatchees)
+        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatchees)
         {
             var noRows = dispatchees.Length;
             var noColumns = dispatchees.Max(row => row.Length);
 
-            var tiles = new IDispatchee[noRows, noColumns];
+            var tiles = new IDispatched[noRows, noColumns];
 
             for (int rowIndex = 0; rowIndex < noRows; rowIndex++)
             {
@@ -28,7 +28,7 @@ namespace Assets.Messaging
             return tiles;
         }
 
-        internal static IDispatchee[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatchees)
+        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatchees)
         {
             var dispatcheeArray = dispatchees.SplitIntoLines();
 

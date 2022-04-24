@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
@@ -45,7 +43,7 @@ namespace Assets.Tiles
                 var doors = tiles.GetTilesOfType<Door>();
 
                 return doors
-                    .Select(tile => (Door)dispatchRegistry.GetDispatchee(tile.UniqueId))
+                    .Select(tile => (Door)dispatchRegistry.GetDispatched(tile.UniqueId))
                     .ToList();
             }
         }

@@ -1,4 +1,5 @@
-﻿namespace Utils
+﻿#nullable enable
+namespace Utils
 {
     public static class ObjectHelpers
     {

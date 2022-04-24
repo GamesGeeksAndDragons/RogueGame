@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Random;
@@ -6,7 +7,7 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    internal class MeleeWeapon : Dispatchee<MeleeWeapon>
+    internal class MeleeWeapon : Dispatched<MeleeWeapon>
     {
         private readonly IDieBuilder _randomNumbers;
         private readonly Dispatcher _dispatcher;
@@ -19,6 +20,10 @@ namespace Assets.Actors
 
             _randomNumbers = randomNumbers;
             _dispatcher = dispatcher;
+
+            MagicBonuses = Dice = Owner = WeaponName = "";
+            OriginalCost = Weight = 0.0;
+            Level = NumRolls = MaxPoints = Hit = Damage = 0;
 
             var parameters = state.ToParameters();
             UpdateState(parameters);

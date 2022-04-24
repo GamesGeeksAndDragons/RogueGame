@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#nullable enable
 using Assets.Actors;
 using Assets.Messaging;
 using Utils.Coordinates;
@@ -52,7 +50,7 @@ namespace Assets.Tiles
 
                 foreach (var coordinates in neighbouringCoordinates)
                 {
-                    var dispatchee = _tiles.GetDispatchee(coordinates);
+                    var dispatchee = _tiles.GetDispatched(coordinates);
 
                     if (dispatchee.IsRock()) return coordinates;
                 }

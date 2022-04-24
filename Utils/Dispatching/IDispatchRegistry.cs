@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-
+﻿#nullable enable
 namespace Utils.Dispatching
 {
     public interface IDispatchRegistry
     {
-        string Register(IDispatchee dispatchee);
-        void Unregister(IDispatchee dispatchee);
+        string Register(IDispatched dispatched);
+        void Unregister(IDispatched dispatched);
         void Unregister(params string[] uniqueIds);
 
-        IDispatchee GetDispatchee(string uniqueId);
-        IReadOnlyList<IDispatchee> Dispatchees { get; }
+        IDispatched GetDispatched(string uniqueId);
+        IReadOnlyList<IDispatched> Dispatched { get; }
     }
 }

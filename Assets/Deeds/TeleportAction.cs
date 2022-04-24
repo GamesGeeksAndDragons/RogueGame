@@ -1,4 +1,5 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Actors;
 using Assets.Tiles;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -7,15 +8,17 @@ namespace Assets.Deeds
 {
     internal class TeleportAction : Action
     {
-        public override void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatched dispatched, string actionValue)
         {
+            if (Tiles == null) throw new ArgumentException($"Tried to Teleport when Tiles is null");
+
             var floorTile = RandomEmptyFloorTile();
 
-            var moved = Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Floor);
+            var moved = Tiles.MoveOnto(dispatched.UniqueId, floorTile.Floor);
 
             if (moved)
             {
-                var character = (ICharacter)dispatchee;
+                var character = (ICharacter)dispatched;
                 character.Position = floorTile.Coordinates;
             }
 
@@ -23,7 +26,7 @@ namespace Assets.Deeds
             {
                 var tile = Tiles.RandomFloorTile(false);
 
-                return ((IFloor) tile.Dispatchee, tile.Coordinates);
+                return ((IFloor) tile.Dispatched, tile.Coordinates);
             }
         }
     }

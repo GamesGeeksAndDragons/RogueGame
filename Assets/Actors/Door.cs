@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
@@ -6,7 +7,7 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    internal class Door : Dispatchee<Door>
+    internal class Door : Dispatched<Door>
     {
         internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(dispatchRegistry, actionRegistry)

@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using System.IO;
-using System.Linq;
 
 namespace Utils.Random
 {

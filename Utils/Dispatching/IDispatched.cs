@@ -1,6 +1,7 @@
-﻿namespace Utils.Dispatching
+﻿#nullable enable
+namespace Utils.Dispatching
 {
-    public interface IDispatchee
+    public interface IDispatched
     {
         void Dispatch(string parameters);
 

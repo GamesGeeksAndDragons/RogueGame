@@ -1,11 +1,12 @@
-﻿using Utils.Dispatching;
+﻿#nullable enable
+using Utils.Dispatching;
 using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
 namespace Assets.Deeds
 {
     class StrikeAction : Action
     {
-        public override void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IDispatched dispatched, string actionValue)
         {
             //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
             //if (coordindates != Coordinates) return;

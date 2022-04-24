@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
 using System.Text;
 using Utils.Coordinates;
 
@@ -171,12 +170,13 @@ namespace Utils
             return sb.ToString();
         }
 
-        public static string Print<T>(this T[,] array, Func<T, string> printer = null)
+        public static string Print<T>(this T[,] array, Func<T, string>? printer = null)
         {
-            if (printer == null)
+            printer ??= t =>
             {
-                printer = t => t.ToString();
-            }
+                var printed = t == null ? StringExtensions.EmptyString : t.ToString().RemoveNullable();
+                return printed;
+            };
 
             var intermediate = GetIntermediateArray(array, printer);
             var xAxis = GetColumnAxis(array);

@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
@@ -6,29 +7,37 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Actors
 {
-    public interface IFloor : IDispatchee
+    public interface IFloor : IDispatched
     {
-        IDispatchee Contains { get; set; }
+        IDispatched Contained { get; }
+        void Contains(IDispatched dispatched);
+        void SetEmpty();
     }
 
-    internal class Floor : Dispatchee<Floor>, IFloor
+    internal class Floor : Dispatched<Floor>, IFloor
     {
         internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
             : base(dispatchRegistry, actionRegistry)
         {
+            Contained = new Null(DispatchRegistry, ActionRegistry);
         }
 
         public override string ToString()
         {
-            var display = Contains?.ToDisplayChar() ?? this.ToDisplayChar();
+            var display = Contained.IsNull() ? this.ToDisplayChar() : Contained.ToDisplayChar();
             return display;
+        }
+
+        public void SetEmpty()
+        {
+            Contained = new Null(DispatchRegistry, ActionRegistry);
         }
 
         public override void UpdateState(Parameters state)
         {
-            if (state.HasValue(nameof(Contains)))
+            if (state.HasValue(nameof(Contained)))
             {
-                Contains = state.GetDispatchee(nameof(Contains), DispatchRegistry);
+                Contained = state.GetDispatched(nameof(Contained), DispatchRegistry);
             }
 
             base.UpdateState(state);
@@ -38,14 +47,19 @@ namespace Assets.Actors
         {
             var parameters = base.CurrentState();
 
-            if (Contains == null) return parameters;
+            if (Contained.IsNull()) return parameters;
 
-            var onTheFloor = (Name: nameof(Contains), Value: Contains.UniqueId);
+            var onTheFloor = (Name: nameof(Contained), Value: Contained.UniqueId);
             parameters.Add(onTheFloor);
 
             return parameters;
         }
 
-        public IDispatchee Contains { get; set; }
+        public IDispatched Contained { get; private set; }
+
+        public void Contains(IDispatched dispatched)
+        {
+            Contained = dispatched;
+        }
     }
 }

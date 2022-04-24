@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using System.IO;
 
 namespace Utils

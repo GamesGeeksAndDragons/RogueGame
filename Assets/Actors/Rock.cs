@@ -1,11 +1,12 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
 namespace Assets.Actors
 {
-    internal class Rock : Dispatchee<Rock>
+    internal class Rock : Dispatched<Rock>
     {
         internal Rock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
             : base(dispatchRegistry, actionRegistry)

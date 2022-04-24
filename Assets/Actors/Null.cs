@@ -1,10 +1,11 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Dispatching;
 
 namespace Assets.Actors
 {
-    class Null : Dispatchee<Null>
+    class Null : Dispatched<Null>
     {
         public Null(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
             : base(dispatchRegistry, actionRegistry)

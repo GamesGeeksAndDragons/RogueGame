@@ -19,7 +19,7 @@ namespace AssetsTests.Helpers
             {
                 if (uniqueId == null) return "";
 
-                var dispatchee = dispatchRegistry.GetDispatchee(uniqueId);
+                var dispatchee = dispatchRegistry.GetDispatched(uniqueId);
 
                 return dispatchee.ToString();
             });

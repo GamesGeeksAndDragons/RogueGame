@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-
+﻿#nullable enable
+#nullable enable
 namespace Utils
 {
     public static class StringExtensions
@@ -40,12 +39,12 @@ namespace Utils
             return str.Any(char.IsWhiteSpace);
         }
 
-        public static bool IsNullOrEmpty(this string str)
+        public static bool IsNullOrEmpty(this string? str)
         {
             return string.IsNullOrEmpty(str);
         }
 
-        public static bool IsNullOrEmptyOrWhiteSpace(this string str)
+        public static bool IsNullOrEmptyOrWhiteSpace(this string? str)
         {
             return string.IsNullOrWhiteSpace(str);
         }
@@ -79,6 +78,13 @@ namespace Utils
             return str.Split(CharHelpers.EndOfLine)
                 .Where(line => ! line.IsNullOrEmpty())
                 .ToArray();
+        }
+
+        public const string EmptyString = "string.Empty";
+
+        public static string RemoveNullable(this string? str, string nullValue = EmptyString)
+        {
+            return str ?? nullValue;
         }
     }
 
