@@ -299,7 +299,7 @@ namespace AssetsTests.ActionTests
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
-            var before = maze.Tiles.Print(dispatchRegistry);
+            var before = maze.Print(dispatchRegistry);
             _output.WriteLine(RoomTestHelpers.Divider + " before " + RoomTestHelpers.Divider);
             _output.WriteLine(before);
 
@@ -311,7 +311,7 @@ namespace AssetsTests.ActionTests
             dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum).Trim(CharHelpers.EndOfLine);
-            var actual = maze.Tiles.Print(dispatchRegistry);
+            var actual = maze.Print(dispatchRegistry);
 
             _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
             _output.WriteLine(expected);

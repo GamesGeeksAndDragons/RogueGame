@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
+using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -14,7 +15,6 @@ namespace Assets.Tiles
     {
         bool IsInside(Coordinate coordinate);
         (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition);
-        bool TileExists(string name);
         TileChanges GetTilesOfType<TTileType>();
         string[] Replace(TileChanges state);
         bool MoveOnto(string name, IFloor floor);
@@ -26,10 +26,8 @@ namespace Assets.Tiles
         IDispatched GetDispatched(Coordinate point);
     }
 
-    internal class Tiles : ITiles
+    internal class Tiles : Dispatched<Tiles>, ITiles
     {
-        internal IDispatchRegistry DispatchRegistry;
-        internal IActionRegistry ActionRegistry;
         internal IDieBuilder DieBuilder;
         internal IActorBuilder ActorBuilder;
 
@@ -37,7 +35,8 @@ namespace Assets.Tiles
 
         public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
 
-        internal Tiles(int maxRows, int maxColumns, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
+        internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, int maxRows, int maxColumns)
+            : base(dispatchRegistry, actionRegistry)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
@@ -46,8 +45,6 @@ namespace Assets.Tiles
             maxRows.ThrowIfBelow(0, nameof(maxRows));
             maxColumns.ThrowIfBelow(0, nameof(maxColumns));
 
-            DispatchRegistry = dispatchRegistry;
-            ActionRegistry = actionRegistry;
             DieBuilder = dieBuilder;
             ActorBuilder = actorBuilder;
             TilesRegistry = new string[maxRows, maxColumns];
@@ -55,30 +52,26 @@ namespace Assets.Tiles
             DefaultTilesToRock(maxRows, maxColumns);
         }
 
-        internal Tiles(string[,] tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
+        internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
+            : base(dispatchRegistry, actionRegistry)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
-            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
-            actionRegistry.ThrowIfNull(nameof(actionRegistry));
             actorBuilder.ThrowIfNull(nameof(actorBuilder));
 
-            DispatchRegistry = dispatchRegistry;
-            ActionRegistry = actionRegistry;
             DieBuilder = dieBuilder;
             ActorBuilder = actorBuilder;
 
             TilesRegistry = tiles.CloneStrings();
         }
 
-        internal Tiles(ITiles toCopy, string[,]? tilesRegistry = null)
+        internal Tiles(Tiles toCopy)
+            : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, toCopy.DieBuilder, toCopy.ActorBuilder, toCopy.TilesRegistry)
         {
-            var tiles = (Tiles)toCopy;
-            DispatchRegistry = tiles.DispatchRegistry;
-            ActionRegistry = tiles.ActionRegistry;
-            DieBuilder = tiles.DieBuilder;
-            ActorBuilder = tiles.ActorBuilder;
+        }
 
-            TilesRegistry = tilesRegistry??tiles.TilesRegistry.CloneStrings();
+        internal Tiles(Tiles toCopy, string[,] tilesRegistry)
+        : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, toCopy.DieBuilder, toCopy.ActorBuilder, tilesRegistry)
+        {
         }
 
         public string[] Replace(TileChanges state)

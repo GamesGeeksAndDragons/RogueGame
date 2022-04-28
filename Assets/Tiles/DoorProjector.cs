@@ -17,7 +17,7 @@ namespace Assets.Tiles
 
         public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
         {
-            _tiles = new Tiles(tiles);
+            _tiles = new Tiles((Tiles)tiles);
             _registry = registry;
             _dieBuilder = dieBuilder;
         }

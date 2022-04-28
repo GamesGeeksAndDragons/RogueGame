@@ -1,8 +1,8 @@
 ﻿using System;
 using Assets.Actors;
 using Assets.Deeds;
-using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using AssetsTests.RoomTests;
@@ -205,9 +205,9 @@ namespace AssetsTests.DispatcherTests
             }
         }
 
-        internal void AssertTest(Maze maze, int level)
+        internal void AssertTest(Tiles maze, int level)
         {
-            var actual = maze.Tiles.Print(maze.DispatchRegistry);
+            var actual = maze.Print(maze.DispatchRegistry);
             var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
 
             _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
@@ -237,7 +237,7 @@ namespace AssetsTests.DispatcherTests
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             var maze = builder.Build(level);
 
-            var before = maze.Tiles.Print(dispatchRegistry);
+            var before = maze.Print(dispatchRegistry);
             _output.WriteLine(RoomTestHelpers.Divider + " before " + RoomTestHelpers.Divider);
             _output.WriteLine(before);
 

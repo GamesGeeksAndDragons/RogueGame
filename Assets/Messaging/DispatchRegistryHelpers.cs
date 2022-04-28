@@ -7,16 +7,16 @@ namespace Assets.Messaging
 {
     public static class DispatchRegistryHelpers
     {
-        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatchees)
+        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatched)
         {
-            var noRows = dispatchees.Length;
-            var noColumns = dispatchees.Max(row => row.Length);
+            var noRows = dispatched.Length;
+            var noColumns = dispatched.Max(row => row.Length);
 
             var tiles = new IDispatched[noRows, noColumns];
 
             for (int rowIndex = 0; rowIndex < noRows; rowIndex++)
             {
-                var row = dispatchees[rowIndex];
+                var row = dispatched[rowIndex];
 
                 for (int colIndex = 0; colIndex < noColumns; colIndex++)
                 {
@@ -28,11 +28,11 @@ namespace Assets.Messaging
             return tiles;
         }
 
-        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatchees)
+        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatched)
         {
-            var dispatcheeArray = dispatchees.SplitIntoLines();
+            var dispatchedArray = dispatched.SplitIntoLines();
 
-            return dispatchRegistry.Register(builder, dispatcheeArray);
+            return dispatchRegistry.Register(builder, dispatchedArray);
         }
     }
 }

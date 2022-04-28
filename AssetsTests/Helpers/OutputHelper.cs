@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Assets.Mazes;
+using Assets.Tiles;
 using Utils;
 using Xunit.Abstractions;
 
@@ -42,7 +43,7 @@ namespace AssetsTests.Helpers
             }
         }
 
-        internal static void OutputMazes(this ITestOutputHelper output, params Maze[] mazes)
+        internal static void OutputMazes(this ITestOutputHelper output, params Tiles[] mazes)
         {
             var stringMazes = mazes.Select(maze => maze.ToString()).ToArray();
 

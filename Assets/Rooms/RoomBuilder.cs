@@ -73,7 +73,7 @@ namespace Assets.Rooms
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
 
-            var tiles = new Tiles.Tiles(maxRows, maxCols, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
+            var tiles = new Tiles.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxRows, maxCols);
 
             for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
             {

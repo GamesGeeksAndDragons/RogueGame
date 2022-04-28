@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
+using Assets.Messaging;
 using Assets.Rooms;
 using Assets.Tiles;
 using log4net;
@@ -80,7 +81,7 @@ namespace Assets.Mazes
             }
         }
 
-        internal Maze BuildMazeWithRoomsAndDoors(int level)
+        internal Tiles.Tiles BuildMaze(int level)
         {
             var mazeDetail = _descriptor[level];
 
@@ -90,20 +91,15 @@ namespace Assets.Mazes
             var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
 
-            var mazeOfRocks = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
-            mazeOfRocks.PositionRoomsInMaze(rooms);
+            var maze = new Tiles.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
 
-            var tunnel = mazeOfRocks.Tiles.GetTunnelToConnectDoors(_dispatchRegistry, _actionRegistry, _dieBuilder);
+            var removed = maze.PositionRoomsInTiles(rooms);
+            _dispatchRegistry.Unregister(removed);
+            _actionRegistry.RegisterTiles(maze);
 
-            mazeOfRocks.Tiles.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _actorBuilder);
+            var tunnel = maze.GetTunnelToConnectDoors(_dispatchRegistry, _actionRegistry, _dieBuilder);
 
-            return mazeOfRocks;
-        }
-
-        internal Maze BuildMaze(int level)
-        {
-            var maze = BuildMazeWithRoomsAndDoors(level);
-            maze.ConnectDoorsWithCorridors();
+            maze.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _actorBuilder);
 
             return maze;
         }

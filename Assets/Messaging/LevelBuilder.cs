@@ -28,12 +28,12 @@ namespace Assets.Messaging
             _actorBuilder = actorBuilder;
         }
 
-        internal Maze Build(int level)
+        internal Tiles.Tiles Build(int level)
         {
             var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);
             var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);
 
-            var maze = mazeBuilder.BuildMazeWithRoomsAndDoors(level);
+            var maze = mazeBuilder.BuildMaze(level);
 
             return maze;
         }

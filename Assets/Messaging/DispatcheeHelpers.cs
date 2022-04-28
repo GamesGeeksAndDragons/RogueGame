@@ -44,10 +44,10 @@ namespace Assets.Messaging
             return dispatched.IsRock() || dispatched.IsWall() || dispatched.IsFloor() || dispatched.IsDoor();
         }
 
-        internal static string[,] ExtractTilesRegistry(this IDispatched[,] dispatchees)
+        internal static string[,] ExtractTilesRegistry(this IDispatched[,] dispatchedTiles)
         {
-            var maxRows = dispatchees.RowUpperBound() + 1;
-            var maxColumns = dispatchees.ColumnUpperBound() + 1;
+            var maxRows = dispatchedTiles.RowUpperBound() + 1;
+            var maxColumns = dispatchedTiles.ColumnUpperBound() + 1;
 
             var registry = new string[maxRows, maxColumns];
 
@@ -55,10 +55,10 @@ namespace Assets.Messaging
             {
                 for (int columnIndex = 0; columnIndex < maxColumns; columnIndex++)
                 {
-                    var dispatchee = dispatchees[rowIndex, columnIndex];
-                    if (!dispatchee.IsTile()) continue;
+                    var dispatched = dispatchedTiles[rowIndex, columnIndex];
+                    if (!dispatched.IsTile()) continue;
 
-                    registry[rowIndex, columnIndex] = dispatchee.UniqueId;
+                    registry[rowIndex, columnIndex] = dispatched.UniqueId;
                 }
             }
 

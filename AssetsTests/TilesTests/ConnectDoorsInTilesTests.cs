@@ -1,10 +1,10 @@
 ﻿using Assets.Tiles;
 using AssetsTests.Helpers;
-using AssetsTests.MazeTests.Helpers;
+using AssetsTests.TilesTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.MazeTests
+namespace AssetsTests.TilesTests
 {
     public class ConnectDoorsInTilesTests : TilesTestHelper
     {

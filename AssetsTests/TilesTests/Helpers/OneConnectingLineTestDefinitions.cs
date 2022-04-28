@@ -1,6 +1,6 @@
 ﻿using AssetsTests.Helpers;
 
-namespace AssetsTests.MazeTests.Helpers
+namespace AssetsTests.TilesTests.Helpers
 {
     internal static class OneConnectingLineTestDefinitions
     {
