@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
-using Assets.Messaging;
 using Assets.Rooms;
 using Assets.Tiles;
 using log4net;
@@ -9,7 +8,7 @@ using Utils;
 using Utils.Dispatching;
 using Utils.Random;
 
-namespace Assets.Mazes
+namespace Assets.Maze
 {
     public class MazeBuilder
     {
@@ -81,7 +80,7 @@ namespace Assets.Mazes
             }
         }
 
-        internal Tiles.Tiles BuildMaze(int level)
+        internal Tiles BuildMaze(int level)
         {
             var mazeDetail = _descriptor[level];
 
@@ -91,7 +90,7 @@ namespace Assets.Mazes
             var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
 
-            var maze = new Tiles.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
+            var maze = new Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
 
             var removed = maze.PositionRoomsInTiles(rooms);
             _dispatchRegistry.Unregister(removed);

@@ -5,7 +5,7 @@ using Utils;
 using Utils.Coordinates;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Tiles
+namespace Assets.Maze
 {
     internal static class PlaceRoomInTiles
     {

@@ -62,7 +62,7 @@ namespace Assets.Rooms
                 {
                     var directory = FileAndDirectoryHelpers.GetLoadDirectory(folder);
                     return Directory.EnumerateFiles(directory)
-                        .Where(fqn => Path.HasExtension(".room"));
+                        .Where(fqn => fqn.HasExtension(".room"));
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace Assets.Rooms
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
 
-            var tiles = new Tiles.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxRows, maxCols);
+            var tiles = new Maze.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxRows, maxCols);
 
             for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
             {
@@ -82,10 +82,10 @@ namespace Assets.Rooms
                 for (int colIndex = 0; colIndex < maxCols; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    var dispatchee = _actorBuilder.Build(actor);
+                    var dispatched = _actorBuilder.Build(actor);
 
                     var coordinates = new Coordinate(rowIndex, colIndex);
-                    tiles[coordinates] = dispatchee.UniqueId;
+                    tiles[coordinates] = dispatched.UniqueId;
                 }
             }
 
@@ -124,7 +124,7 @@ namespace Assets.Rooms
         {
             numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
 
-            var originalTiles = (Tiles.Tiles) room.Tiles;
+            var originalTiles = (Maze.Tiles) room.Tiles;
             var tiles = originalTiles.TilesRegistry;
             var (maxRow, maxColumn) = tiles.UpperBounds();
 
@@ -135,7 +135,7 @@ namespace Assets.Rooms
                 rotatedTiles = BuildRotatedTiles(rotatedTiles, maxRow, maxColumn);
             }
 
-            var newTiles = new Tiles.Tiles(originalTiles, rotatedTiles);
+            var newTiles = new Maze.Tiles(originalTiles, rotatedTiles);
 
             return new Room(room, newTiles);
         }

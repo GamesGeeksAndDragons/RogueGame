@@ -1,4 +1,5 @@
-﻿using Assets.Tiles;
+﻿using Assets.Maze;
+using Assets.Tiles;
 using AssetsTests.Helpers;
 using AssetsTests.TilesTests.Helpers;
 using Xunit;

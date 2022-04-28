@@ -8,7 +8,7 @@ using Utils.Enums;
 using Utils.Exceptions;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Tiles
+namespace Assets.Maze
 {
     internal static class TilesHelpers
     {
@@ -45,13 +45,13 @@ namespace Assets.Tiles
             return registry.GetDispatched(uniqueId);
         }
 
-        internal static Compass4Points GetSearchDirectionsThroughRock(this Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, Compass4Points searchDirection)
+        internal static Compass4Points GetSearchDirectionsThroughRock(this Maze.Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, Compass4Points searchDirection)
         {
             var tile = tiles.GetDispatched(searchFrom.Move(searchDirection), registry);
             return tile.IsRock() ? searchDirection : Compass4Points.Undefined;
         }
 
-        internal static Compass4Points GetSearchDirectionsThroughRock(this Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, (Compass4Points first, Compass4Points second) searchDirections)
+        internal static Compass4Points GetSearchDirectionsThroughRock(this Maze.Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, (Compass4Points first, Compass4Points second) searchDirections)
         {
             var searchedDirection = tiles.GetSearchDirectionsThroughRock(searchFrom, registry, searchDirections.first);
             if (searchedDirection != Compass4Points.Undefined) return searchedDirection;

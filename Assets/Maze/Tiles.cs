@@ -2,6 +2,7 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -9,7 +10,7 @@ using Utils.Enums;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Tiles
+namespace Assets.Maze
 {
     public interface ITiles
     {

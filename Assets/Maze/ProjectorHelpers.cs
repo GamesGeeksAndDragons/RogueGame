@@ -4,7 +4,7 @@ using Utils.Dispatching;
 using Utils.Enums;
 using Line = System.Collections.Generic.List<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Tiles
+namespace Assets.Maze
 {
     internal static class ProjectorHelpers
     {

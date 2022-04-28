@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Assets.Mazes;
+using Assets.Maze;
 using Assets.Tiles;
 using Utils;
 using Xunit.Abstractions;

@@ -10,6 +10,11 @@ namespace Utils
             return Path.ChangeExtension(file, extension);
         }
 
+        public static bool HasExtension(this string filename, string extension)
+        {
+            return Path.HasExtension(filename) && Path.GetExtension(filename).IsSame(extension);
+        }
+
         public const string LoadFolder = "Rogue";
 
         public static string CreateLoadFolder(string folder)

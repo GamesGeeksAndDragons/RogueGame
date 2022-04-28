@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Assets.Actors;
+using Assets.Maze;
 using Assets.Messaging;
 using Assets.Tiles;
 using Utils;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Actors;
 using Assets.Deeds;
+using Assets.Maze;
 using Assets.Messaging;
 using Assets.Tiles;
 using AssetsTests.Fakes;

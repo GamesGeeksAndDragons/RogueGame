@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using Assets.Actors;
+using Assets.Maze;
 using Assets.Messaging;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -13,11 +14,11 @@ namespace Assets.Tiles
     {
         private readonly IDispatchRegistry _registry;
         private readonly IDieBuilder _dieBuilder;
-        private readonly Tiles _tiles;
+        private readonly Maze.Tiles _tiles;
 
         public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
         {
-            _tiles = new Tiles((Tiles)tiles);
+            _tiles = new Maze.Tiles((Maze.Tiles)tiles);
             _registry = registry;
             _dieBuilder = dieBuilder;
         }

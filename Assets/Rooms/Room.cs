@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
+using Assets.Maze;
 using Assets.Tiles;
 using Utils.Coordinates;
 using Utils.Dispatching;

@@ -121,7 +121,7 @@ namespace Utils.Random
             {
                 var dottedExtension = "." + extension;
 
-                var filesWithExtension = filenames.Where(filename => Path.HasExtension(filename) && Path.GetExtension(filename).IsSame(dottedExtension))
+                var filesWithExtension = filenames.Where(filename => filename.HasExtension(dottedExtension))
                     .ToList();
 
                 return filesWithExtension
