@@ -12,7 +12,8 @@ namespace Assets.Actors
         internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
             : base(dispatchRegistry, actionRegistry)
         {
-            var doorId = int.Parse(state);
+            var doorId = state.FromHexString();
+
             DoorId = doorId;
         }
 

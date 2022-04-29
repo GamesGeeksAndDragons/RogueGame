@@ -295,7 +295,7 @@ namespace AssetsTests.ActionTests
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             var maze = builder.Build(1);
 
-            var me = actorBuilder.Build<Me>();
+            var me = actorBuilder.Build(ActorDisplay.Me);
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

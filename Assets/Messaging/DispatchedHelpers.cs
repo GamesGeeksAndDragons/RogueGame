@@ -5,13 +5,13 @@ using Utils.Dispatching;
 
 namespace Assets.Messaging
 {
-    public static class DispatcheeHelpers
+    public static class DispatchedHelpers
     {
-        internal static bool IsTypeof<T>(this IDispatched? dispatchee) 
+        internal static bool IsTypeof<T>(this IDispatched? dispatched) 
             where T : Dispatched<T>
         {
-            if (dispatchee == null) return false;
-            return dispatchee.Name == Dispatched<T>.DispatcheeName;
+            if (dispatched == null) return false;
+            return dispatched.Name == Dispatched<T>.DispatchedName;
         }
 
         internal static bool IsWall(this IDispatched dispatched)

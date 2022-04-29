@@ -134,7 +134,7 @@ namespace Assets.Maze
 
             (string UniqueId, Coordinate Coordinates) Tunnel((string UniqueId, Coordinate Coordinates) tile)
             {
-                var actor = builder.Build<Floor>();
+                var actor = builder.Build(ActorDisplay.Floor);
                 return (actor.UniqueId, tile.Coordinates);
             }
         }

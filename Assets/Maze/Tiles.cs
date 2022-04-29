@@ -109,7 +109,7 @@ namespace Assets.Maze
                     var tile = this[coordinates];
                     if (!tile.IsNullOrEmptyOrWhiteSpace()) continue;
 
-                    var rock = ActorBuilder.Build<Rock>();
+                    var rock = ActorBuilder.Build(ActorDisplay.Rock);
                     this[coordinates] = rock.UniqueId;
                 }
             }
@@ -119,7 +119,7 @@ namespace Assets.Maze
         {
             this[coordinates].ThrowIfNull($"TilesRegistry[{coordinates}]");
 
-            return ActorBuilder.Build<Wall>(direction.ToString());
+            return (Wall)ActorBuilder.Build(direction.ToString());
         }
 
         public bool IsInside(Coordinate coordinate)

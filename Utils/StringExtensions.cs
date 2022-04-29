@@ -1,5 +1,7 @@
 ﻿#nullable enable
 #nullable enable
+using System.Globalization;
+
 namespace Utils
 {
     public static class StringExtensions
@@ -86,6 +88,24 @@ namespace Utils
         {
             return str ?? nullValue;
         }
+
+        public static string ToHexString(this int num, bool useHexPrefix=false)
+        {
+            var hex = num.ToString("X");
+            if (!useHexPrefix) return hex;
+            return "0x" + hex;
+        }
+
+        public static int FromHexString(this string value)
+        {
+            if (value.IsSame("0x"))
+            {
+                value = value.Substring(2);
+            }
+
+            return int.Parse(value, NumberStyles.HexNumber);
+        }
+
     }
 
 }

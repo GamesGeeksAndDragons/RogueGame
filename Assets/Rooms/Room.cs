@@ -2,7 +2,8 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Maze;
-using Assets.Tiles;
+using Assets.Messaging;
+using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
@@ -36,7 +37,6 @@ namespace Assets.Rooms
 
         private readonly IDieBuilder _dieBuilder;
         private readonly IActorBuilder _actorBuilder;
-        private readonly List<Door> _doors = new List<Door>();
         private static uint _counter;
 
         internal IDispatchRegistry DispatchRegistry { get; }
@@ -48,8 +48,6 @@ namespace Assets.Rooms
 
         internal readonly ITiles Tiles;
 
-        public IEnumerable<Door> Doors => _doors;
-
         public string this[Coordinate coordinate] => Tiles[coordinate];
 
         public void AddDoor(int doorNumber)
@@ -57,7 +55,7 @@ namespace Assets.Rooms
             var toReplaceWithDoor = FindWall();
             if (toReplaceWithDoor == default) return;
 
-            var newDoor = _actorBuilder.Build<Door>(doorNumber.ToString());
+            var newDoor = _actorBuilder.Build(doorNumber.ToHexString());
 
             Tiles[toReplaceWithDoor.Coordinates] = newDoor.UniqueId;
             DispatchRegistry.Unregister(toReplaceWithDoor.Wall.UniqueId);
@@ -68,12 +66,12 @@ namespace Assets.Rooms
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var (dispatchee, coordinates) = Tiles.RandomWallTile(WallDirection.NonCorner);
+                    var (dispatched, coordinates) = Tiles.RandomWallTile(WallDirection.NonCorner);
 
                     if (!IsOutsideWall(coordinates, maxRow, maxColumn)) continue;
                     if (IsNextToDoor(coordinates)) continue;
 
-                    return ((Wall)dispatchee, coordinates);
+                    return ((Wall)dispatched, coordinates);
                 }
 
                 return default;
@@ -91,7 +89,12 @@ namespace Assets.Rooms
             {
                 var neighbouringCoordinates = coordinates.Surrounding4Coordinates();
 
-                return Doors.Any(door => neighbouringCoordinates.Any(neighbour => neighbour == coordinates));
+                return neighbouringCoordinates.Any(coordinate =>
+                {
+                    var id = Tiles[coordinates];
+                    var dispatched = DispatchRegistry.GetDispatched(id);
+                    return dispatched.IsDoor();
+                });
             }
         }
 

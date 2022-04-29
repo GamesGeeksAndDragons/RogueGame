@@ -2,7 +2,6 @@
 using Assets.Deeds;
 using Assets.Maze;
 using Assets.Messaging;
-using Assets.Tiles;
 using Utils.Dispatching;
 using Utils.Random;
 using Xunit;

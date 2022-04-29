@@ -43,8 +43,8 @@ namespace Assets.Messaging
         public IDispatchRegistry DispatchRegistry { get; }
         public IActionRegistry ActionRegistry { get; }
 
-        public static readonly string DispatcheeName = typeof(T).Name;
-        public string Name => DispatcheeName;
+        public static readonly string DispatchedName = typeof(T).Name;
+        public string Name => DispatchedName;
         public string UniqueId { get; protected internal set; }
 
         public virtual void UpdateState(Parameters state)

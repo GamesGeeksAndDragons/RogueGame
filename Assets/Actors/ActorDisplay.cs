@@ -17,23 +17,9 @@ namespace Assets.Actors
         public const string WallTopRightCorner = "╗";
         public const string WallBottomLeftCorner = "╚";
         public const string WallBottomRightCorner = "╝";
-        public const string Door1 = "1";
-        public const string Door2 = "2";
-        public const string Door3 = "3";
-        public const string Door4 = "4";
-        public const string Door5 = "5";
-        public const string Door6 = "6";
-        public const string Door7 = "7";
-        public const string Door8 = "8";
-        public const string Door9 = "9";
-        public const string Door10 = "A";
-        public const string Door11 = "B";
-        public const string Door12 = "C";
-        public const string Door13 = "D";
-        public const string Door14 = "E";
-        public const string Door15 = "F";
+        public static readonly string[] Doors = new [] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
 
-        private static ArgumentException UnknownDispatchee(IDispatched dispatched) => new ArgumentException($"Unknown dispatched [{dispatched.Name}] in ToDisplayChar");
+        private static ArgumentException UnknownDispatched(IDispatched dispatched) => new ArgumentException($"Unknown dispatched [{dispatched.Name}] in ToDisplayChar");
 
 
         public static string ToDisplayChar(this IDispatched dispatched)
@@ -50,7 +36,7 @@ namespace Assets.Actors
                 case "Wall": return DisplayWall();
                 case "Door": return DisplayDoor();
                 default:
-                    throw UnknownDispatchee(dispatched);
+                    throw UnknownDispatched(dispatched);
             }
 
             string DisplayDoor()
@@ -72,7 +58,7 @@ namespace Assets.Actors
                     case WallDirection.BottomLeftCorner: return WallBottomLeftCorner;
                     case WallDirection.BottomRightCorner: return WallBottomRightCorner;
                     default:
-                        throw UnknownDispatchee(dispatched);
+                        throw UnknownDispatched(dispatched);
                 }
             }
         }
