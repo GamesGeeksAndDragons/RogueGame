@@ -17,11 +17,6 @@ namespace Assets.Actors
             DoorId = doorId;
         }
 
-        internal Door(Door door) : base(door.DispatchRegistry, door.ActionRegistry, door.Actor)
-        {
-            DoorId = door.DoorId;
-        }
-
         public override void UpdateState(Parameters state)
         {
             if (state.HasValue(nameof(DoorId)))

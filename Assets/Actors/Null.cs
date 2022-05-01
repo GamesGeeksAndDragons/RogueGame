@@ -11,9 +11,5 @@ namespace Assets.Actors
             : base(dispatchRegistry, actionRegistry, actor)
         {
         }
-
-        public Null(Null tile) : base(tile.DispatchRegistry, tile.ActionRegistry, tile.Actor)
-        {
-        }
     }
 }

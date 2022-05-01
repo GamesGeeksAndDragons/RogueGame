@@ -45,23 +45,6 @@ namespace Assets.Maze
             return registry.GetDispatched(uniqueId);
         }
 
-        internal static Compass4Points GetSearchDirectionsThroughRock(this Maze.Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, Compass4Points searchDirection)
-        {
-            var tile = tiles.GetDispatched(searchFrom.Move(searchDirection), registry);
-            return tile.IsRock() ? searchDirection : Compass4Points.Undefined;
-        }
-
-        internal static Compass4Points GetSearchDirectionsThroughRock(this Maze.Tiles tiles, Coordinate searchFrom, DispatchRegistry registry, (Compass4Points first, Compass4Points second) searchDirections)
-        {
-            var searchedDirection = tiles.GetSearchDirectionsThroughRock(searchFrom, registry, searchDirections.first);
-            if (searchedDirection != Compass4Points.Undefined) return searchedDirection;
-
-            searchedDirection = tiles.GetSearchDirectionsThroughRock(searchFrom, registry, searchDirections.second);
-            if (searchedDirection != Compass4Points.Undefined) return searchedDirection;
-
-            throw new UnexpectedTileException($"Attempting to find the direction through rock for coordinates [{searchFrom}]");
-        }
-
         internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates) 
             where T : Dispatched<T>
         {

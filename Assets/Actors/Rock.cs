@@ -12,9 +12,5 @@ namespace Assets.Actors
             : base(dispatchRegistry, actionRegistry, actor)
         {
         }
-
-        internal Rock(Rock rock) : base(rock.DispatchRegistry, rock.ActionRegistry, rock.Actor)
-        {
-        }
     }
 }
