@@ -7,5 +7,7 @@ namespace Utils.Dispatching
 
         string Name { get; }
         string UniqueId { get; }
+
+        string Actor { get; }
     }
 }

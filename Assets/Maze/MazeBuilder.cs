@@ -45,7 +45,7 @@ namespace Assets.Maze
 
             for (var i = 0; i < numRooms; i++)
             {
-                var room = _roomBuilder.BuildRoom(KnownRooms.Square);
+                var room = _roomBuilder.BuildRoom(KnownRooms.Square, i+1);
                 rooms.Add(room);
             }
 

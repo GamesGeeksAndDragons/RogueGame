@@ -9,15 +9,15 @@ namespace Assets.Actors
 {
     internal class Door : Dispatched<Door>
     {
-        internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(dispatchRegistry, actionRegistry)
+        internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
+            : base(dispatchRegistry, actionRegistry, actor)
         {
-            var doorId = state.FromHexString();
+            var doorId = actor.FromHexString();
 
             DoorId = doorId;
         }
 
-        internal Door(Door door) : base(door.DispatchRegistry, door.ActionRegistry)
+        internal Door(Door door) : base(door.DispatchRegistry, door.ActionRegistry, door.Actor)
         {
             DoorId = door.DoorId;
         }

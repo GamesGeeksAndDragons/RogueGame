@@ -105,7 +105,6 @@ namespace Utils
 
             return int.Parse(value, NumberStyles.HexNumber);
         }
-
     }
 
 }

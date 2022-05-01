@@ -6,18 +6,9 @@ namespace Assets.Actors
 {
     internal class Monster : Character<Monster>
     {
-        public Monster(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(dispatchRegistry, actionRegistry, state)
+        public Monster(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
+            : base(dispatchRegistry, actionRegistry, actor, state)
         {
-        }
-
-        private Monster(Monster monster) : base(monster.DispatchRegistry, monster.ActionRegistry, "")
-        {
-        }
-
-        public override string ToString()
-        {
-            return this.ToDisplayChar();
         }
     }
 }

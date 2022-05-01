@@ -13,7 +13,7 @@ namespace Assets.Actors
         private readonly Dispatcher _dispatcher;
 
         public MeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, Dispatcher dispatcher, string state) 
-            : base(dispatchRegistry, actionRegistry)
+            : base(dispatchRegistry, actionRegistry, ActorDisplay.DebugWeapon)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             dispatcher.ThrowIfNull(nameof(dispatcher));

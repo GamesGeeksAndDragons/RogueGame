@@ -67,11 +67,12 @@ namespace Assets.Rooms
             }
         }
 
-        internal Room BuildRoom(string roomName)
+        internal Room BuildRoom(string roomName, int roomNumber)
         {
             var roomDescription = _rooms[roomName];
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
+            var num = roomNumber.ToRoomNumberString();
 
             var tiles = new Maze.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxRows, maxCols);
 
@@ -82,6 +83,7 @@ namespace Assets.Rooms
                 for (int colIndex = 0; colIndex < maxCols; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
+                    if (actor.IsFloorActor()) actor = num;
                     var dispatched = _actorBuilder.Build(actor);
 
                     var coordinates = new Coordinate(rowIndex, colIndex);

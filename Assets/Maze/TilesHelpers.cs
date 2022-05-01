@@ -100,13 +100,16 @@ namespace Assets.Maze
             });
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this ITiles tiles, bool isOccupied = true)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this ITiles tiles, bool isTunnelTile, bool isOccupied)
         {
             return tiles.RandomTile(dispatched =>
             {
                 if (!dispatched.IsFloor()) return false;
 
                 var floor = (Floor) dispatched;
+                
+                if (isTunnelTile != floor.IsTunnel) return false;
+
                 return IsOccupied() == isOccupied;
 
                 bool IsOccupied()

@@ -1,6 +1,7 @@
 ﻿using Assets.Actors;
 using Assets.Messaging;
 using AssetsTests.Helpers;
+using Utils;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +21,7 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterTiles(Tiles);
 
-            var me = new Me(DispatchRegistry, ActionRegistry, "");
+            var me = new Me(DispatchRegistry, ActionRegistry, ActorDisplay.Me, "");
 
             Dispatcher.EnqueueTeleport(me);
         }
@@ -56,10 +57,10 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterTiles(Tiles);
 
-            var monster = new Monster(DispatchRegistry, ActionRegistry, "");
+            var monster = new Monster(DispatchRegistry, ActionRegistry, ActorDisplay.DebugMonster, "");
             Dispatcher.EnqueueTeleport(monster);
 
-            var me = new Me(DispatchRegistry, ActionRegistry, "");
+            var me = new Me(DispatchRegistry, ActionRegistry, ActorDisplay.Me, "");
             Dispatcher.EnqueueTeleport(me);
         }
 

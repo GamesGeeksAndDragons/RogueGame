@@ -8,18 +8,13 @@ namespace Assets.Actors
 {
     internal class Rock : Dispatched<Rock>
     {
-        internal Rock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
-            : base(dispatchRegistry, actionRegistry)
+        internal Rock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string _) 
+            : base(dispatchRegistry, actionRegistry, actor)
         {
         }
 
-        internal Rock(Rock rock) : base(rock.DispatchRegistry, rock.ActionRegistry)
+        internal Rock(Rock rock) : base(rock.DispatchRegistry, rock.ActionRegistry, rock.Actor)
         {
-        }
-
-        public override string ToString()
-        {
-            return this.ToDisplayChar();
         }
     }
 }

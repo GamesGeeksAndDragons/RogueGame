@@ -37,7 +37,7 @@ namespace Assets.Maze
         public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
 
         internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, int maxRows, int maxColumns)
-            : base(dispatchRegistry, actionRegistry)
+            : base(dispatchRegistry, actionRegistry, ActorDisplay.Floor)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
@@ -54,7 +54,7 @@ namespace Assets.Maze
         }
 
         internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
-            : base(dispatchRegistry, actionRegistry)
+            : base(dispatchRegistry, actionRegistry, ActorDisplay.Tiles)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             actorBuilder.ThrowIfNull(nameof(actorBuilder));

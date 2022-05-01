@@ -6,12 +6,8 @@ namespace Assets.Actors
 {
     internal class Me : Character<Me>
     {
-        internal Me(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state)
-            : base(dispatchRegistry, actionRegistry, state)
-        {
-        }
-
-        private Me(Me me) : base(me.DispatchRegistry, me.ActionRegistry, "")
+        internal Me(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
+            : base(dispatchRegistry, actionRegistry, actor, state)
         {
         }
     }

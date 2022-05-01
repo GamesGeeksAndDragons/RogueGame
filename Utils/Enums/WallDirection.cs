@@ -22,5 +22,35 @@ namespace Utils.Enums
         {
             return (direction & compare) == compare;
         }
+
+        public static WallDirection ToWallDirection(this string actor)
+        {
+            switch (actor)
+            {
+                case ActorDisplay.WallHorizontal: return WallDirection.Horizontal;
+                case ActorDisplay.WallVertical: return WallDirection.Vertical;
+                case ActorDisplay.WallTopLeftCorner: return WallDirection.TopLeftCorner;
+                case ActorDisplay.WallTopRightCorner: return WallDirection.TopRightCorner;
+                case ActorDisplay.WallBottomLeftCorner: return WallDirection.BottomLeftCorner;
+                case ActorDisplay.WallBottomRightCorner: return WallDirection.BottomRightCorner;
+            }
+
+            throw new ArgumentException($"Unexpected actor [{actor}]");
+        }
+
+        public static string FromWallDirection(this WallDirection direction)
+        {
+            switch (direction)
+            {
+                case WallDirection.Horizontal: return ActorDisplay.WallHorizontal;
+                case WallDirection.Vertical: return ActorDisplay.WallVertical;
+                case WallDirection.TopLeftCorner: return ActorDisplay.WallTopLeftCorner;
+                case WallDirection.TopRightCorner: return ActorDisplay.WallTopRightCorner;
+                case WallDirection.BottomLeftCorner: return ActorDisplay.WallBottomLeftCorner;
+                case WallDirection.BottomRightCorner: return ActorDisplay.WallBottomRightCorner;
+            }
+
+            throw new ArgumentException($"Unexpected wall direction [{direction}]");
+        }
     }
 }

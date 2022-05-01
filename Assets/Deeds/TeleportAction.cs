@@ -25,7 +25,7 @@ namespace Assets.Deeds
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {
-                var tile = Tiles.RandomFloorTile(false);
+                var tile = Tiles.RandomFloorTile(false, false);
 
                 return ((IFloor) tile.Dispatched, tile.Coordinates);
             }

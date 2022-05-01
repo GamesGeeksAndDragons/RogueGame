@@ -2,7 +2,6 @@
 using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
@@ -13,16 +12,10 @@ namespace Assets.Actors
     {
         public WallDirection WallType { get; private set; }
 
-        internal Wall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(dispatchRegistry, actionRegistry)
+        internal Wall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
+            : base(dispatchRegistry, actionRegistry, actor)
         {
             WallType = state.ToEnum<WallDirection>();
-        }
-
-        internal Wall(Wall wall) 
-            : base(wall.DispatchRegistry, wall.ActionRegistry)
-        {
-            WallType = wall.WallType;
         }
 
         public override void UpdateState(Parameters state)
@@ -44,25 +37,14 @@ namespace Assets.Actors
             return state;
         }
 
-        public static WallDirection GetDirection(string actor)
-        {
-            switch (actor)
-            {
-                case ActorDisplay.WallHorizontal: return WallDirection.Horizontal;
-                case ActorDisplay.WallVertical: return WallDirection.Vertical;
-                case ActorDisplay.WallTopLeftCorner: return WallDirection.TopLeftCorner;
-                case ActorDisplay.WallTopRightCorner: return WallDirection.TopRightCorner;
-                case ActorDisplay.WallBottomLeftCorner: return WallDirection.BottomLeftCorner;
-                case ActorDisplay.WallBottomRightCorner: return WallDirection.BottomRightCorner;
-            }
-
-            throw new ArgumentException($"Unexpected actor [{actor}]");
-        }
-
         public bool IsCorner => WallType.HasDirection(WallDirection.Corner);
 
         public Wall Rotate()
         {
+            var newDirection = GetRotatedDirection();
+            var newActor = newDirection.FromWallDirection();
+            return new Wall(DispatchRegistry, ActionRegistry, newActor, newDirection.ToString());
+
             WallDirection GetRotatedDirection()
             {
                 switch (WallType)
@@ -77,9 +59,6 @@ namespace Assets.Actors
                         throw new ArgumentException($"Unexpected WallType [{WallType}]");
                 }
             }
-
-            var newDirection = GetRotatedDirection().ToString();
-            return new Wall(DispatchRegistry, ActionRegistry, newDirection);
         }
     }
 }

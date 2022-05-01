@@ -12,10 +12,15 @@ namespace Assets.Messaging
     internal abstract class Dispatched<T> : IDispatched
         where T : class
     {
-        protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
+        protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor)
         {
+            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
+            actionRegistry.ThrowIfNull(nameof(actionRegistry));
+            actor.Length.ThrowIfEqual(0, nameof(actor));
+
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
+            Actor = actor;
 
             UniqueId = DispatchRegistry.Register(this);
 
@@ -35,13 +40,14 @@ namespace Assets.Messaging
 
         public override string ToString()
         {
-            return this.ToDisplayChar();
+            return Actor;
         }
 
         protected internal virtual void RegisterActions() { }
 
         public IDispatchRegistry DispatchRegistry { get; }
         public IActionRegistry ActionRegistry { get; }
+        public string Actor { get; }
 
         public static readonly string DispatchedName = typeof(T).Name;
         public string Name => DispatchedName;

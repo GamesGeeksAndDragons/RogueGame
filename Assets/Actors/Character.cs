@@ -19,8 +19,8 @@ namespace Assets.Actors
     internal abstract class Character<T> : Dispatched<T>, ICharacter
         where T : class, IDispatched
     {
-        protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string state) 
-            : base(dispatchRegistry, actionRegistry)
+        protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
+            : base(dispatchRegistry, actionRegistry, actor)
         {
             var extracted = state.ToParameters();
 

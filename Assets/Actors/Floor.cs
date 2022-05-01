@@ -10,27 +10,38 @@ namespace Assets.Actors
     public interface IFloor : IDispatched
     {
         IDispatched Contained { get; }
+        int RoomNumber { get; }
+        bool IsTunnel { get; }
         void Contains(IDispatched dispatched);
         void SetEmpty();
     }
 
     internal class Floor : Dispatched<Floor>, IFloor
     {
-        internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry) 
-            : base(dispatchRegistry, actionRegistry)
+        internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string _) 
+            : base(dispatchRegistry, actionRegistry, actor)
         {
-            Contained = new Null(DispatchRegistry, ActionRegistry);
+            if (actor.IsSame(ActorDisplay.Floor))
+            {
+                RoomNumber = 0;
+            }
+            else
+            {
+                RoomNumber = actor.FromRoomNumberString();
+            }
+
+            Contained = new Null(DispatchRegistry, ActionRegistry, ActorDisplay.Null);
         }
 
         public override string ToString()
         {
-            var display = Contained.IsNull() ? this.ToDisplayChar() : Contained.ToDisplayChar();
+            var display = Contained.IsNull() ? Actor : Contained.Actor;
             return display;
         }
 
         public void SetEmpty()
         {
-            Contained = new Null(DispatchRegistry, ActionRegistry);
+            Contained = new Null(DispatchRegistry, ActionRegistry, ActorDisplay.Null);
         }
 
         public override void UpdateState(Parameters state)
@@ -56,6 +67,8 @@ namespace Assets.Actors
         }
 
         public IDispatched Contained { get; private set; }
+        public int RoomNumber { get; }
+        public bool IsTunnel => RoomNumber == 0;
 
         public void Contains(IDispatched dispatched)
         {
