@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.ActionTests
 {
-    public class TeleportTestsForOneCharacter : TilesTestHelper
+    public class TeleportTestsForOneCharacter : MazeTestHelper
     {
         public IDispatcher Dispatcher;
 
@@ -19,7 +19,7 @@ namespace AssetsTests.ActionTests
         protected override void TestArrange(IMazeExpectations expectations)
         {
             base.TestArrange(expectations);
-            ActionRegistry.RegisterTiles(Tiles);
+            ActionRegistry.RegisterMaze(Maze);
 
             var me = new Me(DispatchRegistry, ActionRegistry, ActorDisplay.Me, "");
 
@@ -43,7 +43,7 @@ namespace AssetsTests.ActionTests
         }
     }
 
-    public class TeleportTestsForTwoCharacters : TilesTestHelper
+    public class TeleportTestsForTwoCharacters : MazeTestHelper
     {
         public IDispatcher Dispatcher;
 
@@ -55,7 +55,7 @@ namespace AssetsTests.ActionTests
         protected override void TestArrange(IMazeExpectations expectations)
         {
             base.TestArrange(expectations);
-            ActionRegistry.RegisterTiles(Tiles);
+            ActionRegistry.RegisterMaze(Maze);
 
             var monster = new Monster(DispatchRegistry, ActionRegistry, ActorDisplay.DebugMonster, "");
             Dispatcher.EnqueueTeleport(monster);

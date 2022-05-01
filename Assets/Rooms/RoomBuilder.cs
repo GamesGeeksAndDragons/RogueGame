@@ -3,6 +3,7 @@ using System.IO;
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Maze;
+using Assets.Mazes;
 using Assets.Messaging;
 using log4net;
 using Utils;
@@ -75,7 +76,7 @@ namespace Assets.Rooms
             var maxCols = roomDescription.Max(row => row.Length);
             var num = roomNumber.ToRoomNumberString();
 
-            var tiles = TilesHelpers.BuildDefaultTiles(maxRows, maxCols, _actorBuilder.WallBuilder(num));
+            var tiles = MazeHelpers.BuildDefaultTiles(maxRows, maxCols, _actorBuilder.WallBuilder(num));
 
             for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
             {
@@ -92,7 +93,7 @@ namespace Assets.Rooms
                 }
             }
 
-            var maze = new Maze.Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, tiles);
+            var maze = new Mazes.Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, tiles);
 
             return new Room(roomName, maze, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
         }
@@ -129,15 +130,15 @@ namespace Assets.Rooms
         {
             numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
 
-            var maze = (Maze.Tiles) room.Tiles;
-            var rotatedTiles = Rotate(maze.TilesRegistry);
+            var maze = (Mazes.Maze) room.Maze;
+            var rotatedTiles = Rotate(maze.Tiles);
 
             for (int i = 0; i < numTimes-1; i++)
             {
                 rotatedTiles = Rotate(rotatedTiles);
             }
 
-            var newTiles = new Maze.Tiles(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ActorBuilder, rotatedTiles);
+            var newTiles = new Mazes.Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ActorBuilder, rotatedTiles);
 
             return new Room(room, newTiles);
 

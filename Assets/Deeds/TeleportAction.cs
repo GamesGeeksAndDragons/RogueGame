@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Maze;
-using Assets.Tiles;
+using Assets.Mazes;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
@@ -11,11 +11,11 @@ namespace Assets.Deeds
     {
         public override void Act(IDispatched dispatched, string actionValue)
         {
-            if (Tiles == null) throw new ArgumentException($"Tried to Teleport when Tiles is null");
+            if (Maze == null) throw new ArgumentException($"Tried to Teleport when Maze is null");
 
             var floorTile = RandomEmptyFloorTile();
 
-            var moved = Tiles.MoveOnto(dispatched.UniqueId, floorTile.Floor);
+            var moved = Maze.MoveOnto(dispatched.UniqueId, floorTile.Floor);
 
             if (moved)
             {
@@ -25,7 +25,7 @@ namespace Assets.Deeds
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {
-                var tile = Tiles.RandomFloorTile(false, false);
+                var tile = Maze.RandomFloorTile(false, false);
 
                 return ((IFloor) tile.Dispatched, tile.Coordinates);
             }

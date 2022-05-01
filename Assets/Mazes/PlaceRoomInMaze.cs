@@ -1,19 +1,20 @@
 ﻿#nullable enable
 using Assets.Actors;
+using Assets.Maze;
 using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
-    internal static class PlaceRoomInTiles
+    internal static class PlaceRoomInMaze
     {
         public const int NumAttemptTillGrowMaze = 3;
-        public const int TilesToCheckIfRoomTooClose = 4;
-        public const int TilesToCheckIfEdgeTooClose = 3;
+        public const int TooCloseToRoom = 4;
+        public const int TooCloseToEdge = 3;
 
-        internal static string[] PositionRoomsInTiles(this ITiles tiles, IEnumerable<Room> rooms)
+        internal static string[] PositionRoomsInMaze(this IMaze maze, IEnumerable<Room> rooms)
         {
             var removedTiles = new List<string>();
 
@@ -24,24 +25,24 @@ namespace Assets.Maze
                 var tilesChange = new List<(string Name, Coordinate coordinates)>();
                 while (!roomIsPositioned)
                 {
-                    var (topLeft, topRight, bottomLeft, bottomRight) = AttemptToPositionRoomInsideTiles(tiles, room);
+                    var (topLeft, topRight, bottomLeft, bottomRight) = AttemptToPositionRoomInsideTiles(maze, room);
 
                     var bigEnough = AreTilesBigEnough(topLeft, topRight, bottomLeft, bottomRight);
                     if (!bigEnough)
                     {
-                        tiles.Grow();
+                        maze.Grow();
                         continue;
                     }
 
-                    if (IsTooCloseToEdge(tiles, topLeft, topRight, bottomLeft, bottomRight)) continue;
-                    if (IsTooCloseToARoom(tiles, topLeft, topRight, bottomLeft, bottomRight)) continue;
+                    if (IsTooCloseToEdge(maze, topLeft, topRight, bottomLeft, bottomRight)) continue;
+                    if (IsTooCloseToARoom(maze, topLeft, topRight, bottomLeft, bottomRight)) continue;
 
                     var changes = PositionRoom(room, topLeft);
                     tilesChange.AddRange(changes);
                     roomIsPositioned = true;
                 }
 
-                var removed = tiles.Replace(tilesChange);
+                var removed = maze.Replace(tilesChange);
                 removedTiles.AddRange(removed);
             }
 
@@ -53,7 +54,7 @@ namespace Assets.Maze
             return topLeft != topRight && topRight != bottomLeft && bottomLeft != bottomRight && bottomRight != Coordinate.NotSet;
         }
 
-        private static bool IsSurroundedByRock(Coordinate coordinate, ITiles tiles, int tilesToCheck, int boundaryRow, int boundaryColumn)
+        private static bool IsSurroundedByRock(Coordinate coordinate, IMaze maze, int tilesToCheck, int boundaryRow, int boundaryColumn)
         {
             var minRow = Math.Max(coordinate.Row - tilesToCheck, 0);
             var maxRow = Math.Min(coordinate.Row + tilesToCheck, boundaryRow);
@@ -66,11 +67,11 @@ namespace Assets.Maze
                 {
                     var checkCoordinate = new Coordinate(row, column);
 
-                    var name = tiles[checkCoordinate];
+                    var name = maze[checkCoordinate];
                     if (name.IsNullOrEmpty()) return false;
 
                     // really want isPaper and isScissors
-                    var isRock = tiles.IsTileType<Rock>(checkCoordinate);
+                    var isRock = maze.IsTileType<Rock>(checkCoordinate);
                     if (!isRock) return false;
                 }
             }
@@ -78,42 +79,42 @@ namespace Assets.Maze
             return true;
         }
 
-        private static bool IsTooCloseToEdge(ITiles tiles, Coordinate coordinates, int tilesToCheck)
+        private static bool IsTooCloseToEdge(IMaze maze, Coordinate coordinates, int tilesToCheck)
         {
             if (coordinates.Row - tilesToCheck < 0) return true;
             if (coordinates.Column - tilesToCheck < 0) return true;
 
-            var (maxRow, maxColumn) = tiles.UpperBounds;
+            var (maxRow, maxColumn) = maze.UpperBounds;
             if (coordinates.Row > maxRow) return true;
             if (coordinates.Column > maxColumn) return true;
 
             return false;
         }
 
-        private static bool IsTooCloseToEdge(ITiles tiles, Coordinate topLeft, Coordinate topRight,
+        private static bool IsTooCloseToEdge(IMaze maze, Coordinate topLeft, Coordinate topRight,
             Coordinate bottomLeft, Coordinate bottomRight)
         {
-            if (IsTooCloseToEdge(tiles, topLeft, TilesToCheckIfEdgeTooClose)) return true;
-            if (IsTooCloseToEdge(tiles, topRight, TilesToCheckIfEdgeTooClose)) return true;
-            if (IsTooCloseToEdge(tiles, bottomLeft, TilesToCheckIfEdgeTooClose)) return true;
-            return IsTooCloseToEdge(tiles, bottomRight, TilesToCheckIfEdgeTooClose);
+            if (IsTooCloseToEdge(maze, topLeft, TooCloseToEdge)) return true;
+            if (IsTooCloseToEdge(maze, topRight, TooCloseToEdge)) return true;
+            if (IsTooCloseToEdge(maze, bottomLeft, TooCloseToEdge)) return true;
+            return IsTooCloseToEdge(maze, bottomRight, TooCloseToEdge);
         }
 
-        private static bool IsTooCloseToARoom(ITiles tiles, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
+        private static bool IsTooCloseToARoom(IMaze maze, Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight)
         {
-            var (row, column) = tiles.UpperBounds;
-            if (!IsSurroundedByRock(topLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            if (!IsSurroundedByRock(topRight, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            if (!IsSurroundedByRock(bottomLeft, tiles, TilesToCheckIfRoomTooClose, row, column)) return true;
-            return !IsSurroundedByRock(bottomRight, tiles, TilesToCheckIfRoomTooClose, row, column);
+            var (row, column) = maze.UpperBounds;
+            if (!IsSurroundedByRock(topLeft, maze, TooCloseToRoom, row, column)) return true;
+            if (!IsSurroundedByRock(topRight, maze, TooCloseToRoom, row, column)) return true;
+            if (!IsSurroundedByRock(bottomLeft, maze, TooCloseToRoom, row, column)) return true;
+            return !IsSurroundedByRock(bottomRight, maze, TooCloseToRoom, row, column);
         }
 
         private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight)
-            AttemptToPositionRoomInsideTiles(ITiles tiles, Room room)
+            AttemptToPositionRoomInsideTiles(IMaze maze, Room room)
         {
             for (var attempts = 0; attempts < NumAttemptTillGrowMaze; ++attempts)
             {
-                var start = tiles.RandomRockTile().Coordinates;
+                var start = maze.RandomRockTile().Coordinates;
 
                 var (topLeft, topRight, bottomLeft, bottomRight) = room.GetSize();
                 topLeft += start;
@@ -122,10 +123,10 @@ namespace Assets.Maze
                 bottomRight += start;
 
                 var isInsideMaze =
-                    tiles.IsInside(topLeft) &&
-                    tiles.IsInside(topRight) &&
-                    tiles.IsInside(bottomLeft) &&
-                    tiles.IsInside(bottomRight);
+                    maze.IsInside(topLeft) &&
+                    maze.IsInside(topRight) &&
+                    maze.IsInside(bottomLeft) &&
+                    maze.IsInside(bottomRight);
 
                 if (isInsideMaze)
                 {

@@ -2,6 +2,7 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Maze;
+using Assets.Mazes;
 using Assets.Rooms;
 using log4net;
 using Utils.Dispatching;
@@ -28,7 +29,7 @@ namespace Assets.Messaging
             _actorBuilder = actorBuilder;
         }
 
-        internal Maze.Tiles Build(int level)
+        internal Mazes.Maze Build(int level)
         {
             var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);
             var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _actorBuilder);

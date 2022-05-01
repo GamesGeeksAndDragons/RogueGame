@@ -7,32 +7,32 @@ namespace Assets.Messaging
 {
     public static class DispatchRegistryHelpers
     {
-        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] dispatched)
+        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] tilesArray)
         {
-            var noRows = dispatched.Length;
-            var noColumns = dispatched.Max(row => row.Length);
+            var noRows = tilesArray.Length;
+            var noColumns = tilesArray.Max(row => row.Length);
 
-            var tiles = new IDispatched[noRows, noColumns];
+            var tiles = new string[noRows, noColumns];
 
             for (int rowIndex = 0; rowIndex < noRows; rowIndex++)
             {
-                var row = dispatched[rowIndex];
+                var row = tilesArray[rowIndex];
 
                 for (int colIndex = 0; colIndex < noColumns; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    tiles[rowIndex, colIndex] = builder.Build(actor);
+                    tiles[rowIndex, colIndex] = builder.Build(actor).UniqueId;
                 }
             }
 
             return tiles;
         }
 
-        internal static IDispatched[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string dispatched)
+        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string tiles)
         {
-            var dispatchedArray = dispatched.SplitIntoLines();
+            var tilesArray = tiles.SplitIntoLines();
 
-            return dispatchRegistry.Register(builder, dispatchedArray);
+            return dispatchRegistry.Register(builder, tilesArray);
         }
     }
 }

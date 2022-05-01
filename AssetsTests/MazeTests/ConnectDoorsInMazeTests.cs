@@ -1,22 +1,21 @@
-﻿using Assets.Maze;
-using Assets.Tiles;
+﻿using Assets.Mazes;
 using AssetsTests.Helpers;
-using AssetsTests.TilesTests.Helpers;
+using AssetsTests.MazeTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace AssetsTests.TilesTests
+namespace AssetsTests.MazeTests
 {
-    public class ConnectDoorsInTilesTests : TilesTestHelper
+    public class ConnectDoorsInMazeTests : MazeTestHelper
     {
-        public ConnectDoorsInTilesTests(ITestOutputHelper output) : base(output)
+        public ConnectDoorsInMazeTests(ITestOutputHelper output) : base(output)
         {
         }
 
         protected override void TestAct()
         {
-            var changes = Tiles.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
-            Tiles.ConnectDoorsWithCorridors(changes, DispatchRegistry, ActorBuilder);
+            var changes = Maze.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
+            Maze.ConnectDoorsWithCorridors(changes, DispatchRegistry, ActorBuilder);
         }
 
         private void ConnectDoorTestsImpl(IMazeExpectations expectations)

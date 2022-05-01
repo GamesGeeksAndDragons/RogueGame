@@ -2,8 +2,8 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Maze;
+using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using AssetsTests.RoomTests;
@@ -206,7 +206,7 @@ namespace AssetsTests.DispatcherTests
             }
         }
 
-        internal void AssertTest(Tiles maze, int level)
+        internal void AssertTest(Maze maze, int level)
         {
             var actual = maze.Print(maze.DispatchRegistry);
             var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);

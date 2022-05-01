@@ -145,7 +145,7 @@ namespace AssetsTests.RoomTests
         {
             var room = ArrangeTest(roomSetup, _testName, _output);
 
-            var before = room.Tiles.Print(room.DispatchRegistry);
+            var before = room.Maze.Print(room.DispatchRegistry);
             _output.WriteLine(Divider + " before " + Divider);
             _output.WriteLine(before);
 

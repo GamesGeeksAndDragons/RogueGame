@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
+using Assets.Maze;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
@@ -8,13 +9,13 @@ using Utils.Dispatching;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
-    public interface ITiles
+    public interface IMaze
     {
         bool IsInside(Coordinate coordinate);
         (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition);
-        TileChanges GetTilesOfType<TTileType>();
+        TileChanges GetTiles<TTileType>();
         string[] Replace(TileChanges state);
         bool MoveOnto(string name, IFloor floor);
         void Grow();
@@ -25,17 +26,17 @@ namespace Assets.Maze
         IDispatched GetDispatched(Coordinate point);
     }
 
-    internal class Tiles : Dispatched<Tiles>, ITiles
+    internal class Maze : Dispatched<Maze>, IMaze
     {
         internal IDieBuilder DieBuilder { get; }
         internal IActorBuilder ActorBuilder { get; }
 
-        protected internal string[,] TilesRegistry;
+        protected internal string[,] Tiles;
 
-        public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
+        public (int Row, int Column) UpperBounds => Tiles.UpperBounds();
 
-        internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
-            : base(dispatchRegistry, actionRegistry, ActorDisplay.Tiles)
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
+            : base(dispatchRegistry, actionRegistry, ActorDisplay.Maze)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             actorBuilder.ThrowIfNull(nameof(actorBuilder));
@@ -43,7 +44,7 @@ namespace Assets.Maze
             DieBuilder = dieBuilder;
             ActorBuilder = actorBuilder;
 
-            TilesRegistry = tiles.CloneStrings();
+            Tiles = tiles.CloneStrings();
         }
 
         public string[] Replace(TileChanges state)
@@ -70,7 +71,7 @@ namespace Assets.Maze
 
         public bool IsInside(Coordinate coordinate)
         {
-            return TilesRegistry.IsInside(coordinate);
+            return Tiles.IsInside(coordinate);
         }
 
         public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition)
@@ -82,7 +83,7 @@ namespace Assets.Maze
 
             while (tile == null || ! tileCondition(tile))
             {
-                randomCoordinates = TilesRegistry.RandomCoordinates(DieBuilder, maxRows, maxColumns);
+                randomCoordinates = Tiles.RandomCoordinates(DieBuilder, maxRows, maxColumns);
                 var uniqueId = this[randomCoordinates];
                 tile = DispatchRegistry.GetDispatched(uniqueId);
             }
@@ -90,17 +91,17 @@ namespace Assets.Maze
             return (tile, randomCoordinates);
         }
 
-        public TileChanges GetTilesOfType<TTileType>()
+        public TileChanges GetTiles<TTileType>()
         {
-            return TilesRegistry.GetTilesOfType<TTileType>(DispatchRegistry.GetDispatched);
+            return Tiles.GetTiles<TTileType>(DispatchRegistry.GetDispatched);
         }
 
         public string this[Coordinate point]
         {
-            get => TilesRegistry[point.Row, point.Column];
-            set => TilesRegistry[point.Row, point.Column] = value;
+            get => Tiles[point.Row, point.Column];
+            set => Tiles[point.Row, point.Column] = value;
         }
-        public Coordinate this[string uniqueId] => TilesRegistry.Locate(name => name.IsSame(uniqueId));
+        public Coordinate this[string uniqueId] => Tiles.Locate(name => name.IsSame(uniqueId));
 
         public IDispatched GetDispatched(Coordinate point) => DispatchRegistry.GetDispatched(this[point]);
 
@@ -114,9 +115,9 @@ namespace Assets.Maze
 
             CopyExistingIntoNew();
 
-            TilesRegistry = newTiles;
+            Tiles = newTiles;
 
-            TilesRegistry.DefaultTiles(ActorBuilder.RockBuilder());
+            Tiles.DefaultTiles(ActorBuilder.RockBuilder());
 
             void CopyExistingIntoNew()
             {

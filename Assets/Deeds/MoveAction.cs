@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Maze;
+using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -12,9 +12,9 @@ namespace Assets.Deeds
 {
     internal abstract class Action : IAction
     {
-        public void SetTiles(ITiles tiles) => Tiles = tiles;
+        public void SetMaze(IMaze maze) => Maze = maze;
 
-        protected ITiles? Tiles { get; private set; }
+        protected IMaze? Maze { get; private set; }
 
         public abstract void Act(IDispatched dispatched, string actionValue);
     }
@@ -29,17 +29,17 @@ namespace Assets.Deeds
             var direction = actionValue.ToEnum<Compass8Points>();
             var newCoordinates = oldCoordinates.Move(direction);
 
-            if (Tiles == null) throw new ArgumentException($"Tried to Move when Tiles is null");
+            if (Maze == null) throw new ArgumentException($"Tried to Move when Maze is null");
 
-            var newTile = Tiles.GetDispatched(newCoordinates);
+            var newTile = Maze.GetDispatched(newCoordinates);
             if (!newTile.IsFloor()) return;
             var to = (Floor)newTile;
 
-            var moved = Tiles.MoveOnto(dispatched.UniqueId, to);
+            var moved = Maze.MoveOnto(dispatched.UniqueId, to);
             if (!moved) return;
 
             character.Position = newCoordinates;
-            var from = (Floor)Tiles.GetDispatched(oldCoordinates);
+            var from = (Floor)Maze.GetDispatched(oldCoordinates);
             from.SetEmpty();
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Assets.Maze;
-using Assets.Tiles;
+using Assets.Mazes;
 using Utils;
 using Utils.Dispatching;
 
@@ -7,11 +7,11 @@ namespace AssetsTests.Helpers
 {
     static class PrinterHelper
     {
-        public static string Print(this ITiles tiles, IDispatchRegistry dispatchRegistry)
+        public static string Print(this IMaze maze, IDispatchRegistry dispatchRegistry)
         {
-            var tileMatrix = (Tiles)tiles;
+            var tileMatrix = (Maze)maze;
 
-            return tileMatrix.TilesRegistry.Print(dispatchRegistry);
+            return tileMatrix.Tiles.Print(dispatchRegistry);
         }
 
         public static string Print(this string[,] tiles, IDispatchRegistry dispatchRegistry)

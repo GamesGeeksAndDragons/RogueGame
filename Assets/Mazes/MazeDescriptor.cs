@@ -1,7 +1,7 @@
 ﻿#nullable enable
 using Utils;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
     internal struct MazeDetail
     {

@@ -30,7 +30,7 @@ namespace AssetsTests.RoomTests
 
         internal void AssertTest(Room room, ITestOutputHelper output, string expected = "")
         {
-            var actual = room.Tiles.Print(room.DispatchRegistry);
+            var actual = room.Maze.Print(room.DispatchRegistry);
 
             output.WriteLine(Divider + " expected " + Divider);
             output.WriteLine(expected);

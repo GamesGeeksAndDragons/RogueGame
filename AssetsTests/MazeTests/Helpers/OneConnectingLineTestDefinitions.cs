@@ -1,12 +1,12 @@
 ﻿using AssetsTests.Helpers;
 
-namespace AssetsTests.TilesTests.Helpers
+namespace AssetsTests.MazeTests.Helpers;
+
+internal static class OneConnectingLineTestDefinitions
 {
-    internal static class OneConnectingLineTestDefinitions
+    class Test1 : MazeExpectations
     {
-        class Test1 : MazeExpectations
-        {
-            protected override string Start => @"
+        protected override string Start => @"
 ██████████████████
 ██████████████████
 ██████████████████
@@ -24,7 +24,7 @@ namespace AssetsTests.TilesTests.Helpers
 ██████████████████
 ";
 
-            protected override string Expected => @"
+        protected override string Expected => @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
@@ -45,11 +45,11 @@ namespace AssetsTests.TilesTests.Helpers
 ------------------------
   |012345678901234567|  
 ";
-        }
+    }
 
-        class Test2 : MazeExpectations
-        {
-            protected override string Start => @"
+    class Test2 : MazeExpectations
+    {
+        protected override string Start => @"
 ██████████████████
 ██████████████████
 ██████████████████
@@ -67,7 +67,7 @@ namespace AssetsTests.TilesTests.Helpers
 ██████████████████
 ";
 
-            protected override string Expected => @"
+        protected override string Expected => @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
@@ -88,18 +88,17 @@ namespace AssetsTests.TilesTests.Helpers
 ------------------------
   |012345678901234567|  
 ";
-        }
+    }
 
-        internal static IMazeExpectations GetExpectations(int testNumber)
+    internal static IMazeExpectations GetExpectations(int testNumber)
+    {
+        switch (testNumber)
         {
-            switch (testNumber)
-            {
-                case 1: return new Test1();
-                case 2: return new Test2();
-            }
-
-            testNumber.ThrowUnknownTest();
-            return null;
+            case 1: return new Test1();
+            case 2: return new Test2();
         }
+
+        testNumber.ThrowUnknownTest();
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 ﻿#nullable enable
 using Assets.Maze;
-using Assets.Tiles;
+using Assets.Mazes;
 using Utils.Dispatching;
 
 namespace Assets.Deeds
@@ -8,7 +8,7 @@ namespace Assets.Deeds
     public interface IActionRegistry
     {
         void RegisterAction(IDispatched dispatched, string action);
-        void RegisterTiles(ITiles tiles);
+        void RegisterMaze(IMaze maze);
         IAction GetAction(string dispatchedName, string actionName);
     }
 
@@ -38,11 +38,11 @@ namespace Assets.Deeds
             _characterActions[action] = _actionImpl[action];
         }
 
-        public void RegisterTiles(ITiles tiles)
+        public void RegisterMaze(IMaze maze)
         {
             foreach (var action in _actionImpl)
             {
-                action.Value.SetTiles(tiles);
+                action.Value.SetMaze(maze);
             }
         }
 

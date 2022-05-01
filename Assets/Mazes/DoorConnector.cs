@@ -1,18 +1,18 @@
 ﻿#nullable enable
 using Assets.Actors;
 using Assets.Deeds;
-using Assets.Tiles;
+using Assets.Maze;
 using Utils;
 using Utils.Dispatching;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 using DoorsWithCoordinates = System.Collections.Generic.List<Assets.Actors.Door>;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
     public static class DoorConnector
     {
-        public static TileChanges GetTunnelToConnectDoors(this ITiles tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
+        public static TileChanges GetTunnelToConnectDoors(this IMaze maze, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder)
         {
             var tunnel = new TileChanges();
 
@@ -35,13 +35,13 @@ namespace Assets.Maze
 
             TileChanges ConnectDoors(Door firstDoor, Door secondDoor)
             {
-                var doorProjector = new DoorProjector(tiles, dispatchRegistry, dieBuilder);
+                var doorProjector = new DoorProjector(maze, dispatchRegistry, dieBuilder);
                 return doorProjector.FindProjection(firstDoor, secondDoor);
             }
 
             DoorsWithCoordinates GetDoors()
             {
-                var doors = tiles.GetTilesOfType<Door>();
+                var doors = maze.GetTiles<Door>();
 
                 return doors
                     .Select(tile => (Door)dispatchRegistry.GetDispatched(tile.UniqueId))

@@ -5,14 +5,13 @@ using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
-using Utils.Exceptions;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
-    internal static class TilesHelpers
+    internal static class MazeHelpers
     {
-        internal static TileChanges GetTilesOfType<TTileType>(this string[,] tiles, Func<string, IDispatched> getDispatchee)
+        internal static TileChanges GetTiles<TTileType>(this string[,] tiles, Func<string, IDispatched> getDispatched)
         {
             var tilesOfType = new TileChanges();
             var tileType = typeof(TTileType).Name;
@@ -25,7 +24,7 @@ namespace Assets.Maze
                     var uniqueId = tiles[row, col];
                     if (uniqueId.IsNullOrEmpty()) continue;
 
-                    var dispatched = getDispatchee(uniqueId);
+                    var dispatched = getDispatched(uniqueId);
                     if(dispatched.Name != tileType) continue;
 
                     var tile = (UniqueId: uniqueId, Coordinates: new Coordinate(row, col));
@@ -36,36 +35,36 @@ namespace Assets.Maze
             return tilesOfType;
         }
 
-        internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates) 
+        internal static bool IsTileType<T>(this IMaze maze, Coordinate coordinates) 
             where T : Dispatched<T>
         {
-            var dispatched = tiles.GetDispatched(coordinates);
+            var dispatched = maze.GetDispatched(coordinates);
             return dispatched.IsTypeof<T>();
         }
 
-        internal static bool IsDoor(this ITiles tiles, Coordinate coordinates)
+        internal static bool IsDoor(this IMaze maze, Coordinate coordinates)
         {
-            return tiles.IsTileType<Door>(coordinates);
+            return maze.IsTileType<Door>(coordinates);
         }
 
-        internal static bool IsRock(this ITiles tiles, Coordinate coordinates)
+        internal static bool IsRock(this IMaze maze, Coordinate coordinates)
         {
-            return tiles.IsTileType<Rock>(coordinates);
+            return maze.IsTileType<Rock>(coordinates);
         }
 
-        internal static bool IsFloor(this ITiles tiles, Coordinate coordinates)
+        internal static bool IsFloor(this IMaze maze, Coordinate coordinates)
         {
-            return tiles.IsTileType<Floor>(coordinates);
+            return maze.IsTileType<Floor>(coordinates);
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomRockTile(this ITiles tiles)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomRockTile(this IMaze maze)
         {
-            return tiles.RandomTile(dispatched => dispatched.IsRock());
+            return maze.RandomTile(dispatched => dispatched.IsRock());
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomWallTile(this ITiles tiles, WallDirection onlyThese = WallDirection.All)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomWallTile(this IMaze maze, WallDirection onlyThese = WallDirection.All)
         {
-            return tiles.RandomTile(dispatched =>
+            return maze.RandomTile(dispatched =>
             {
                 if (!dispatched.IsWall()) return false;
 
@@ -74,9 +73,9 @@ namespace Assets.Maze
             });
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this ITiles tiles, bool isTunnelTile, bool isOccupied)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this IMaze maze, bool isTunnelTile, bool isOccupied)
         {
-            return tiles.RandomTile(dispatched =>
+            return maze.RandomTile(dispatched =>
             {
                 if (!dispatched.IsFloor()) return false;
 
@@ -118,17 +117,17 @@ namespace Assets.Maze
         }
 
 
-        public static void ConnectDoorsWithCorridors(this ITiles tiles, TileChanges changes, IDispatchRegistry dispatchRegistry, IActorBuilder builder)
+        public static void ConnectDoorsWithCorridors(this IMaze maze, TileChanges changes, IDispatchRegistry dispatchRegistry, IActorBuilder builder)
         {
             var tunnel = BuildTunnelTiles(changes);
 
-            var replaced = tiles.Replace(tunnel);
+            var replaced = maze.Replace(tunnel);
 
             dispatchRegistry.Unregister(replaced);
 
             TileChanges BuildTunnelTiles(TileChanges projectedLine)
             {
-                var extracted = projectedLine.Where(tile => IsTileType<Rock>(tiles, tile.Coordinates)).ToList();
+                var extracted = projectedLine.Where(tile => IsTileType<Rock>(maze, tile.Coordinates)).ToList();
                 return extracted
                     .Select(Tunnel)
                     .ToList();

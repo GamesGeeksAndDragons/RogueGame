@@ -25,7 +25,7 @@ namespace Utils
         public static readonly List<string> RoomNumberOfFloor = new() { Floor, "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "ᵃ", "ᵇ", "ᶜ", "ᵈ", "ᵉ", "ᶠ", "ᶢ", "ᵸ", "ᵢ", "ᶨ", "ᵏ" };
 
         // https://unicode-table.com/en/sets/mathematical-signs/
-        public const string Tiles = "*";
+        public const string Maze = "*";
         public const string MagicMissile = "⋇";
         public const string MagicMissile2 = "∗";
         public const string FloorIlluminated = "⋅";

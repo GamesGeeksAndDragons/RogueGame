@@ -1,36 +1,37 @@
 ﻿#nullable enable
+using Assets.Maze;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;
 using Line = System.Collections.Generic.List<(string Id, Utils.Coordinates.Coordinate Coordinates)>;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
     internal static class ProjectorHelpers
     {
-        internal static bool ShouldProject(this ITiles tiles, Coordinate coordinate)
+        internal static bool ShouldProject(this IMaze maze, Coordinate coordinate)
         {
-            if (!tiles.IsInside(coordinate)) return false;
+            if (!maze.IsInside(coordinate)) return false;
 
-            return tiles.IsRock(coordinate) ||
-                   tiles.IsDoor(coordinate) ||
-                   tiles.IsFloor(coordinate);
+            return maze.IsRock(coordinate) ||
+                   maze.IsDoor(coordinate) ||
+                   maze.IsFloor(coordinate);
         }
 
-        internal static Line ProjectLine(this ITiles tiles, Coordinate coordinate, IDispatchRegistry registry, Compass4Points direction)
+        internal static Line ProjectLine(this IMaze maze, Coordinate coordinate, IDispatchRegistry registry, Compass4Points direction)
         {
             var line = new List<(string Id, Coordinate Coordinates)>();
-            if (tiles.ShouldProject(coordinate)) line.Add((tiles[coordinate], coordinate));
+            if (maze.ShouldProject(coordinate)) line.Add((maze[coordinate], coordinate));
 
             bool continueProjection;
             do
             {
                 coordinate = coordinate.Move(direction);
 
-                continueProjection = tiles.ShouldProject(coordinate);
+                continueProjection = maze.ShouldProject(coordinate);
                 if (continueProjection)
                 {
-                    line.Add((tiles[coordinate], coordinate));
+                    line.Add((maze[coordinate], coordinate));
                 }
             } while (continueProjection);
 

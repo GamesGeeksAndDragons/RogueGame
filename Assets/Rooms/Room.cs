@@ -2,6 +2,7 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Maze;
+using Assets.Mazes;
 using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
@@ -19,7 +20,7 @@ namespace Assets.Rooms
 
     internal class Room : IRoom
     {
-        internal Room(string name, ITiles tiles, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
+        internal Room(string name, IMaze maze, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
         {
             _dieBuilder = dieBuilder;
             _actorBuilder = actorBuilder;
@@ -28,10 +29,10 @@ namespace Assets.Rooms
             OriginalName = name;
             Name = $"{name}{++_counter}";
 
-            Tiles = tiles;
+            Maze = maze;
         }
 
-        internal Room(Room room, ITiles tiles) : this(room.OriginalName, tiles, room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._actorBuilder)
+        internal Room(Room room, IMaze maze) : this(room.OriginalName, maze, room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._actorBuilder)
         {
         }
 
@@ -44,11 +45,11 @@ namespace Assets.Rooms
 
         public string OriginalName { get; }
         public string Name { get; }
-        public (int Row, int Column) UpperBounds => Tiles.UpperBounds;
+        public (int Row, int Column) UpperBounds => Maze.UpperBounds;
 
-        internal readonly ITiles Tiles;
+        internal readonly IMaze Maze;
 
-        public string this[Coordinate coordinate] => Tiles[coordinate];
+        public string this[Coordinate coordinate] => Maze[coordinate];
 
         public void AddDoor(int doorNumber)
         {
@@ -57,16 +58,16 @@ namespace Assets.Rooms
 
             var newDoor = _actorBuilder.Build(doorNumber.ToHexString());
 
-            Tiles[toReplaceWithDoor.Coordinates] = newDoor.UniqueId;
+            Maze[toReplaceWithDoor.Coordinates] = newDoor.UniqueId;
             DispatchRegistry.Unregister(toReplaceWithDoor.Wall.UniqueId);
 
             (Wall Wall, Coordinate Coordinates) FindWall()
             {
-                var (maxRow, maxColumn) = Tiles.UpperBounds;
+                var (maxRow, maxColumn) = Maze.UpperBounds;
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var (dispatched, coordinates) = Tiles.RandomWallTile(WallDirection.NonCorner);
+                    var (dispatched, coordinates) = Maze.RandomWallTile(WallDirection.NonCorner);
 
                     if (!IsOutsideWall(coordinates, maxRow, maxColumn)) continue;
                     if (IsNextToDoor(coordinates)) continue;
@@ -91,7 +92,7 @@ namespace Assets.Rooms
 
                 return neighbouringCoordinates.Any(coordinate =>
                 {
-                    var id = Tiles[coordinates];
+                    var id = Maze[coordinates];
                     var dispatched = DispatchRegistry.GetDispatched(id);
                     return dispatched.IsDoor();
                 });
@@ -100,7 +101,7 @@ namespace Assets.Rooms
 
         public (Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight) GetSize()
         {
-            var (maxRow, maxColumn) = Tiles.UpperBounds;
+            var (maxRow, maxColumn) = Maze.UpperBounds;
 
             var topLeft = new Coordinate(0, 0);
             var topRight = new Coordinate(0, maxColumn - 1);
