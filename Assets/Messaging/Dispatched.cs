@@ -27,6 +27,11 @@ namespace Assets.Messaging
             RegisterActions();
         }
 
+        protected Dispatched(Dispatched<T> toCopy, string actor) 
+        : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, actor)
+        {
+        }
+
         public virtual void Dispatch(string parameters)
         {
             var parametersList = parameters.ToParameters().ToList();
@@ -45,8 +50,8 @@ namespace Assets.Messaging
 
         protected internal virtual void RegisterActions() { }
 
-        public IDispatchRegistry DispatchRegistry { get; }
-        public IActionRegistry ActionRegistry { get; }
+        public IDispatchRegistry DispatchRegistry { get; protected set; }
+        public IActionRegistry ActionRegistry { get; protected set; }
         public string Actor { get; }
 
         public static readonly string DispatchedName = typeof(T).Name;

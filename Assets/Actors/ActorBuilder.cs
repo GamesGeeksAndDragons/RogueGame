@@ -10,6 +10,8 @@ namespace Assets.Actors
     public interface IActorBuilder
     {
         IDispatched Build(string actor, string state = "");
+        Func<IDispatched> RockBuilder(string state = "");
+        Func<IDispatched> WallBuilder(string roomNumber, string state = "");
     }
 
     internal class ActorBuilder : IActorBuilder
@@ -90,5 +92,8 @@ namespace Assets.Actors
 
             throw new ArgumentException($"Unable to find Actor Builder for [{actor}]");
         }
+
+        public Func<IDispatched> RockBuilder(string state = "") => () => Build(ActorDisplay.Rock, state);
+        public Func<IDispatched> WallBuilder(string roomNumber, string state = "") => () => Build(roomNumber, state);
     }
 }

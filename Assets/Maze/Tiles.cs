@@ -2,11 +2,9 @@
 using Assets.Actors;
 using Assets.Deeds;
 using Assets.Messaging;
-using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Utils.Enums;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
@@ -29,29 +27,12 @@ namespace Assets.Maze
 
     internal class Tiles : Dispatched<Tiles>, ITiles
     {
-        internal IDieBuilder DieBuilder;
-        internal IActorBuilder ActorBuilder;
+        internal IDieBuilder DieBuilder { get; }
+        internal IActorBuilder ActorBuilder { get; }
 
         protected internal string[,] TilesRegistry;
 
         public (int Row, int Column) UpperBounds => TilesRegistry.UpperBounds();
-
-        internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, int maxRows, int maxColumns)
-            : base(dispatchRegistry, actionRegistry, ActorDisplay.Floor)
-        {
-            dieBuilder.ThrowIfNull(nameof(dieBuilder));
-            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
-            actionRegistry.ThrowIfNull(nameof(actionRegistry));
-            actorBuilder.ThrowIfNull(nameof(actorBuilder));
-            maxRows.ThrowIfBelow(0, nameof(maxRows));
-            maxColumns.ThrowIfBelow(0, nameof(maxColumns));
-
-            DieBuilder = dieBuilder;
-            ActorBuilder = actorBuilder;
-            TilesRegistry = new string[maxRows, maxColumns];
-
-            DefaultTilesToRock(maxRows, maxColumns);
-        }
 
         internal Tiles(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
             : base(dispatchRegistry, actionRegistry, ActorDisplay.Tiles)
@@ -63,16 +44,6 @@ namespace Assets.Maze
             ActorBuilder = actorBuilder;
 
             TilesRegistry = tiles.CloneStrings();
-        }
-
-        internal Tiles(Tiles toCopy)
-            : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, toCopy.DieBuilder, toCopy.ActorBuilder, toCopy.TilesRegistry)
-        {
-        }
-
-        internal Tiles(Tiles toCopy, string[,] tilesRegistry)
-        : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, toCopy.DieBuilder, toCopy.ActorBuilder, tilesRegistry)
-        {
         }
 
         public string[] Replace(TileChanges state)
@@ -97,39 +68,9 @@ namespace Assets.Maze
             return true;
         }
 
-        private void DefaultTilesToRock(int maxRows, int maxColumns)
-        {
-            for (var row = 0; row < maxRows; row++)
-            {
-                for (var column = 0; column < maxColumns; column++)
-                {
-                    var coordinates = new Coordinate(row, column);
-                    TilesRegistry.ThrowIfOutsideBounds(coordinates, nameof(TilesRegistry));
-
-                    var tile = this[coordinates];
-                    if (!tile.IsNullOrEmptyOrWhiteSpace()) continue;
-
-                    var rock = ActorBuilder.Build(ActorDisplay.Rock);
-                    this[coordinates] = rock.UniqueId;
-                }
-            }
-        }
-
-        internal Wall CreateWall(Coordinate coordinates, WallDirection direction)
-        {
-            this[coordinates].ThrowIfNull($"TilesRegistry[{coordinates}]");
-
-            return (Wall)ActorBuilder.Build(direction.ToString());
-        }
-
         public bool IsInside(Coordinate coordinate)
         {
             return TilesRegistry.IsInside(coordinate);
-        }
-
-        public Coordinate Locate(string uniqueId)
-        {
-            return TilesRegistry.Locate(id => uniqueId.IsSame(id));
         }
 
         public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition)
@@ -147,21 +88,6 @@ namespace Assets.Maze
             }
 
             return (tile, randomCoordinates);
-        }
-
-        public bool TileExists(string name)
-        {
-            var (rowMax, colMax) = TilesRegistry.UpperBounds();
-            for (var row = 0; row <= rowMax; row++)
-            {
-                for (var col = 0; col <= colMax; col++)
-                {
-                    var tile = TilesRegistry[row, col];
-                    if (tile == name) return true;
-                }
-            }
-
-            return false;
         }
 
         public TileChanges GetTilesOfType<TTileType>()
@@ -190,7 +116,7 @@ namespace Assets.Maze
 
             TilesRegistry = newTiles;
 
-            DefaultTilesToRock(grownRows, grownColumns);
+            TilesRegistry.DefaultTiles(ActorBuilder.RockBuilder());
 
             void CopyExistingIntoNew()
             {

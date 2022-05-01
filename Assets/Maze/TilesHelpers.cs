@@ -36,20 +36,11 @@ namespace Assets.Maze
             return tilesOfType;
         }
 
-        internal static IDispatched GetDispatched(this ITiles tiles, Coordinate coordinates, IDispatchRegistry registry)
-        {
-            if (!tiles.IsInside(coordinates)) 
-                throw new ArgumentException($"Request for coordinates [{coordinates}] not found inside tiles with bounds [{tiles.UpperBounds}]");
-
-            var uniqueId = tiles[coordinates];
-            return registry.GetDispatched(uniqueId);
-        }
-
         internal static bool IsTileType<T>(this ITiles tiles, Coordinate coordinates) 
             where T : Dispatched<T>
         {
-            var dispatchee = tiles.GetDispatched(coordinates);
-            return dispatchee.IsTypeof<T>();
+            var dispatched = tiles.GetDispatched(coordinates);
+            return dispatched.IsTypeof<T>();
         }
 
         internal static bool IsDoor(this ITiles tiles, Coordinate coordinates)
@@ -101,6 +92,31 @@ namespace Assets.Maze
                 }
             });
         }
+
+        public static void DefaultTiles(this string[,] tiles, Func<IDispatched> actorBuilder)
+        {
+            var (maxRows, maxColumns) = tiles.UpperBounds();
+
+            for (var row = 0; row <= maxRows; row++)
+            {
+                for (var column = 0; column <= maxColumns; column++)
+                {
+                    var tile = tiles[row, column];
+                    if (! tile.IsNullOrEmpty()) continue;
+
+                    var rock = actorBuilder();
+                    tiles[row, column] = rock.UniqueId;
+                }
+            }
+        }
+
+        public static string[,] BuildDefaultTiles(int maxRows, int maxColumns, Func<IDispatched> actorBuilder)
+        {
+            var tiles = new string[maxRows,maxColumns];
+            tiles.DefaultTiles(actorBuilder);
+            return tiles;
+        }
+
 
         public static void ConnectDoorsWithCorridors(this ITiles tiles, TileChanges changes, IDispatchRegistry dispatchRegistry, IActorBuilder builder)
         {

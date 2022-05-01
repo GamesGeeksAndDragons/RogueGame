@@ -14,11 +14,11 @@ namespace Assets.Tiles
     {
         private readonly IDispatchRegistry _registry;
         private readonly IDieBuilder _dieBuilder;
-        private readonly Maze.Tiles _tiles;
+        private readonly ITiles _tiles;
 
         public DoorProjector(ITiles tiles, IDispatchRegistry registry, IDieBuilder dieBuilder)
         {
-            _tiles = new Maze.Tiles((Maze.Tiles)tiles);
+            _tiles = tiles;
             _registry = registry;
             _dieBuilder = dieBuilder;
         }
@@ -38,9 +38,9 @@ namespace Assets.Tiles
 
             (Coordinate Coordinates, Compass4Points Direction) GetDirectionOutside(Door door)
             {
-                var coordinates = _tiles.Locate(door.UniqueId);
-                var òutside = GetOutsideDoorCoordinates(coordinates);
-                var direction = coordinates.GetDirectionOfTravel(òutside);
+                var coordinates = _tiles[door.UniqueId];
+                var outside = GetOutsideDoorCoordinates(coordinates);
+                var direction = coordinates.GetDirectionOfTravel(outside);
 
                 return (coordinates, direction);
             }
@@ -51,9 +51,9 @@ namespace Assets.Tiles
 
                 foreach (var coordinates in neighbouringCoordinates)
                 {
-                    var dispatchee = _tiles.GetDispatched(coordinates);
+                    var dispatched = _tiles.GetDispatched(coordinates);
 
-                    if (dispatchee.IsRock()) return coordinates;
+                    if (dispatched.IsRock()) return coordinates;
                 }
 
                 return Coordinate.NotSet;
@@ -61,12 +61,12 @@ namespace Assets.Tiles
 
             if (HasIntersection(startProjection, targetProjection))
             {
-                return Join();
+                return JoinIntersection();
             }
 
             return Search(startProjection, startDirection, targetProjection, targetDirection);
 
-            TileChanges Join()
+            TileChanges JoinIntersection()
             {
                 var intersectionTile = FindIntersection(startProjection, targetProjection);
 
@@ -107,14 +107,14 @@ namespace Assets.Tiles
 
             Func<(string Id, Coordinate Coordinates), Coordinate, bool> GetDirectionCheck(Compass4Points check)
             {
-                switch (check)
+                return check switch
                 {
-                    case Compass4Points.North: return IsNorthOf;
-                    case Compass4Points.South: return IsSouthOf;
-                    case Compass4Points.East: return IsEastOf;
-                    case Compass4Points.West: return IsWestOf;
-                    default: throw new ArgumentException($"Unable to GetDirectionCheck for {check}");
-                }
+                    Compass4Points.North => IsNorthOf,
+                    Compass4Points.South => IsSouthOf,
+                    Compass4Points.East => IsEastOf,
+                    Compass4Points.West => IsWestOf,
+                    _ => throw new ArgumentException($"Unable to GetDirectionCheck for {check}")
+                };
             }
         }
 
@@ -171,7 +171,7 @@ namespace Assets.Tiles
             projectionFromStart = GetLongestLine(startProjections);
             projectionToTarget = GetLongestLine(targetProjections);
 
-            return Search(start, startDirection, projectionFromStart, projectionToTarget, target); ;
+            return Search(start, startDirection, projectionFromStart, projectionToTarget, target);
         }
 
         bool DoThreeLinesIntersect(List<TileChanges> intersections) => intersections.Count != 0;
@@ -190,7 +190,7 @@ namespace Assets.Tiles
             var startIntersections = GetIntersections(startProjections, projectionFromTarget).ToList();
             if (! DoThreeLinesIntersect(startIntersections))
             {
-                throw new NotImplementedException($"Not implemented finding with six projections");
+                throw new NotImplementedException("Not implemented finding with six projections");
             }
 
             var connectingProjection = GetRandomLine(startIntersections);
@@ -311,15 +311,14 @@ namespace Assets.Tiles
 
             Func<(string, Coordinate), int> GetOrderBy()
             {
-                switch (projectionDirection)
+                return projectionDirection switch
                 {
-                    case Compass4Points.North: return NorthOrder;
-                    case Compass4Points.South: return SouthOrder;
-                    case Compass4Points.East: return EastOrder;
-                    case Compass4Points.West: return WestOrder;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(projectionDirection), projectionDirection, null);
-                }
+                    Compass4Points.North => NorthOrder,
+                    Compass4Points.South => SouthOrder,
+                    Compass4Points.East => EastOrder,
+                    Compass4Points.West => WestOrder,
+                    _ => throw new ArgumentOutOfRangeException(nameof(projectionDirection), projectionDirection, null)
+                };
             }
         }
 

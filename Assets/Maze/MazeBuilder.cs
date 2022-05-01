@@ -90,7 +90,8 @@ namespace Assets.Maze
             var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
 
-            var maze = new Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, maxTileRows, maxTileCols);
+            var tiles = TilesHelpers.BuildDefaultTiles(maxTileRows, maxTileCols, _actorBuilder.RockBuilder());
+            var maze = new Tiles(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, tiles);
 
             var removed = maze.PositionRoomsInTiles(rooms);
             _dispatchRegistry.Unregister(removed);
