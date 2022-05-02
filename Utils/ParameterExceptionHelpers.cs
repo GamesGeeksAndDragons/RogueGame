@@ -139,16 +139,6 @@ namespace Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIfOutsideBounds(this string [,] array, Coordinate coordinates, string name)
-        {
-            if (!array.IsInside(coordinates))
-            {
-                var maxBounary = new Coordinate(array.UpperBounds());
-                throw new ArgumentException(name, $"[{name}] expected the indexer [{coordinates}] to be inside [{maxBounary}] and they were outside");
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowIfFileNotExist(this string filename)
         {
             var exists = File.Exists(filename);

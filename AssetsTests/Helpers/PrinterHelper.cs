@@ -1,5 +1,4 @@
-﻿using Assets.Maze;
-using Assets.Mazes;
+﻿using Assets.Mazes;
 using Utils;
 using Utils.Dispatching;
 

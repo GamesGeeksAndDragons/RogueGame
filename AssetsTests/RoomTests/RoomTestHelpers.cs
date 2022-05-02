@@ -1,7 +1,8 @@
-﻿using Assets.Actors;
-using Assets.Deeds;
+﻿using Assets.Deeds;
 using Assets.Messaging;
+using Assets.Resources;
 using Assets.Rooms;
+using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using Utils;
@@ -22,7 +23,7 @@ namespace AssetsTests.RoomTests
             var actionRegistry = new ActionRegistry();
             var random = new DieBuilder(loadFolder: testName, reset: reset);
             var logger = new FakeLogger(output);
-            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
+            var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
 
             Builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
             return Builder.BuildRoom(roomName, 1);

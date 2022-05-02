@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Assets.Maze;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Enums;

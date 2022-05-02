@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using Assets.Actors;
-using Assets.Maze;
+using Assets.Characters;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;

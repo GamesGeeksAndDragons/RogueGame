@@ -6,7 +6,7 @@ using Utils.Coordinates;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Actors
+namespace Assets.Characters
 {
     internal interface ICharacter
     {

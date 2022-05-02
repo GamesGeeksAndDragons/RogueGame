@@ -1,9 +1,11 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Enums;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
@@ -92,7 +94,7 @@ namespace Assets.Mazes
             });
         }
 
-        public static void DefaultTiles(this string[,] tiles, Func<IDispatched> actorBuilder)
+        public static void DefaultTiles(this string[,] tiles, Func<IDispatched> resourceBuilder)
         {
             var (maxRows, maxColumns) = tiles.UpperBounds();
 
@@ -103,7 +105,7 @@ namespace Assets.Mazes
                     var tile = tiles[row, column];
                     if (! tile.IsNullOrEmpty()) continue;
 
-                    var rock = actorBuilder();
+                    var rock = resourceBuilder();
                     tiles[row, column] = rock.UniqueId;
                 }
             }
@@ -117,14 +119,17 @@ namespace Assets.Mazes
         }
 
 
-        public static void ConnectDoorsWithCorridors(this IMaze maze, TileChanges changes, IDispatchRegistry dispatchRegistry, IActorBuilder builder)
+        public static void ConnectDoorsWithCorridors(this IMaze maze, TileChanges changes, IDispatchRegistry dispatchRegistry, IResourceBuilder builder)
         {
+            var floorBuilder = builder.FloorBuilder();
+            IDispatched FloorForTunnel() => floorBuilder(0, "");
+
             var tunnel = BuildTunnelTiles(changes);
 
             var replaced = maze.Replace(tunnel);
 
             dispatchRegistry.Unregister(replaced);
-
+            
             TileChanges BuildTunnelTiles(TileChanges projectedLine)
             {
                 var extracted = projectedLine.Where(tile => IsTileType<Rock>(maze, tile.Coordinates)).ToList();
@@ -135,7 +140,8 @@ namespace Assets.Mazes
 
             (string UniqueId, Coordinate Coordinates) Tunnel((string UniqueId, Coordinate Coordinates) tile)
             {
-                var actor = builder.Build(ActorDisplay.Floor);
+                var actor = FloorForTunnel();
+
                 return (actor.UniqueId, tile.Coordinates);
             }
         }

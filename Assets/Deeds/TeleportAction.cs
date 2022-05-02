@@ -1,9 +1,9 @@
 ﻿#nullable enable
-using Assets.Actors;
-using Assets.Maze;
+using Assets.Characters;
 using Assets.Mazes;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using IFloor = Assets.Tiles.IFloor;
 
 namespace Assets.Deeds
 {

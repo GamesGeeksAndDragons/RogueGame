@@ -1,14 +1,14 @@
 ﻿#nullable enable
 using System.IO;
-using Assets.Actors;
 using Assets.Deeds;
-using Assets.Maze;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using log4net;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
 
 namespace Assets.Rooms
@@ -27,10 +27,10 @@ namespace Assets.Rooms
         private readonly ILog _logger;
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
-        private readonly IActorBuilder _actorBuilder;
+        private readonly IResourceBuilder _resourceBuilder;
         private readonly Dictionary<string, string[]> _rooms;
 
-        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
+        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             logger.ThrowIfNull(nameof(logger));
@@ -41,7 +41,7 @@ namespace Assets.Rooms
             _logger = logger;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
-            _actorBuilder = actorBuilder;
+            _resourceBuilder = resourceBuilder;
 
             _rooms = LoadRooms();
 
@@ -74,9 +74,11 @@ namespace Assets.Rooms
             var roomDescription = _rooms[roomName];
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
-            var num = roomNumber.ToRoomNumberString();
 
-            var tiles = MazeHelpers.BuildDefaultTiles(maxRows, maxCols, _actorBuilder.WallBuilder(num));
+            var floorBuilder = _resourceBuilder.FloorBuilder();
+            IDispatched FloorForRoom() => floorBuilder(roomNumber, "");
+
+            var tiles = MazeHelpers.BuildDefaultTiles(maxRows, maxCols, FloorForRoom);
 
             for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
             {
@@ -87,15 +89,15 @@ namespace Assets.Rooms
                     var actor = row[colIndex].ToString();
                     if (actor.IsFloorActor()) continue;
 
-                    var dispatched = _actorBuilder.Build(actor);
+                    var dispatched = _resourceBuilder.BuildTile(actor);
 
                     tiles[rowIndex, colIndex] = dispatched.UniqueId;
                 }
             }
 
-            var maze = new Mazes.Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, tiles);
+            var maze = new Mazes.Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
-            return new Room(roomName, maze, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
+            return new Room(roomName, maze, _dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder);
         }
 
         string[,] BuildRotatedTiles(string[,] tilesToRotate, int maxRows, int maxColumns)
@@ -138,7 +140,7 @@ namespace Assets.Rooms
                 rotatedTiles = Rotate(rotatedTiles);
             }
 
-            var newTiles = new Mazes.Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ActorBuilder, rotatedTiles);
+            var newTiles = new Mazes.Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ResourceBuilder, rotatedTiles);
 
             return new Room(room, newTiles);
 

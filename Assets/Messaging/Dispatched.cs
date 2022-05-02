@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Deeds;
 using Utils;
 using Utils.Dispatching;
@@ -20,7 +19,7 @@ namespace Assets.Messaging
 
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
-            Actor = actor;
+            Actor = actor.Intern();
 
             UniqueId = DispatchRegistry.Register(this);
 

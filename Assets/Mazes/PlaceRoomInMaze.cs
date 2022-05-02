@@ -1,7 +1,6 @@
 ﻿#nullable enable
-using Assets.Actors;
-using Assets.Maze;
 using Assets.Rooms;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;

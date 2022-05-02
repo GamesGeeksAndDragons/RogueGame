@@ -1,17 +1,15 @@
 ﻿#nullable enable
 using Utils.Dispatching;
 
-namespace Utils
+namespace Utils.Display
 {
-    public static class ActorDisplay
+    public static class TilesDisplay
     {
         // UTF-8
         public const string Null = "#";
         public const string Floor = " ";
         public const string Rock = "█";
-        public const string Me = "@";
         public const string DebugWeapon = "W";
-        public const string DebugMonster = "M";
         public const string WallHorizontal = "═";
         public const string WallVertical = "║";
         public const string WallTopLeftCorner = "╔";
@@ -34,7 +32,7 @@ namespace Utils
 
         public static bool IsFloorActor(this string actor)
         {
-            return RoomNumberOfFloor.Contains(actor);
+            return RoomNumberOfFloor.Contains(actor.Intern());
         }
 
         public static string ToRoomNumberString(this int num)
@@ -42,12 +40,12 @@ namespace Utils
             num.ThrowIfBelow(0, nameof(num));
             num.ThrowIfAbove(RoomNumberOfFloor.Count-1, nameof(num));
 
-            return RoomNumberOfFloor[num];
+            return RoomNumberOfFloor[num].Intern();
         }
 
         public static int FromRoomNumberString(this string num)
         {
-            var index = RoomNumberOfFloor.IndexOf(num);
+            var index = RoomNumberOfFloor.IndexOf(num.Intern());
             if (index == -1) throw new ArgumentException($"Unknown RoomNumber [{num}]");
 
             return index;

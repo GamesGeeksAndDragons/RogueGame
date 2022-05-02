@@ -1,9 +1,9 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Deeds;
-using Assets.Maze;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
@@ -20,24 +20,26 @@ namespace Assets.Rooms
 
     internal class Room : IRoom
     {
-        internal Room(string name, IMaze maze, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder)
+        internal Room(string name, IMaze maze, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder)
         {
             _dieBuilder = dieBuilder;
-            _actorBuilder = actorBuilder;
+            _resourceBuilder = resourceBuilder;
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
             OriginalName = name;
+            _doorBuilder = _resourceBuilder.DoorBuilder();
             Name = $"{name}{++_counter}";
 
             Maze = maze;
         }
 
-        internal Room(Room room, IMaze maze) : this(room.OriginalName, maze, room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._actorBuilder)
+        internal Room(Room room, IMaze maze) 
+            : this(room.OriginalName, maze, room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._resourceBuilder)
         {
         }
 
         private readonly IDieBuilder _dieBuilder;
-        private readonly IActorBuilder _actorBuilder;
+        private readonly IResourceBuilder _resourceBuilder;
         private static uint _counter;
 
         internal IDispatchRegistry DispatchRegistry { get; }
@@ -48,6 +50,7 @@ namespace Assets.Rooms
         public (int Row, int Column) UpperBounds => Maze.UpperBounds;
 
         internal readonly IMaze Maze;
+        private readonly Func<int, string, IDispatched> _doorBuilder;
 
         public string this[Coordinate coordinate] => Maze[coordinate];
 
@@ -56,7 +59,7 @@ namespace Assets.Rooms
             var toReplaceWithDoor = FindWall();
             if (toReplaceWithDoor == default) return;
 
-            var newDoor = _actorBuilder.Build(doorNumber.ToHexString());
+            var newDoor = _doorBuilder(doorNumber, "");
 
             Maze[toReplaceWithDoor.Coordinates] = newDoor.UniqueId;
             DispatchRegistry.Unregister(toReplaceWithDoor.Wall.UniqueId);

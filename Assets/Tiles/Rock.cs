@@ -1,10 +1,9 @@
 ﻿#nullable enable
 using Assets.Deeds;
 using Assets.Messaging;
-using Utils.Coordinates;
 using Utils.Dispatching;
 
-namespace Assets.Actors
+namespace Assets.Tiles
 {
     internal class Rock : Dispatched<Rock>
     {

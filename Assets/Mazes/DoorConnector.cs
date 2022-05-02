@@ -1,12 +1,11 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Deeds;
-using Assets.Maze;
+using Assets.Tiles;
 using Utils;
 using Utils.Dispatching;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
-using DoorsWithCoordinates = System.Collections.Generic.List<Assets.Actors.Door>;
+using DoorsWithCoordinates = System.Collections.Generic.List<Assets.Tiles.Door>;
 
 namespace Assets.Mazes
 {

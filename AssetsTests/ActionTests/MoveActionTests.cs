@@ -1,11 +1,14 @@
 ﻿using System;
-using Assets.Actors;
 using Assets.Deeds;
+using Assets.Level;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using AssetsTests.RoomTests;
 using Utils;
+using Utils.Display;
 using Utils.Enums;
 using Utils.Random;
 using Xunit;
@@ -288,14 +291,14 @@ namespace AssetsTests.ActionTests
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry);
-            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
+            var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
             var fakeRandomNumbers = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
             var maze = builder.Build(1);
 
-            var me = actorBuilder.Build(ActorDisplay.Me);
+            var me = actorBuilder.MeBuilder()("");
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 

@@ -15,7 +15,7 @@ namespace AssetsTests.MazeTests
         protected override void TestAct()
         {
             var changes = Maze.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
-            Maze.ConnectDoorsWithCorridors(changes, DispatchRegistry, ActorBuilder);
+            Maze.ConnectDoorsWithCorridors(changes, DispatchRegistry, ResourceBuilder);
         }
 
         private void ConnectDoorTestsImpl(IMazeExpectations expectations)

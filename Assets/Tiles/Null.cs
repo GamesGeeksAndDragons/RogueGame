@@ -3,7 +3,7 @@ using Assets.Deeds;
 using Assets.Messaging;
 using Utils.Dispatching;
 
-namespace Assets.Actors
+namespace Assets.Tiles
 {
     class Null : Dispatched<Null>
     {

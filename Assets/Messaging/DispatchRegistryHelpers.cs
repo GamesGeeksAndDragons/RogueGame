@@ -1,5 +1,6 @@
 ﻿#nullable enable
-using Assets.Actors;
+using Assets.Resources;
+using Assets.Tiles;
 using Utils;
 using Utils.Dispatching;
 
@@ -7,7 +8,7 @@ namespace Assets.Messaging
 {
     public static class DispatchRegistryHelpers
     {
-        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string[] tilesArray)
+        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IResourceBuilder builder, string[] tilesArray)
         {
             var noRows = tilesArray.Length;
             var noColumns = tilesArray.Max(row => row.Length);
@@ -21,14 +22,14 @@ namespace Assets.Messaging
                 for (int colIndex = 0; colIndex < noColumns; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    tiles[rowIndex, colIndex] = builder.Build(actor).UniqueId;
+                    tiles[rowIndex, colIndex] = builder.BuildTile(actor).UniqueId;
                 }
             }
 
             return tiles;
         }
 
-        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IActorBuilder builder, string tiles)
+        internal static string[,] Register(this IDispatchRegistry dispatchRegistry, IResourceBuilder builder, string tiles)
         {
             var tilesArray = tiles.SplitIntoLines();
 

@@ -1,7 +1,8 @@
-﻿using Assets.Actors;
-using Assets.Deeds;
+﻿using Assets.Deeds;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using Utils.Dispatching;
 using Utils.Random;
 using Xunit;
@@ -13,7 +14,7 @@ namespace AssetsTests.Helpers
     {
         public IDispatchRegistry DispatchRegistry = new DispatchRegistry();
         public IActionRegistry ActionRegistry = new ActionRegistry();
-        public IActorBuilder ActorBuilder;
+        public IResourceBuilder ResourceBuilder;
         public IDieBuilder DieBuilder = new DieBuilder();
 
         public IMaze Maze { get; protected set; }
@@ -23,7 +24,7 @@ namespace AssetsTests.Helpers
         protected MazeTestHelper(ITestOutputHelper output)
         {
             Output = output;
-            ActorBuilder = new ActorBuilder(DispatchRegistry, ActionRegistry);
+            ResourceBuilder = new ResourceBuilder(DispatchRegistry, ActionRegistry);
         }
 
         protected virtual void TestArrange(IMazeExpectations expectations)
@@ -33,8 +34,8 @@ namespace AssetsTests.Helpers
 
             IMaze LoadMaze(string loaded)
             {
-                var tiles = DispatchRegistry.Register(ActorBuilder, loaded);
-                var maze = new Maze(DispatchRegistry, ActionRegistry, DieBuilder, ActorBuilder, tiles);
+                var tiles = DispatchRegistry.Register(ResourceBuilder, loaded);
+                var maze = new Maze(DispatchRegistry, ActionRegistry, DieBuilder, ResourceBuilder, tiles);
                 return maze;
             }
         }

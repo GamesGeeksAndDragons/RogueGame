@@ -1,13 +1,17 @@
 ﻿using System;
-using Assets.Actors;
+using Assets.Characters;
 using Assets.Deeds;
-using Assets.Maze;
+using Assets.Level;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using AssetsTests.RoomTests;
 using Utils;
+using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
@@ -206,9 +210,9 @@ namespace AssetsTests.DispatcherTests
             }
         }
 
-        internal void AssertTest(Maze maze, int level)
+        internal void AssertTest(IMaze maze, int level, IDispatchRegistry dispatchRegistry)
         {
-            var actual = maze.Print(maze.DispatchRegistry);
+            var actual = maze.Print(dispatchRegistry);
             var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
 
             _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
@@ -229,24 +233,26 @@ namespace AssetsTests.DispatcherTests
         public void WhenBuiltDispatcher_ShouldHaveMeInMaze(int level)
         {
             var dispatchRegistry = new DispatchRegistry();
-            var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry);
+            var actionRegistry = new ActionRegistry();
             var fakeRandomNumbers = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);
-            var actorBuilder = new ActorBuilder(dispatchRegistry, actionRegistry);
+            var resourceBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
+            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, resourceBuilder);
             var maze = builder.Build(level);
 
             var before = maze.Print(dispatchRegistry);
             _output.WriteLine(RoomTestHelpers.Divider + " before " + RoomTestHelpers.Divider);
             _output.WriteLine(before);
 
-            var me = new Me(dispatchRegistry, actionRegistry, ActorDisplay.Me, "");
+            var meBuilder = resourceBuilder.MeBuilder();
+            var me = meBuilder("");
+
             dispatcher.EnqueueTeleport(me);
             dispatcher.Dispatch();
 
-            AssertTest(maze, level);
+            AssertTest(maze, level, dispatchRegistry);
         }
     }
 }

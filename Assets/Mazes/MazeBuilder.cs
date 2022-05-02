@@ -1,26 +1,25 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Deeds;
-using Assets.Mazes;
+using Assets.Resources;
 using Assets.Rooms;
+using Assets.Tiles;
 using log4net;
 using Utils;
 using Utils.Dispatching;
 using Utils.Random;
 
-namespace Assets.Maze
+namespace Assets.Mazes
 {
     public class MazeBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly RoomBuilder _roomBuilder;
-        private readonly IMazeDescriptor _descriptor;
         private readonly ILog _logger;
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
-        private readonly IActorBuilder _actorBuilder;
+        private readonly IResourceBuilder _resourceBuilder;
 
-        internal MazeBuilder(IDieBuilder dieBuilder, RoomBuilder roomBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
+        internal MazeBuilder(IDieBuilder dieBuilder, RoomBuilder roomBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             roomBuilder.ThrowIfNull(nameof(roomBuilder));
@@ -29,18 +28,17 @@ namespace Assets.Maze
 
             _dieBuilder = dieBuilder;
             _roomBuilder = roomBuilder;
-            _descriptor = new MazeDescriptor();
             _logger = logger;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
-            _actorBuilder = actorBuilder;
+            _resourceBuilder = resourceBuilder;
         }
 
-        private IList<Room> BuildRooms(MazeDetail detail)
+        private IList<Room> BuildRooms(int minNumRooms, int maxNumRooms)
         {
             var rooms = new List<Room>();
 
-            var dice = _dieBuilder.Between(detail.MinNumRooms, detail.MaxNumRooms);
+            var dice = _dieBuilder.Between(minNumRooms, maxNumRooms);
             var numRooms = dice.Random;
 
             for (var i = 0; i < numRooms; i++)
@@ -80,18 +78,16 @@ namespace Assets.Maze
             }
         }
 
-        internal Mazes.Maze BuildMaze(int level)
+        internal IMaze BuildMaze(int minRooms, int maxRooms)
         {
-            var mazeDetail = _descriptor[level];
-
-            var rooms = BuildRooms(mazeDetail);
+            var rooms = BuildRooms(minRooms, maxRooms);
             AddDoors(rooms);
 
             var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
 
-            var tiles = MazeHelpers.BuildDefaultTiles(maxTileRows, maxTileCols, _actorBuilder.RockBuilder());
-            var maze = new Mazes.Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder, tiles);
+            var tiles = MazeHelpers.BuildDefaultTiles(maxTileRows, maxTileCols, _resourceBuilder.DefaultRockBuilder());
+            var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
             var removed = maze.PositionRoomsInMaze(rooms);
             _dispatchRegistry.Unregister(removed);
@@ -99,7 +95,7 @@ namespace Assets.Maze
 
             var tunnel = maze.GetTunnelToConnectDoors(_dispatchRegistry, _actionRegistry, _dieBuilder);
 
-            maze.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _actorBuilder);
+            maze.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _resourceBuilder);
 
             return maze;
         }

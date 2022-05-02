@@ -2,10 +2,11 @@
 using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
+using Utils.Display;
 using Utils.Random;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Actors
+namespace Assets.Resources
 {
     internal class MeleeWeapon : Dispatched<MeleeWeapon>
     {
@@ -13,7 +14,7 @@ namespace Assets.Actors
         private readonly Dispatcher _dispatcher;
 
         public MeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, Dispatcher dispatcher, string state) 
-            : base(dispatchRegistry, actionRegistry, ActorDisplay.DebugWeapon)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.DebugWeapon)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             dispatcher.ThrowIfNull(nameof(dispatcher));

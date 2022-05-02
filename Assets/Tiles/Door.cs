@@ -5,7 +5,7 @@ using Utils;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Actors
+namespace Assets.Tiles
 {
     internal class Door : Dispatched<Door>
     {

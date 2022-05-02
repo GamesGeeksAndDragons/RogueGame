@@ -1,11 +1,12 @@
 ﻿#nullable enable
-using Assets.Actors;
 using Assets.Deeds;
-using Assets.Maze;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
 using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
@@ -29,20 +30,20 @@ namespace Assets.Mazes
     internal class Maze : Dispatched<Maze>, IMaze
     {
         internal IDieBuilder DieBuilder { get; }
-        internal IActorBuilder ActorBuilder { get; }
+        internal IResourceBuilder ResourceBuilder { get; }
 
         protected internal string[,] Tiles;
 
         public (int Row, int Column) UpperBounds => Tiles.UpperBounds();
 
-        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, string[,] tiles)
-            : base(dispatchRegistry, actionRegistry, ActorDisplay.Maze)
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string[,] tiles)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
-            actorBuilder.ThrowIfNull(nameof(actorBuilder));
+            resourceBuilder.ThrowIfNull(nameof(resourceBuilder));
 
             DieBuilder = dieBuilder;
-            ActorBuilder = actorBuilder;
+            ResourceBuilder = resourceBuilder;
 
             Tiles = tiles.CloneStrings();
         }
@@ -117,7 +118,7 @@ namespace Assets.Mazes
 
             Tiles = newTiles;
 
-            Tiles.DefaultTiles(ActorBuilder.RockBuilder());
+            Tiles.DefaultTiles(ResourceBuilder.DefaultRockBuilder());
 
             void CopyExistingIntoNew()
             {

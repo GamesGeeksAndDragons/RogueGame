@@ -1,5 +1,5 @@
 ﻿#nullable enable
-using Assets.Actors;
+using Assets.Tiles;
 using Utils;
 using Utils.Dispatching;
 

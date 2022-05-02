@@ -3,9 +3,10 @@ using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
+using Utils.Display;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Actors
+namespace Assets.Tiles
 {
     public interface IFloor : IDispatched
     {
@@ -21,7 +22,7 @@ namespace Assets.Actors
         internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string _) 
             : base(dispatchRegistry, actionRegistry, actor)
         {
-            if (actor.IsSame(ActorDisplay.Floor))
+            if (actor.IsSame(TilesDisplay.Floor))
             {
                 RoomNumber = 0;
             }
@@ -30,7 +31,7 @@ namespace Assets.Actors
                 RoomNumber = actor.FromRoomNumberString();
             }
 
-            Contained = new Null(DispatchRegistry, ActionRegistry, ActorDisplay.Null);
+            Contained = new Null(DispatchRegistry, ActionRegistry, TilesDisplay.Null);
         }
 
         public override string ToString()
@@ -41,7 +42,7 @@ namespace Assets.Actors
 
         public void SetEmpty()
         {
-            Contained = new Null(DispatchRegistry, ActionRegistry, ActorDisplay.Null);
+            Contained = new Null(DispatchRegistry, ActionRegistry, TilesDisplay.Null);
         }
 
         public override void UpdateState(Parameters state)

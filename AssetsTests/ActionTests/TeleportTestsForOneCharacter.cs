@@ -1,7 +1,8 @@
-﻿using Assets.Actors;
+﻿using Assets.Characters;
 using Assets.Messaging;
 using AssetsTests.Helpers;
 using Utils;
+using Utils.Display;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,7 +22,8 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterMaze(Maze);
 
-            var me = new Me(DispatchRegistry, ActionRegistry, ActorDisplay.Me, "");
+            var meBuilder = ResourceBuilder.MeBuilder();
+            var me = meBuilder("");
 
             Dispatcher.EnqueueTeleport(me);
         }
@@ -57,10 +59,14 @@ namespace AssetsTests.ActionTests
             base.TestArrange(expectations);
             ActionRegistry.RegisterMaze(Maze);
 
-            var monster = new Monster(DispatchRegistry, ActionRegistry, ActorDisplay.DebugMonster, "");
+            var monsterBuilder = ResourceBuilder.MonsterBuilder();
+            var monster = monsterBuilder("");
+
             Dispatcher.EnqueueTeleport(monster);
 
-            var me = new Me(DispatchRegistry, ActionRegistry, ActorDisplay.Me, "");
+            var meBuilder = ResourceBuilder.MeBuilder();
+            var me = meBuilder("");
+
             Dispatcher.EnqueueTeleport(me);
         }
 

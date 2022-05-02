@@ -105,6 +105,11 @@ namespace Utils
 
             return int.Parse(value, NumberStyles.HexNumber);
         }
+
+        public static string Intern(this string str)
+        {
+            return string.Intern(str);
+        }
     }
 
 }

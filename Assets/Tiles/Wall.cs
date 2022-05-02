@@ -6,7 +6,7 @@ using Utils.Dispatching;
 using Utils.Enums;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Actors
+namespace Assets.Tiles
 {
     internal class Wall : Dispatched<Wall>
     {

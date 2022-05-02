@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using Utils.Display;
+
 namespace Utils.Enums
 {
     [Flags]
@@ -27,12 +29,12 @@ namespace Utils.Enums
         {
             switch (actor)
             {
-                case ActorDisplay.WallHorizontal: return WallDirection.Horizontal;
-                case ActorDisplay.WallVertical: return WallDirection.Vertical;
-                case ActorDisplay.WallTopLeftCorner: return WallDirection.TopLeftCorner;
-                case ActorDisplay.WallTopRightCorner: return WallDirection.TopRightCorner;
-                case ActorDisplay.WallBottomLeftCorner: return WallDirection.BottomLeftCorner;
-                case ActorDisplay.WallBottomRightCorner: return WallDirection.BottomRightCorner;
+                case TilesDisplay.WallHorizontal: return WallDirection.Horizontal;
+                case TilesDisplay.WallVertical: return WallDirection.Vertical;
+                case TilesDisplay.WallTopLeftCorner: return WallDirection.TopLeftCorner;
+                case TilesDisplay.WallTopRightCorner: return WallDirection.TopRightCorner;
+                case TilesDisplay.WallBottomLeftCorner: return WallDirection.BottomLeftCorner;
+                case TilesDisplay.WallBottomRightCorner: return WallDirection.BottomRightCorner;
             }
 
             throw new ArgumentException($"Unexpected actor [{actor}]");
@@ -42,12 +44,12 @@ namespace Utils.Enums
         {
             switch (direction)
             {
-                case WallDirection.Horizontal: return ActorDisplay.WallHorizontal;
-                case WallDirection.Vertical: return ActorDisplay.WallVertical;
-                case WallDirection.TopLeftCorner: return ActorDisplay.WallTopLeftCorner;
-                case WallDirection.TopRightCorner: return ActorDisplay.WallTopRightCorner;
-                case WallDirection.BottomLeftCorner: return ActorDisplay.WallBottomLeftCorner;
-                case WallDirection.BottomRightCorner: return ActorDisplay.WallBottomRightCorner;
+                case WallDirection.Horizontal: return TilesDisplay.WallHorizontal;
+                case WallDirection.Vertical: return TilesDisplay.WallVertical;
+                case WallDirection.TopLeftCorner: return TilesDisplay.WallTopLeftCorner;
+                case WallDirection.TopRightCorner: return TilesDisplay.WallTopRightCorner;
+                case WallDirection.BottomLeftCorner: return TilesDisplay.WallBottomLeftCorner;
+                case WallDirection.BottomRightCorner: return TilesDisplay.WallBottomRightCorner;
             }
 
             throw new ArgumentException($"Unexpected wall direction [{direction}]");
