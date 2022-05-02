@@ -60,7 +60,8 @@ namespace Assets.Rooms
             {
                 var (maxRow, maxColumn) = Maze.UpperBounds;
 
-                for (int i = 0; i < 10; i++)
+                const int maxRetries = 50;
+                for (int i = 0; i < maxRetries; i++)
                 {
                     var (dispatched, coordinates) = Maze.RandomWallTile(WallDirection.NonCorner);
 
@@ -85,10 +86,12 @@ namespace Assets.Rooms
             {
                 var neighbouringCoordinates = coordinates.Surrounding4Coordinates();
 
-                return neighbouringCoordinates.Any(coordinate =>
+                return neighbouringCoordinates.Any(neighbouring=>
                 {
-                    var id = Maze[coordinates];
-                    var dispatched = DispatchRegistry.GetDispatched(id);
+                    if(! Maze.IsInside(neighbouring)) return false;
+
+                    var neighbouringId = Maze[neighbouring];
+                    var dispatched = DispatchRegistry.GetDispatched(neighbouringId);
                     return dispatched.IsDoor();
                 });
             }

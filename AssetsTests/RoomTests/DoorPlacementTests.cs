@@ -22,10 +22,10 @@ namespace AssetsTests.RoomTests
             public const string RectangleWithOneDoor = @"
  |0123456| 
 -----------
-0|╔══1══╗|0
+0|╔═════╗|0
 1|║¹¹¹¹¹║|1
 2|║¹¹¹¹¹║|2
-3|║¹¹¹¹¹║|3
+3|1¹¹¹¹¹║|3
 4|║¹¹¹¹¹║|4
 5|║¹¹¹¹¹║|5
 6|║¹¹¹¹¹║|6
@@ -39,10 +39,10 @@ namespace AssetsTests.RoomTests
             public const string SquareWithTwoDoors = @"
  |0123456789| 
 --------------
-0|╔══2═════╗|0
+0|╔1═══════╗|0
 1|║¹¹¹¹¹¹¹¹║|1
 2|║¹¹¹¹¹¹¹¹║|2
-3|1¹¹¹¹¹¹¹¹║|3
+3|2¹¹¹¹¹¹¹¹║|3
 4|║¹¹¹¹¹¹¹¹║|4
 5|║¹¹¹¹¹¹¹¹║|5
 6|║¹¹¹¹¹¹¹¹║|6
@@ -56,10 +56,10 @@ namespace AssetsTests.RoomTests
             public const string LShapedWithThreeDoors = @"
  |0123456789| 
 --------------
-0|╔══2═╗####|0
+0|╔1═══╗####|0
 1|║¹¹¹¹║####|1
-2|3¹¹¹¹║####|2
-3|1¹¹¹¹╚═══╗|3
+2|║¹¹¹¹║####|2
+3|3¹¹¹¹╚══2╗|3
 4|║¹¹¹¹¹¹¹¹║|4
 5|║¹¹¹¹¹¹¹¹║|5
 6|║¹¹¹¹¹¹¹¹║|6
@@ -69,37 +69,21 @@ namespace AssetsTests.RoomTests
 --------------
  |0123456789| 
 ";
-            public const string LShapedWithDoorsCappedAt12 = @"
- |0123456789| 
---------------
-0|╔B729╗####|0
-1|4¹¹¹¹║####|1
-2|3¹¹¹¹║####|2
-3|1¹¹¹¹╚══C╗|3
-4|8¹¹¹¹¹¹¹¹║|4
-5|5¹¹¹¹¹¹¹¹║|5
-6|A¹¹¹¹¹¹¹¹║|6
-7|6¹¹¹¹¹¹¹¹║|7
-8|D¹¹¹¹¹¹¹¹║|8
-9|╚════════╝|9
---------------
- |0123456789| 
-";
 
-            public const string OShapedWithFifteenDoors = @"
+            public const string OShapedWithCappedDoors = @"
   |012345678901|  
 ------------------
-0 |╔2══DFBC567╗|0 
-1 |║¹¹¹¹¹¹¹¹¹¹║|1 
-2 |3¹¹¹¹¹¹¹¹¹¹║|2 
-3 |1¹¹¹╔══╗¹¹¹║|3 
-4 |9¹¹¹║¹¹║¹¹¹║|4 
-5 |4¹¹¹║¹¹¹¹¹¹║|5 
-6 |║¹¹¹║¹¹║¹¹¹║|6 
-7 |E¹¹¹╚══╝¹¹¹║|7 
-8 |8¹¹¹¹¹¹¹¹¹¹║|8 
-9 |A¹¹¹¹¹¹¹¹¹¹║|9 
-10|╚══════════╝|10
+0 |╔6═1═D═7══3╗|0 
+1 |9¹¹¹¹¹¹¹¹¹¹║|1 
+2 |║¹¹¹¹¹¹¹¹¹¹║|2 
+3 |2¹¹¹╔══╗¹¹¹║|3 
+4 |║¹¹¹║¹¹║¹¹¹║|4 
+5 |║¹¹¹║¹¹¹¹¹¹║|5 
+6 |8¹¹¹║¹¹║¹¹¹║|6 
+7 |║¹¹¹╚══╝¹¹¹║|7 
+8 |A¹¹¹¹¹¹¹¹¹¹║|8 
+9 |║¹¹¹¹¹¹¹¹¹¹5|9 
+10|╚═════════4╝|10
 ------------------
   |012345678901|  
 ";
@@ -136,15 +120,9 @@ namespace AssetsTests.RoomTests
         }
 
         [Fact]
-        public void PlaceFifteenDoorsInOShapedRoom_ShouldSuccessfullyPlaceDoors()
-        {
-            DoorPlacementTest(KnownRooms.OShaped, 15, DoorPlacementExpectations.OShapedWithFifteenDoors);
-        }
-
-        [Fact]
         public void PlaceMoreDoorsThanRoomCanHave_ShouldResultCapTheNumberOfDoorsAdded()
         {
-            DoorPlacementTest(KnownRooms.LShaped, 15, DoorPlacementExpectations.LShapedWithDoorsCappedAt12);
+            DoorPlacementTest(KnownRooms.OShaped, 15, DoorPlacementExpectations.OShapedWithCappedDoors);
         }
     }
 }

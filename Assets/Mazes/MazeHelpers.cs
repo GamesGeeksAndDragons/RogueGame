@@ -71,7 +71,8 @@ namespace Assets.Mazes
                 if (!dispatched.IsWall()) return false;
 
                 var wall = (Wall)dispatched;
-                return onlyThese.HasDirection(wall.WallType);
+                var hasDirection = onlyThese.HasDirection(wall.WallType);
+                return hasDirection;
             });
         }
 

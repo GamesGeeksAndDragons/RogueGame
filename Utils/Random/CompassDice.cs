@@ -18,9 +18,9 @@ namespace Utils.Random
 
         internal void Populate() => _die.Populate();
 
-        public CompassDice(string name, int max, string loadFolder, Die.RandomiserReset reset=Die.RandomiserReset.None)
+        public CompassDice(int max, string loadFolder, Die.RandomiserReset reset=Die.RandomiserReset.None)
         {
-            _die = new Die(name, 1, max, loadFolder, reset);
+            _die = new Die(1, max, loadFolder, reset);
         }
 
         public void NextTurn()

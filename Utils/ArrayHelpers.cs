@@ -115,8 +115,8 @@ namespace Utils
 
         public static Coordinate RandomCoordinates<T>(this T[,] matrix, IDieBuilder dieBuilder, int maxRows, int maxColumns)
         {
-            var randomRow = dieBuilder.Dice(maxRows).Random - 1;
-            var randomColumn = dieBuilder.Dice(maxColumns).Random - 1;
+            var randomRow = dieBuilder.Between(0, maxRows).Random;
+            var randomColumn = dieBuilder.Between(0, maxColumns).Random;
 
             return new Coordinate(randomRow, randomColumn);
         }

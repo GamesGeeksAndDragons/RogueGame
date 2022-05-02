@@ -16,7 +16,7 @@ namespace Utils.Display
         public const string WallTopRightCorner = "╗";
         public const string WallBottomLeftCorner = "╚";
         public const string WallBottomRightCorner = "╝";
-        public static readonly List<string> Doors = new() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F" };
+        public static readonly List<string> Doors = new() { "-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" };
         public static readonly List<string> Walls = new() { WallHorizontal, WallVertical, WallTopLeftCorner, WallTopRightCorner, WallBottomLeftCorner, WallBottomRightCorner };
 
         //https://unicode-table.com/en/sets/superscript-and-subscript-letters/#subscript,-superscript
@@ -38,20 +38,40 @@ namespace Utils.Display
             return RoomNumberOfFloor.Contains(actor.Intern());
         }
 
-        public static string ToRoomNumberString(this int num)
+        private static string ToNumberString(this int num, List<string> numberArray)
         {
             num.ThrowIfBelow(0, nameof(num));
-            num.ThrowIfAbove(RoomNumberOfFloor.Count-1, nameof(num));
+            num.ThrowIfAbove(RoomNumberOfFloor.Count - 1, nameof(num));
 
-            return RoomNumberOfFloor[num].Intern();
+            return numberArray[num].Intern();
+        }
+
+        public static string ToRoomNumberString(this int num)
+        {
+            return num.ToNumberString(RoomNumberOfFloor);
+        }
+
+        public static string ToDoorNumberString(this int num)
+        {
+            return num.ToNumberString(Doors);
+        }
+
+        private static int FromNumberString(this string num, List<string> numberArray)
+        {
+            var index = numberArray.IndexOf(num.Intern());
+            if (index == -1) throw new ArgumentException($"Unknown Number [{num}]");
+
+            return index;
         }
 
         public static int FromRoomNumberString(this string num)
         {
-            var index = RoomNumberOfFloor.IndexOf(num.Intern());
-            if (index == -1) throw new ArgumentException($"Unknown RoomNumber [{num}]");
+            return num.FromNumberString(RoomNumberOfFloor);
+        }
 
-            return index;
+        public static int FromDoorNumberString(this string num)
+        {
+            return num.FromNumberString(Doors);
         }
     }
 }

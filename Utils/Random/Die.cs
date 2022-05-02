@@ -22,9 +22,18 @@ namespace Utils.Random
             None, Index, Full
         }
 
-        public Die(string name, int min, int max, string loadFolder, RandomiserReset reset)
+        public Die(int min, int max, string loadFolder, RandomiserReset reset)
         {
-            Name = name;
+            Name = NameFormat(min, max);
+
+            if (min == max)
+            {
+                _min = min;
+                _max = max;
+
+                return;
+            }
+
             _min = min;
             _max = max+1; // Generator.Next(min, max); max is exclusive, so adding 1
 
@@ -41,6 +50,9 @@ namespace Utils.Random
             }
         }
 
+        public const string Prefix = "number";
+        public static string NameFormat(int min, int max) => $"{Prefix}_{min}_{max}";
+
         private (string random, string index) GetFilenameWithRandomNumbers(string loadFolder)
         {
             var filename = Name.ChangeExtension(DieBuilder.RandomExtension);
@@ -54,6 +66,11 @@ namespace Utils.Random
 
         internal void Populate()
         {
+            if (_max == _min) return;
+
+            LoadIndexFile();
+            LoadRandomNumbersFile();
+
             void LoadIndexFile()
             {
                 if (!File.Exists(_fileWithIndex))
@@ -84,9 +101,6 @@ namespace Utils.Random
                     _randomNumbers.Add(number);
                 }
             }
-
-            LoadIndexFile();
-            LoadRandomNumbersFile();
         }
 
         internal void NextTurn()
@@ -119,6 +133,8 @@ namespace Utils.Random
         {
             get
             {
+                if (_min == _max) return _max;
+
                 bool HasBeenPopulated() => _randomNumbers.Count != 0;
                 if (!HasBeenPopulated())
                 {

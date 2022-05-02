@@ -9,9 +9,6 @@ namespace Utils.Random
         private readonly string _loadFolder;
         private readonly Die.RandomiserReset _reset;
 
-        public const string BetweenPrefix = "between";
-        public const string NumberPrefix = "number";
-        public const string CompassPrefix = "compass";
         public const string RandomExtension = "random";
         public const string IndexExtension = "index";
         public const string FolderSuffix = "RandomNumbers";
@@ -37,22 +34,19 @@ namespace Utils.Random
             _loadFolder = loadFolder + FolderSuffix;
             _reset = reset;
 
-            if (reset != Die.RandomiserReset.None)
-            {
-                FileAndDirectoryHelpers.CreateLoadFolder(_loadFolder);
-            }
+            FileAndDirectoryHelpers.CreateLoadFolder(_loadFolder);
 
-            D2 = new Die(GetNormalDiceName(2), 1, 2, _loadFolder, _reset);
-            D3 = new Die(GetNormalDiceName(3), 1, 3, _loadFolder, _reset);
-            D4 = new Die(GetNormalDiceName(4), 1, 4, _loadFolder, _reset);
-            D5 = new Die(GetNormalDiceName(5), 1, 5, _loadFolder, _reset);
-            D6 = new Die(GetNormalDiceName(6), 1, 6, _loadFolder, _reset);
-            D7 = new Die(GetNormalDiceName(7), 1, 7, _loadFolder, _reset);
-            D8 = new Die(GetNormalDiceName(8), 1, 8, _loadFolder, _reset);
-            D9 = new Die(GetNormalDiceName(9), 1, 9, _loadFolder, _reset);
-            D10 = new Die(GetNormalDiceName(10), 1, 10, _loadFolder, _reset);
-            D12 = new Die(GetNormalDiceName(12), 1, 12, _loadFolder, _reset);
-            D20 = new Die(GetNormalDiceName(20), 1, 20, _loadFolder, _reset);
+            D2 = new Die(1, 2, _loadFolder, _reset);
+            D3 = new Die(1, 3, _loadFolder, _reset);
+            D4 = new Die(1, 4, _loadFolder, _reset);
+            D5 = new Die(1, 5, _loadFolder, _reset);
+            D6 = new Die(1, 6, _loadFolder, _reset);
+            D7 = new Die(1, 7, _loadFolder, _reset);
+            D8 = new Die(1, 8, _loadFolder, _reset);
+            D9 = new Die(1, 9, _loadFolder, _reset);
+            D10 = new Die(1, 10, _loadFolder, _reset);
+            D12 = new Die(1, 12, _loadFolder, _reset);
+            D20 = new Die(1, 20, _loadFolder, _reset);
 
             _dice = new Dictionary<string, IDice>
             {
@@ -69,14 +63,8 @@ namespace Utils.Random
                 {D20.Name, D20},
             };
 
-            Compass4Die = new CompassDice<Compass4Points>(GetName(CompassPrefix, 1, 4), 4, _loadFolder, _reset);
-            Compass8Die = new CompassDice<Compass8Points>(GetName(CompassPrefix, 1, 8), 8, _loadFolder, _reset);
-
-            //PopulateAllQueues();
-            string GetNormalDiceName(int max)
-            {
-                return GetName(NumberPrefix, 1, max);
-            }
+            Compass4Die = new CompassDice<Compass4Points>(4, _loadFolder, _reset);
+            Compass8Die = new CompassDice<Compass8Points>(8, _loadFolder, _reset);
         }
 
         public void NextTurn()
@@ -90,13 +78,6 @@ namespace Utils.Random
 
             ((CompassDice<Compass4Points>)Compass4Die).NextTurn();
             ((CompassDice<Compass8Points>)Compass8Die).NextTurn();
-        }
-
-        private void PopulateAllQueues()
-        {
-            PopulateQueues(NumberPrefix, PopulateNumberDice);
-            PopulateQueues(BetweenPrefix, PopulateBetweenDice);
-            PopulateQueues(CompassPrefix, PopulateCompassDice);
         }
 
         private void PopulateQueues(string prefix, Action<string> populator)
@@ -134,15 +115,7 @@ namespace Utils.Random
         {
             var file = Path.ChangeExtension(filename, "");
             var max = int.Parse(file);
-            GetDice(NumberPrefix, 1, max);
-        }
-
-        private void PopulateBetweenDice(string filename)
-        {
-            var split = filename.Split('_');
-            var min = int.Parse(split[1]);
-            var max = int.Parse(split[2]);
-            GetDice(BetweenPrefix, min, max);
+            GetDice(1, max);
         }
 
         private void PopulateCompassDice(string filename)
@@ -161,11 +134,6 @@ namespace Utils.Random
             }
         }
 
-        string GetName(string prefix, int min, int max)
-        {
-            return $"{prefix}_{min}_{max}";
-        }
-
         public IDice Between(string between)
         {
             var numbers = between.Split('B');
@@ -177,15 +145,15 @@ namespace Utils.Random
 
         public IDice Between(int min, int max)
         {
-            var name = GetName(BetweenPrefix, min, max);
-            return GetDice(name, min, max);
+            return GetDice(min, max);
         }
 
-        private IDice GetDice(string name, int min, int max)
+        private IDice GetDice(int min, int max)
         {
+            var name = Die.NameFormat(min, max);
             if (_dice.TryGetValue(name, out var dice)) return dice;
 
-            var newDice = new Die(name, min, max, _loadFolder, _reset);
+            var newDice = new Die(min, max, _loadFolder, _reset);
             newDice.Populate();
             _dice[name] = newDice;
 
@@ -194,9 +162,7 @@ namespace Utils.Random
 
         public IDice Dice(int max)
         {
-            var name = GetName(NumberPrefix, 1, max);
-
-            var die = GetDice(name, 1, max);
+            var die = GetDice(1, max);
 
             return die;
         }

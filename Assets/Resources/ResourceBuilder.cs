@@ -68,7 +68,7 @@ namespace Assets.Resources
         public Func<string, IDispatched> RockBuilder() => (state) => BuildTile(TilesDisplay.Rock, state);
         public Func<IDispatched> DefaultRockBuilder() => () => BuildTile(TilesDisplay.Rock, "");
         public Func<int, string, IDispatched> FloorBuilder() => (roomNumber, state) => BuildTile(roomNumber.ToRoomNumberString(), state);
-        public Func<int, string, IDispatched> DoorBuilder() => (doorNumber, state) => BuildTile(doorNumber.ToHexString(), state);
+        public Func<int, string, IDispatched> DoorBuilder() => (doorNumber, state) => BuildTile(doorNumber.ToDoorNumberString(), state);
         public Func<WallDirection, string, IDispatched> WallBuilder() => (wall, state) => BuildTile(wall.ToString(), state);
         public Func<string, IDispatched> MeBuilder() => (state) => BuildTile(CharacterDisplay.Me, state);
         public Func<string, IDispatched> MonsterBuilder() => (state) => BuildTile(CharacterDisplay.DebugMonster, state);
