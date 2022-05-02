@@ -22,8 +22,11 @@ namespace Utils.Display
         //https://unicode-table.com/en/sets/superscript-and-subscript-letters/#subscript,-superscript
         public static readonly List<string> RoomNumberOfFloor = new() { Floor, "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "ᵃ", "ᵇ", "ᶜ", "ᵈ", "ᵉ", "ᶠ", "ᶢ", "ᵸ", "ᵢ", "ᶨ", "ᵏ" };
 
+        //https://unicode-table.com/en/sets/krasivye-bukvy/
+        public const string Maze = "ℳ";
+        public const string Room = "ℛ";
+
         // https://unicode-table.com/en/sets/mathematical-signs/
-        public const string Maze = "*";
         public const string MagicMissile = "⋇";
         public const string MagicMissile2 = "∗";
         public const string FloorIlluminated = "⋅";

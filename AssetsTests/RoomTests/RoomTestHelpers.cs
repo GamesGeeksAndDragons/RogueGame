@@ -17,7 +17,7 @@ namespace AssetsTests.RoomTests
         public static readonly string Divider = '='.ToPaddedString(10);
         public RoomBuilder Builder;
 
-        internal Room ArrangeTest(string roomName, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
+        internal Room ArrangeTest(int roomIndex, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
@@ -26,7 +26,7 @@ namespace AssetsTests.RoomTests
             var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
 
             Builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
-            return Builder.BuildRoom(roomName, 1);
+            return Builder.BuildRoom(roomIndex, 1);
         }
 
         internal void AssertTest(Room room, ITestOutputHelper output, string expected = "")

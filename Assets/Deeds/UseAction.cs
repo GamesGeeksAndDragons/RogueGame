@@ -21,7 +21,7 @@ namespace Assets.Deeds
             //_dispatcher.EnqueueStrike(Owner, hit, damage);
         }
 
-        public override void Act(IDispatched dispatched, string actionValue)
+        public override void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue)
         {
             throw new System.NotImplementedException();
         }

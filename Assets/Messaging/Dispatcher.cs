@@ -17,12 +17,14 @@ namespace Assets.Messaging
 
     internal class Dispatcher : IDispatcher
     {
-        private readonly IDispatchRegistry _registry;
-        private readonly Queue<(IDispatched Dispatchee, string Parameters)> _actionQueue = new Queue<(IDispatched Dispatchee, string Parameters)>();
+        private readonly IDispatchRegistry _dispatchRegistry;
+        private readonly IActionRegistry _actionRegistry;
+        private readonly Queue<(IDispatched Dispatched, string Parameters)> _actionQueue = new Queue<(IDispatched Dispatched, string Parameters)>();
 
-        public Dispatcher(IDispatchRegistry registry)
+        public Dispatcher(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
-            _registry = registry;
+            _dispatchRegistry = dispatchRegistry;
+            _actionRegistry = actionRegistry;
         }
 
         private void Enqueue(IDispatched who, string parameters)
@@ -50,13 +52,13 @@ namespace Assets.Messaging
 
         public void EnqueueStrike(string name, int hit, int damage)
         {
-            var dispatchee = _registry.GetDispatched(name);
+            var dispatched = _dispatchRegistry.GetDispatched(name);
 
             var parameters = Deed.Hit.FormatParameter(hit)
 //                .AppendParameter("Damage", damage)
                 ;
 
-            Enqueue(dispatchee, parameters);
+            Enqueue(dispatched, parameters);
         }
 
         public void Dispatch()
@@ -64,8 +66,19 @@ namespace Assets.Messaging
             while (_actionQueue.Count != 0)
             {
                 var (who, parameters) = _actionQueue.Dequeue();
-                who.Dispatch(parameters);
+                ActionDispatch(who, parameters);
             }
-        }
+
+            void ActionDispatch(IDispatched who, string parameters)
+            {
+                var parametersList = parameters.ToParameters();
+
+                foreach (var parameter in parametersList)
+                {
+                    var action = _actionRegistry.GetAction(who.Name, parameter.Name);
+                    action.Act(_dispatchRegistry, who, parameter.Value);
+                }
+            }
     }
+}
 }

@@ -22,11 +22,9 @@ namespace Assets.Messaging
             return dispatched.Name + count;
         }
 
-        public string Register(IDispatched dispatched)
+        public string Register(IDispatched dispatched, string uniqueId="")
         {
-            dispatched.ThrowIfNull(nameof(dispatched));
-
-            var uniqueId = dispatched.UniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatched) : dispatched.UniqueId;
+            uniqueId = uniqueId.IsNullOrEmpty() ? GenerateUniqueId(dispatched) : uniqueId;
 
             EnsureToUnregisterExistingDispatched(dispatched, uniqueId);
 

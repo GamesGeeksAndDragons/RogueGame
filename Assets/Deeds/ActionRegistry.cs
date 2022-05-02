@@ -7,7 +7,6 @@ namespace Assets.Deeds
     public interface IActionRegistry
     {
         void RegisterAction(IDispatched dispatched, string action);
-        void RegisterMaze(IMaze maze);
         IAction GetAction(string dispatchedName, string actionName);
     }
 
@@ -35,14 +34,6 @@ namespace Assets.Deeds
             if (_characterActions.ContainsKey(action)) return;
 
             _characterActions[action] = _actionImpl[action];
-        }
-
-        public void RegisterMaze(IMaze maze)
-        {
-            foreach (var action in _actionImpl)
-            {
-                action.Value.SetMaze(maze);
-            }
         }
 
         public IAction GetAction(string dispatchedName, string actionName)

@@ -15,10 +15,10 @@ namespace Assets.Rooms
 {
     public static class KnownRooms
     {
-        public const string Rectangle = nameof(Rectangle);
-        public const string Square = nameof(Square);
-        public const string LShaped = nameof(LShaped);
-        public const string OShaped = nameof(OShaped);
+        public const int Rectangle = 2;
+        public const int Square = 1;
+        public const int LShaped = 3;
+        public const int OShaped = 4;
     }
 
     public class RoomBuilder
@@ -28,7 +28,7 @@ namespace Assets.Rooms
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
         private readonly IResourceBuilder _resourceBuilder;
-        private readonly Dictionary<string, string[]> _rooms;
+        private readonly Dictionary<int, string[]> _rooms;
 
         public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
@@ -45,17 +45,20 @@ namespace Assets.Rooms
 
             _rooms = LoadRooms();
 
-            Dictionary<string, string[]> LoadRooms()
+            Dictionary<int, string[]> LoadRooms()
             {
                 var filenames = GetRoomFilenamesToLoad(FileAndDirectoryHelpers.LoadFolder);
 
-                var rooms = new Dictionary<string, string[]>();
+                var rooms = new Dictionary<int, string[]>();
                 foreach (var filename in filenames)
                 {
                     var room = File.ReadAllLines(filename);
                     var name = Path.GetFileNameWithoutExtension(filename);
+                    var splitName = name.Split('-');
+                    var index = splitName[0];
+                    var roomIndex = int.Parse(index);
 
-                    rooms[name] = room;
+                    rooms[roomIndex] = room;
                 }
 
                 return rooms;
@@ -69,9 +72,9 @@ namespace Assets.Rooms
             }
         }
 
-        internal Room BuildRoom(string roomName, int roomNumber)
+        internal Room BuildRoom(int roomIndex, int roomNumber)
         {
-            var roomDescription = _rooms[roomName];
+            var roomDescription = _rooms[roomIndex];
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
 
@@ -95,9 +98,9 @@ namespace Assets.Rooms
                 }
             }
 
-            var maze = new Mazes.Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
+            var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
-            return new Room(roomName, maze, _dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder);
+            return new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
         }
 
         string[,] BuildRotatedTiles(string[,] tilesToRotate, int maxRows, int maxColumns)
@@ -132,7 +135,7 @@ namespace Assets.Rooms
         {
             numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
 
-            var maze = (Mazes.Maze) room.Maze;
+            var maze = (Maze) room.Maze;
             var rotatedTiles = Rotate(maze.Tiles);
 
             for (int i = 0; i < numTimes-1; i++)
@@ -140,7 +143,7 @@ namespace Assets.Rooms
                 rotatedTiles = Rotate(rotatedTiles);
             }
 
-            var newTiles = new Mazes.Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ResourceBuilder, rotatedTiles);
+            var newTiles = new Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ResourceBuilder, rotatedTiles);
 
             return new Room(room, newTiles);
 

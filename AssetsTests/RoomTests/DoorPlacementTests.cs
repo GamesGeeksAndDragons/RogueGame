@@ -1,4 +1,5 @@
-﻿using Utils;
+﻿using Assets.Rooms;
+using Utils;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
@@ -104,9 +105,9 @@ namespace AssetsTests.RoomTests
 ";
         }
 
-        private void DoorPlacementTest(string roomName, int numDoors, string expectation)
+        private void DoorPlacementTest(int roomIndex, int numDoors, string expectation)
         {
-            var room = ArrangeTest(roomName, _testName, _output, Die.RandomiserReset.Index);
+            var room = ArrangeTest(roomIndex, _testName, _output, Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {
@@ -119,31 +120,31 @@ namespace AssetsTests.RoomTests
         [Fact]
         public void PlaceOneDoorInSquareRoom_ShouldSuccessfullyPlaceDoor()
         {
-            DoorPlacementTest("Rectangle", 1, DoorPlacementExpectations.RectangleWithOneDoor);
+            DoorPlacementTest(KnownRooms.Rectangle, 1, DoorPlacementExpectations.RectangleWithOneDoor);
         }
 
         [Fact]
         public void PlaceTwoDoorsInSquareRoom_ShouldSuccessfullyPlaceDoors()
         {
-            DoorPlacementTest("Square", 2, DoorPlacementExpectations.SquareWithTwoDoors);
+            DoorPlacementTest(KnownRooms.Square, 2, DoorPlacementExpectations.SquareWithTwoDoors);
         }
 
         [Fact]
         public void PlaceThreeDoorsInLShapedRoom_ShouldSuccessfullyPlaceDoors()
         {
-            DoorPlacementTest("LShaped", 3, DoorPlacementExpectations.LShapedWithThreeDoors);
+            DoorPlacementTest(KnownRooms.LShaped, 3, DoorPlacementExpectations.LShapedWithThreeDoors);
         }
 
         [Fact]
         public void PlaceFifteenDoorsInOShapedRoom_ShouldSuccessfullyPlaceDoors()
         {
-            DoorPlacementTest("OShaped", 15, DoorPlacementExpectations.OShapedWithFifteenDoors);
+            DoorPlacementTest(KnownRooms.OShaped, 15, DoorPlacementExpectations.OShapedWithFifteenDoors);
         }
 
         [Fact]
         public void PlaceMoreDoorsThanRoomCanHave_ShouldResultCapTheNumberOfDoorsAdded()
         {
-            DoorPlacementTest("LShaped", 15, DoorPlacementExpectations.LShapedWithDoorsCappedAt12);
+            DoorPlacementTest(KnownRooms.LShaped, 15, DoorPlacementExpectations.LShapedWithDoorsCappedAt12);
         }
     }
 }

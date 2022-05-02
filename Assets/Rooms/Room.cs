@@ -7,6 +7,7 @@ using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Enums;
 using Utils.Random;
 
@@ -18,35 +19,26 @@ namespace Assets.Rooms
         (int Row, int Column) UpperBounds { get; }
     }
 
-    internal class Room : IRoom
+    internal class Room : Dispatched<Room>, IRoom
     {
-        internal Room(string name, IMaze maze, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder)
+        internal Room(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, IMaze maze)
+        : base(dispatchRegistry, actionRegistry, TilesDisplay.Room)
         {
             _dieBuilder = dieBuilder;
             _resourceBuilder = resourceBuilder;
-            DispatchRegistry = dispatchRegistry;
-            ActionRegistry = actionRegistry;
-            OriginalName = name;
             _doorBuilder = _resourceBuilder.DoorBuilder();
-            Name = $"{name}{++_counter}";
 
             Maze = maze;
         }
 
         internal Room(Room room, IMaze maze) 
-            : this(room.OriginalName, maze, room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._resourceBuilder)
+            : this(room.DispatchRegistry, room.ActionRegistry, room._dieBuilder, room._resourceBuilder, maze)
         {
         }
 
         private readonly IDieBuilder _dieBuilder;
         private readonly IResourceBuilder _resourceBuilder;
-        private static uint _counter;
 
-        internal IDispatchRegistry DispatchRegistry { get; }
-        internal IActionRegistry ActionRegistry { get; }
-
-        public string OriginalName { get; }
-        public string Name { get; }
         public (int Row, int Column) UpperBounds => Maze.UpperBounds;
 
         internal readonly IMaze Maze;

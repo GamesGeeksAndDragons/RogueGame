@@ -233,8 +233,8 @@ namespace AssetsTests.DispatcherTests
         public void WhenBuiltDispatcher_ShouldHaveMeInMaze(int level)
         {
             var dispatchRegistry = new DispatchRegistry();
-            var dispatcher = new Dispatcher(dispatchRegistry);
             var actionRegistry = new ActionRegistry();
+            var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
             var fakeRandomNumbers = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);
             var resourceBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);

@@ -18,6 +18,7 @@ namespace Utils.Random
         IDice D20 { get; }
         IDice Dice(int max);
         IDice Between(int min, int max);
+        IDice Between(string between);
 
         ICompassDice<Compass4Points> Compass4Die { get; }
         ICompassDice<Compass8Points> Compass8Die { get; }

@@ -12,16 +12,12 @@ namespace Assets.Deeds
 {
     internal abstract class Action : IAction
     {
-        public void SetMaze(IMaze maze) => Maze = maze;
-
-        protected IMaze? Maze { get; private set; }
-
-        public abstract void Act(IDispatched dispatched, string actionValue);
+        public abstract void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue);
     }
 
     class MoveAction : Action
     {
-        public override void Act(IDispatched dispatched, string actionValue)
+        public override void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue)
         {
             var character = (ICharacter)dispatched;
 
@@ -29,17 +25,17 @@ namespace Assets.Deeds
             var direction = actionValue.ToEnum<Compass8Points>();
             var newCoordinates = oldCoordinates.Move(direction);
 
-            if (Maze == null) throw new ArgumentException($"Tried to Move when Maze is null");
+            var maze = (IMaze)dispatchRegistry.GetDispatched(Maze.DispatchedName);
 
-            var newTile = Maze.GetDispatched(newCoordinates);
+            var newTile = maze.GetDispatched(newCoordinates);
             if (!newTile.IsFloor()) return;
             var to = (Floor)newTile;
 
-            var moved = Maze.MoveOnto(dispatched.UniqueId, to);
+            var moved = maze.MoveOnto(dispatched.UniqueId, to);
             if (!moved) return;
 
             character.Position = newCoordinates;
-            var from = (Floor)Maze.GetDispatched(oldCoordinates);
+            var from = (Floor)maze.GetDispatched(oldCoordinates);
             from.SetEmpty();
         }
     }

@@ -14,13 +14,12 @@ namespace AssetsTests.ActionTests
 
         public TeleportTestsForOneCharacter(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry);
+            Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
         }
 
         protected override void TestArrange(IMazeExpectations expectations)
         {
             base.TestArrange(expectations);
-            ActionRegistry.RegisterMaze(Maze);
 
             var meBuilder = ResourceBuilder.MeBuilder();
             var me = meBuilder("");
@@ -51,13 +50,12 @@ namespace AssetsTests.ActionTests
 
         public TeleportTestsForTwoCharacters(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry);
+            Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
         }
 
         protected override void TestArrange(IMazeExpectations expectations)
         {
             base.TestArrange(expectations);
-            ActionRegistry.RegisterMaze(Maze);
 
             var monsterBuilder = ResourceBuilder.MonsterBuilder();
             var monster = monsterBuilder("");

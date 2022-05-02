@@ -11,35 +11,17 @@ namespace Assets.Messaging
     internal abstract class Dispatched<T> : IDispatched
         where T : class
     {
-        protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor)
+        protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string uniqueId="")
         {
-            dispatchRegistry.ThrowIfNull(nameof(dispatchRegistry));
-            actionRegistry.ThrowIfNull(nameof(actionRegistry));
             actor.Length.ThrowIfEqual(0, nameof(actor));
 
             DispatchRegistry = dispatchRegistry;
             ActionRegistry = actionRegistry;
             Actor = actor.Intern();
 
-            UniqueId = DispatchRegistry.Register(this);
+            UniqueId = DispatchRegistry.Register(this, uniqueId);
 
             RegisterActions();
-        }
-
-        protected Dispatched(Dispatched<T> toCopy, string actor) 
-        : this(toCopy.DispatchRegistry, toCopy.ActionRegistry, actor)
-        {
-        }
-
-        public virtual void Dispatch(string parameters)
-        {
-            var parametersList = parameters.ToParameters().ToList();
-
-            foreach (var parameter in parametersList)
-            {
-                var action = ActionRegistry.GetAction(Name, parameter.Name);
-                action.Act(this, parameter.Value);
-            }
         }
 
         public override string ToString()

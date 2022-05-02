@@ -6,6 +6,6 @@ namespace Assets.Deeds
 {
     public interface IAction
     {
-        void Act(IDispatched dispatched, string actionValue);
+        void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue);
     }
 }

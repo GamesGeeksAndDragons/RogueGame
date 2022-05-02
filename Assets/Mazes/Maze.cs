@@ -37,7 +37,7 @@ namespace Assets.Mazes
         public (int Row, int Column) UpperBounds => Tiles.UpperBounds();
 
         internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string[,] tiles)
-            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             resourceBuilder.ThrowIfNull(nameof(resourceBuilder));

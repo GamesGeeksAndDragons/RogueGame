@@ -13,17 +13,17 @@ namespace Assets.Level
 {
     internal class LevelBuilder
     {
-        private readonly IDieBuilder _randomNumberGenerator;
+        private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;
-        private readonly Dispatcher _dispatcher;
+        private readonly IDispatcher _dispatcher;
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
         private readonly IResourceBuilder _resourceBuilder;
         private readonly ILevelDescriptor _descriptor;
 
-        public LevelBuilder(IDieBuilder randomNumberGenerator, ILog logger, Dispatcher dispatcher, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
+        public LevelBuilder(IDieBuilder dieBuilder, ILog logger, IDispatcher dispatcher, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
-            _randomNumberGenerator = randomNumberGenerator;
+            _dieBuilder = dieBuilder;
             _logger = logger;
             _dispatcher = dispatcher;
             _dispatchRegistry = dispatchRegistry;
@@ -34,11 +34,11 @@ namespace Assets.Level
 
         internal IMaze Build(int level)
         {
-            var roomBuilder = new RoomBuilder(_randomNumberGenerator, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
-            var mazeBuilder = new MazeBuilder(_randomNumberGenerator, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
+            var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
+            var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
 
             var levelDetail = _descriptor[level];
-            var maze = mazeBuilder.BuildMaze(levelDetail.MinNumRooms, levelDetail.MaxNumRooms);
+            var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
 
             return maze;
         }

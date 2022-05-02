@@ -6,7 +6,7 @@ namespace Assets.Deeds
 {
     class StrikeAction : Action
     {
-        public override void Act(IDispatched dispatched, string actionValue)
+        public override void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue)
         {
             //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
             //if (coordindates != Coordinates) return;

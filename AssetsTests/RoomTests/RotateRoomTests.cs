@@ -141,9 +141,9 @@ namespace AssetsTests.RoomTests
 ";
         }
 
-        private void RotateTestImpl(string roomSetup, int rotateTimes, string roomExpectation)
+        private void RotateTestImpl(int roomIndex, int rotateTimes, string roomExpectation)
         {
-            var room = ArrangeTest(roomSetup, _testName, _output);
+            var room = ArrangeTest(roomIndex, _testName, _output);
 
             var before = room.Maze.Print(room.DispatchRegistry);
             _output.WriteLine(Divider + " before " + Divider);

@@ -34,11 +34,11 @@ namespace Assets.Mazes
             _resourceBuilder = resourceBuilder;
         }
 
-        private IList<Room> BuildRooms(int minNumRooms, int maxNumRooms)
+        private IList<Room> BuildRooms(string numRoomsBetween)
         {
             var rooms = new List<Room>();
 
-            var dice = _dieBuilder.Between(minNumRooms, maxNumRooms);
+            var dice = _dieBuilder.Between(numRoomsBetween);
             var numRooms = dice.Random;
 
             for (var i = 0; i < numRooms; i++)
@@ -69,7 +69,7 @@ namespace Assets.Mazes
 
             Room GetRoomToConnectTo(Room toConnect)
             {
-                var connectableRooms = roomsWithDoors.Where(room => !room.Name.IsSame(toConnect.Name)).ToArray();
+                var connectableRooms = roomsWithDoors.Where(room => !room.UniqueId.IsSame(toConnect.UniqueId)).ToArray();
                 if (connectableRooms.Length == 0) throw new ArgumentException("AddDoors: Unable to find a room to add a door to.");
                 if (connectableRooms.Length == 1) return connectableRooms.First();
 
@@ -78,10 +78,9 @@ namespace Assets.Mazes
             }
         }
 
-        internal IMaze BuildMaze(int minRooms, int maxRooms)
+        internal IMaze BuildMaze(string numRooms)
         {
-            var rooms = BuildRooms(minRooms, maxRooms);
-            AddDoors(rooms);
+            var rooms = RoomsWithDoors();
 
             var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
             var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
@@ -90,14 +89,27 @@ namespace Assets.Mazes
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
             var removed = maze.PositionRoomsInMaze(rooms);
+
             _dispatchRegistry.Unregister(removed);
-            _actionRegistry.RegisterMaze(maze);
+            _dispatchRegistry.Register(maze);
+
+            foreach (var room in rooms)
+            {
+                _dispatchRegistry.Unregister(room);
+            }
 
             var tunnel = maze.GetTunnelToConnectDoors(_dispatchRegistry, _actionRegistry, _dieBuilder);
 
             maze.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _resourceBuilder);
 
             return maze;
+
+            IList<Room> RoomsWithDoors()
+            {
+                var roomsWithDoors = BuildRooms(numRooms);
+                AddDoors(roomsWithDoors);
+                return roomsWithDoors;
+            }
         }
     }
 }

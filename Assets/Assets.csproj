@@ -39,16 +39,16 @@
     <None Update="game.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Rogue\LShaped.room">
+    <None Update="Rogue\3-LShaped.room">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Rogue\OShaped.room">
+    <None Update="Rogue\4-OShaped.room">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Rogue\Rectangle.room">
+    <None Update="Rogue\2-Rectangle.room">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Rogue\Square.room">
+    <None Update="Rogue\1-Square.room">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

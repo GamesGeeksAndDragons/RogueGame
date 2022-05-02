@@ -290,7 +290,7 @@ namespace AssetsTests.ActionTests
         {
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
-            var dispatcher = new Dispatcher(dispatchRegistry);
+            var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
             var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
             var fakeRandomNumbers = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);

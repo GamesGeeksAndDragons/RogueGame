@@ -166,6 +166,15 @@ namespace Utils.Random
             return $"{prefix}_{min}_{max}";
         }
 
+        public IDice Between(string between)
+        {
+            var numbers = between.Split('B');
+            var min = int.Parse(numbers[0]);
+            var max = int.Parse(numbers[1]);
+
+            return Between(min, max);
+        }
+
         public IDice Between(int min, int max)
         {
             var name = GetName(BetweenPrefix, min, max);
