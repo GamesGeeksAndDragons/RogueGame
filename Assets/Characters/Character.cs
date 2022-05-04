@@ -8,7 +8,7 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Characters
 {
-    internal interface ICharacter
+    public interface ICharacter : IDispatched
     {
         Parameters CurrentState();
         int ArmourClass { get; set; }

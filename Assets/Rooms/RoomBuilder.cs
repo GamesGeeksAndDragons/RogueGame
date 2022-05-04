@@ -92,7 +92,7 @@ namespace Assets.Rooms
                     var actor = row[colIndex].ToString();
                     if (actor.IsFloorActor()) continue;
 
-                    var dispatched = _resourceBuilder.BuildTile(actor);
+                    var dispatched = _resourceBuilder.BuildResource(actor);
 
                     tiles[rowIndex, colIndex] = dispatched.UniqueId;
                 }

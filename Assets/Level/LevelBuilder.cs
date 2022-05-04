@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Deeds;
 using Assets.Mazes;
 using Assets.Messaging;
@@ -32,7 +33,7 @@ namespace Assets.Level
             _descriptor = new LevelDescriptor();
         }
 
-        internal IMaze Build(int level)
+        internal (IMaze, Me) Build(int level)
         {
             var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
             var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
@@ -40,7 +41,22 @@ namespace Assets.Level
             var levelDetail = _descriptor[level];
             var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
 
-            return maze;
+            var characterBuilder = new LevelCharacters("", _resourceBuilder, _dieBuilder, levelDetail);
+
+            TeleportMonsters();
+            _dispatcher.EnqueueTeleport(characterBuilder.Me);
+
+            _dispatcher.Dispatch();
+
+            return (maze, characterBuilder.Me);
+
+            void TeleportMonsters()
+            {
+                foreach (var monster in characterBuilder.Monsters())
+                {
+                    _dispatcher.EnqueueTeleport(monster);
+                }
+            }
         }
     }
 }

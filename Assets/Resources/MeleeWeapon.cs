@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
@@ -8,13 +9,14 @@ using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Resources
 {
-    internal class MeleeWeapon : Dispatched<MeleeWeapon>
+    //TODO: Change to have a Weapon base class
+    internal class MeleeWeapon : Character<MeleeWeapon>
     {
         private readonly IDieBuilder _randomNumbers;
         private readonly Dispatcher _dispatcher;
 
         public MeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, Dispatcher dispatcher, string state) 
-            : base(dispatchRegistry, actionRegistry, TilesDisplay.DebugWeapon)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.DebugWeapon, state)
         {
             randomNumbers.ThrowIfNull(nameof(randomNumbers));
             dispatcher.ThrowIfNull(nameof(dispatcher));

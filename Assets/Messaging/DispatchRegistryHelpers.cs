@@ -22,7 +22,7 @@ namespace Assets.Messaging
                 for (int colIndex = 0; colIndex < noColumns; colIndex++)
                 {
                     var actor = row[colIndex].ToString();
-                    tiles[rowIndex, colIndex] = builder.BuildTile(actor).UniqueId;
+                    tiles[rowIndex, colIndex] = builder.BuildResource(actor).UniqueId;
                 }
             }
 

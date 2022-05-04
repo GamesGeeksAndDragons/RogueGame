@@ -1,13 +1,12 @@
 ﻿#nullable enable
-using Assets.Mazes;
-using Utils.Dispatching;
+using Assets.Characters;
 
 namespace Assets.Deeds
 {
     public interface IActionRegistry
     {
-        void RegisterAction(IDispatched dispatched, string action);
-        IAction GetAction(string dispatchedName, string actionName);
+        void RegisterAction(ICharacter who, string action);
+        IAction GetAction(string who, string actionName);
     }
 
     internal class ActionRegistry : IActionRegistry
@@ -27,16 +26,16 @@ namespace Assets.Deeds
             };
         }
 
-        public void RegisterAction(IDispatched dispatched, string action)
+        public void RegisterAction(ICharacter who, string action)
         {
-            if(!Deed.IsValid(action)) throw new ArgumentNullException($"Unrecognised action [{action}] when registering for [{dispatched.Name}]");
+            if(!Deed.IsValid(action)) throw new ArgumentNullException($"Unrecognised action [{action}] when registering for [{who.Name}]");
 
             if (_characterActions.ContainsKey(action)) return;
 
             _characterActions[action] = _actionImpl[action];
         }
 
-        public IAction GetAction(string dispatchedName, string actionName)
+        public IAction GetAction(string who, string actionName)
         {
             if (_actionImpl.TryGetValue(actionName, out var action))
             {
