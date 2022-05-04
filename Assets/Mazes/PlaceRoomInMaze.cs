@@ -84,8 +84,8 @@ namespace Assets.Mazes
             if (coordinates.Column - tilesToCheck < 0) return true;
 
             var (maxRow, maxColumn) = maze.UpperBounds;
-            if (coordinates.Row > maxRow) return true;
-            if (coordinates.Column > maxColumn) return true;
+            if (coordinates.Row > maxRow - tilesToCheck) return true;
+            if (coordinates.Column > maxColumn - tilesToCheck) return true;
 
             return false;
         }
