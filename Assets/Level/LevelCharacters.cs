@@ -9,7 +9,7 @@ namespace Assets.Level
     {
         public Me Me { get; }
 
-        private List<ICharacter> _levelCharacters = new List<ICharacter>();
+        private readonly List<ICharacter> _levelCharacters = new List<ICharacter>();
 
         public LevelCharacters(string meState, IResourceBuilder resourceBuilder, IDieBuilder dieBuilder, LevelDetail levelDetail)
         {

@@ -13,20 +13,20 @@ namespace Utils.Random
         public const string IndexExtension = "index";
         public const string FolderSuffix = "RandomNumbers";
 
-        public IDice D2 { get; }
-        public IDice D3 { get; }
-        public IDice D4 { get; }
-        public IDice D5 { get; }
-        public IDice D6 { get; }
-        public IDice D7 { get; }
-        public IDice D8 { get; }
-        public IDice D9 { get; }
-        public IDice D10 { get; }
-        public IDice D12 { get; }
-        public IDice D20 { get; }
+        public virtual IDice D2 { get; }
+        public virtual IDice D3 { get; }
+        public virtual IDice D4 { get; }
+        public virtual IDice D5 { get; }
+        public virtual IDice D6 { get; }
+        public virtual IDice D7 { get; }
+        public virtual IDice D8 { get; }
+        public virtual IDice D9 { get; }
+        public virtual IDice D10 { get; }
+        public virtual IDice D12 { get; }
+        public virtual IDice D20 { get; }
 
-        public ICompassDice<Compass4Points> Compass4Die { get; }
-        public ICompassDice<Compass8Points> Compass8Die { get; }
+        public virtual ICompassDice<Compass4Points> Compass4Die { get; }
+        public virtual ICompassDice<Compass8Points> Compass8Die { get; }
         private readonly Dictionary<string, IDice> _dice;
 
         public DieBuilder(string loadFolder = FileAndDirectoryHelpers.LoadFolder, Die.RandomiserReset reset = Die.RandomiserReset.None)
@@ -134,7 +134,7 @@ namespace Utils.Random
             }
         }
 
-        public IDice Between(string between)
+        public virtual IDice Between(string between)
         {
             var numbers = between.Split('B');
             var min = int.Parse(numbers[0]);
@@ -143,7 +143,7 @@ namespace Utils.Random
             return Between(min, max);
         }
 
-        public IDice Between(int min, int max)
+        public virtual IDice Between(int min, int max)
         {
             return GetDice(min, max);
         }
@@ -160,7 +160,7 @@ namespace Utils.Random
             return newDice;
         }
 
-        public IDice Dice(int max)
+        public virtual IDice Dice(int max)
         {
             var die = GetDice(1, max);
 

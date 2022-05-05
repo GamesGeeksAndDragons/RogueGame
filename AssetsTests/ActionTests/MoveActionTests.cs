@@ -286,13 +286,18 @@ namespace AssetsTests.ActionTests
             }
         }
 
+        class FakeDieBuilderWithD4 : DieBuilder
+        {
+            public override IDice D4 { get; } = new FakeDie() { Name = "D4", Random = 1 };
+        }
+
         private void Move_Me_Test(int testNum, params Compass8Points[] directions)
         {
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
             var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
-            var fakeRandomNumbers = new DieBuilder();
+            var fakeRandomNumbers = new FakeDieBuilderWithD4();
             var fakeLogger = new FakeLogger(_output);
 
             var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);

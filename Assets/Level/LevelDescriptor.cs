@@ -3,7 +3,7 @@ using Utils;
 
 namespace Assets.Level
 {
-    internal record struct LevelDetail(string NumRooms, string MonsterCount);
+    internal record struct LevelDetail(string NumRooms, string RoomSelection, string MonsterCount);
 
     internal interface ILevelDescriptor
     {
@@ -14,11 +14,11 @@ namespace Assets.Level
     {
         internal readonly Dictionary<int, LevelDetail> MazeDetailByLevel = new Dictionary<int, LevelDetail>
         {
-            { 1, new LevelDetail("1B1",  "1B1")},
-            { 2, new LevelDetail("2B2",  "2B2")},
-            { 3, new LevelDetail("3B3",  "3B3")},
-            { 4, new LevelDetail("3B4",  "3B4")},
-            { 5, new LevelDetail("3B5",  "3B5")},
+            { 1, new LevelDetail("1B1",  "1B1", "1B1")},
+            { 2, new LevelDetail("2B2",  "1B2", "2B3")},
+            { 3, new LevelDetail("3B3",  "1B3", "3B4")},
+            { 4, new LevelDetail("4B4",  "1B4", "3B6")},
+            { 5, new LevelDetail("5B5",  "1B4", "3B8")},
         };
 
         public LevelDetail this[int level]

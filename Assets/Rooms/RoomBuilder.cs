@@ -72,8 +72,9 @@ namespace Assets.Rooms
             }
         }
 
-        internal Room BuildRoom(int roomIndex, int roomNumber)
+        internal Room BuildRoom(int roomNumber)
         {
+            var roomIndex = _dieBuilder.D4.Random;
             var roomDescription = _rooms[roomIndex];
             var maxRows = roomDescription.Length;
             var maxCols = roomDescription.Max(row => row.Length);
@@ -100,7 +101,17 @@ namespace Assets.Rooms
 
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
-            return new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
+            var room = new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
+
+            return RotateRoom();
+
+            Room RotateRoom()
+            {
+                var rotation = _dieBuilder.D4.Random - 1;
+                if (rotation == 0) return room;
+
+                return BuildRotatedRoom(room, rotation);
+            }
         }
 
         string[,] BuildRotatedTiles(string[,] tilesToRotate, int maxRows, int maxColumns)

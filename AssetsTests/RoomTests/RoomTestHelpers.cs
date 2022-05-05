@@ -26,7 +26,7 @@ namespace AssetsTests.RoomTests
             var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
 
             Builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
-            return Builder.BuildRoom(roomIndex, 1);
+            return Builder.BuildRoom(1);
         }
 
         internal void AssertTest(Room room, ITestOutputHelper output, string expected = "")
