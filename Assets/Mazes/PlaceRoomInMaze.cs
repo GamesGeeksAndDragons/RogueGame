@@ -111,9 +111,10 @@ namespace Assets.Mazes
         private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight)
             AttemptToPositionRoomInsideTiles(IMaze maze, Room room)
         {
+            var checkedTiles = new List<string>();
             for (var attempts = 0; attempts < NumAttemptTillGrowMaze; ++attempts)
             {
-                var start = maze.RandomRockTile().Coordinates;
+                var start = maze.RandomRockTile(checkedTiles).Coordinates;
 
                 var (topLeft, topRight, bottomLeft, bottomRight) = room.GetSize();
                 topLeft += start;

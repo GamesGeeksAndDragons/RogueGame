@@ -48,38 +48,42 @@ namespace Assets.Rooms
 
         public void AddDoor(int doorNumber)
         {
-            var toReplaceWithDoor = FindWall();
-            if (toReplaceWithDoor == default) return;
-
             var newDoor = _doorBuilder(doorNumber, "");
+
+            var walls = FindWallsWhichCanHoldDoors();
+            if (walls.Count == 0) return;
+            var random = _dieBuilder.Between(1, walls.Count).Random - 1;
+            var toReplaceWithDoor = walls[random];
 
             Maze[toReplaceWithDoor.Coordinates] = newDoor.UniqueId;
             DispatchRegistry.Unregister(toReplaceWithDoor.Wall.UniqueId);
 
-            (Wall Wall, Coordinate Coordinates) FindWall()
+            List<(Wall Wall, Coordinate Coordinates)> FindWallsWhichCanHoldDoors()
             {
+                var wallTiles = new List<(Wall Wall, Coordinate Coordinates)>();
                 var (maxRow, maxColumn) = Maze.UpperBounds;
 
-                const int maxRetries = 50;
-                for (int i = 0; i < maxRetries; i++)
+                foreach (var (uniqueId, coordinates) in Maze.GetTiles<Wall>())
                 {
-                    var (dispatched, coordinates) = Maze.RandomWallTile(WallDirection.NonCorner);
-
                     if (!IsOutsideWall(coordinates, maxRow, maxColumn)) continue;
                     if (IsNextToDoor(coordinates)) continue;
 
-                    return ((Wall)dispatched, coordinates);
+                    var wall = (Wall)Maze.GetDispatched(coordinates);
+                    var isCorner = wall.WallType.HasDirection(WallDirection.Corner);
+                    if (isCorner) continue;
+
+                    wallTiles.Add((wall, coordinates));
                 }
 
-                return default;
+                return wallTiles;
             }
 
-            bool IsOutsideWall(Coordinate coordinates, int maxRow, int maxColumns)
+            bool IsOutsideWall(Coordinate coordinates, int maxRow, int maxColumn)
             {
                 return coordinates.Row == 0 ||
-                       coordinates.Row == maxRow - 1 ||
+                       coordinates.Row == maxRow ||
                        coordinates.Column == 0 ||
-                       coordinates.Column == maxColumns - 1;
+                       coordinates.Column == maxColumn;
             }
 
             bool IsNextToDoor(Coordinate coordinates)

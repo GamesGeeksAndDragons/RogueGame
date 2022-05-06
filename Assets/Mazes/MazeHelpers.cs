@@ -59,24 +59,12 @@ namespace Assets.Mazes
             return maze.IsTileType<Floor>(coordinates);
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomRockTile(this IMaze maze)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomRockTile(this IMaze maze, IList<string> checkedTiles)
         {
-            return maze.RandomTile(dispatched => dispatched.IsRock());
+            return maze.RandomTile(dispatched => dispatched.IsRock(), checkedTiles);
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomWallTile(this IMaze maze, WallDirection onlyThese = WallDirection.All)
-        {
-            return maze.RandomTile(dispatched =>
-            {
-                if (!dispatched.IsWall()) return false;
-
-                var wall = (Wall)dispatched;
-                var hasDirection = onlyThese.HasDirection(wall.WallType);
-                return hasDirection;
-            });
-        }
-
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this IMaze maze, bool isTunnelTile, bool isOccupied)
+        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this IMaze maze, IList<string> checkedTiles, bool isTunnelTile, bool isOccupied)
         {
             return maze.RandomTile(dispatched =>
             {
@@ -92,7 +80,7 @@ namespace Assets.Mazes
                 {
                     return ! floor.Contained.IsNull();
                 }
-            });
+            }, checkedTiles);
         }
 
         public static void DefaultTiles(this string[,] tiles, Func<IDispatched> resourceBuilder)

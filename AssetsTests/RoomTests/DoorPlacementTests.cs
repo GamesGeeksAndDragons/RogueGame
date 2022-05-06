@@ -1,5 +1,7 @@
 ﻿using Assets.Rooms;
+using AssetsTests.Fakes;
 using Utils;
+using Utils.Display;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,8 +27,8 @@ namespace AssetsTests.RoomTests
 0|╔═════╗|0
 1|║¹¹¹¹¹║|1
 2|║¹¹¹¹¹║|2
-3|1¹¹¹¹¹║|3
-4|║¹¹¹¹¹║|4
+3|║¹¹¹¹¹║|3
+4|║¹¹¹¹¹1|4
 5|║¹¹¹¹¹║|5
 6|║¹¹¹¹¹║|6
 7|║¹¹¹¹¹║|7
@@ -39,10 +41,10 @@ namespace AssetsTests.RoomTests
             public const string SquareWithTwoDoors = @"
  |0123456789| 
 --------------
-0|╔1═══════╗|0
+0|╔════1══2╗|0
 1|║¹¹¹¹¹¹¹¹║|1
 2|║¹¹¹¹¹¹¹¹║|2
-3|2¹¹¹¹¹¹¹¹║|3
+3|║¹¹¹¹¹¹¹¹║|3
 4|║¹¹¹¹¹¹¹¹║|4
 5|║¹¹¹¹¹¹¹¹║|5
 6|║¹¹¹¹¹¹¹¹║|6
@@ -56,16 +58,16 @@ namespace AssetsTests.RoomTests
             public const string LShapedWithThreeDoors = @"
  |0123456789| 
 --------------
-0|╔1═══╗####|0
+0|╔════╗####|0
 1|║¹¹¹¹║####|1
-2|║¹¹¹¹║####|2
-3|3¹¹¹¹╚══2╗|3
+2|3¹¹¹¹║####|2
+3|║¹¹¹¹╚═══╗|3
 4|║¹¹¹¹¹¹¹¹║|4
 5|║¹¹¹¹¹¹¹¹║|5
 6|║¹¹¹¹¹¹¹¹║|6
-7|║¹¹¹¹¹¹¹¹║|7
+7|║¹¹¹¹¹¹¹¹2|7
 8|║¹¹¹¹¹¹¹¹║|8
-9|╚════════╝|9
+9|╚══1═════╝|9
 --------------
  |0123456789| 
 ";
@@ -73,17 +75,17 @@ namespace AssetsTests.RoomTests
             public const string OShapedWithCappedDoors = @"
   |012345678901|  
 ------------------
-0 |╔6═1═D═7══3╗|0 
-1 |9¹¹¹¹¹¹¹¹¹¹║|1 
+0 |╔Δ═Γ═3═2═Ε═╗|0 
+1 |4¹¹¹¹¹¹¹¹¹¹9|1 
 2 |║¹¹¹¹¹¹¹¹¹¹║|2 
-3 |2¹¹¹╔══╗¹¹¹║|3 
-4 |║¹¹¹║¹¹║¹¹¹║|4 
-5 |║¹¹¹║¹¹¹¹¹¹║|5 
-6 |8¹¹¹║¹¹║¹¹¹║|6 
-7 |║¹¹¹╚══╝¹¹¹║|7 
-8 |A¹¹¹¹¹¹¹¹¹¹║|8 
-9 |║¹¹¹¹¹¹¹¹¹¹5|9 
-10|╚═════════4╝|10
+3 |Η¹¹¹╔══╗¹¹¹║|3 
+4 |║¹¹¹║¹¹║¹¹¹Α|4 
+5 |1¹¹¹║¹¹¹¹¹¹║|5 
+6 |║¹¹¹║¹¹║¹¹¹║|6 
+7 |8¹¹¹╚══╝¹¹¹5|7 
+8 |║¹¹¹¹¹¹¹¹¹¹║|8 
+9 |Β¹¹¹¹¹¹¹¹¹¹7|9 
+10|╚Θ═Κ═6═Ι═Ζ═╝|10
 ------------------
   |012345678901|  
 ";
@@ -91,7 +93,9 @@ namespace AssetsTests.RoomTests
 
         private void DoorPlacementTest(int roomIndex, int numDoors, string expectation)
         {
-            var room = ArrangeTest(roomIndex, _testName, _output, Die.RandomiserReset.Index);
+            Random = new FakeDieBuilder(4, roomIndex, 1);
+
+            var room = ArrangeTest(_testName, _output, Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {
@@ -102,7 +106,7 @@ namespace AssetsTests.RoomTests
         }
 
         [Fact]
-        public void PlaceOneDoorInSquareRoom_ShouldSuccessfullyPlaceDoor()
+        public void PlaceOneDoorInRectangleRoom_ShouldSuccessfullyPlaceDoor()
         {
             DoorPlacementTest(KnownRooms.Rectangle, 1, DoorPlacementExpectations.RectangleWithOneDoor);
         }
@@ -122,7 +126,7 @@ namespace AssetsTests.RoomTests
         [Fact]
         public void PlaceMoreDoorsThanRoomCanHave_ShouldResultCapTheNumberOfDoorsAdded()
         {
-            DoorPlacementTest(KnownRooms.OShaped, 15, DoorPlacementExpectations.OShapedWithCappedDoors);
+            DoorPlacementTest(KnownRooms.OShaped, TilesDisplay.Doors.Count-1, DoorPlacementExpectations.OShapedWithCappedDoors);
         }
     }
 }

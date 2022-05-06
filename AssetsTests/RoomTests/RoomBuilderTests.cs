@@ -1,4 +1,5 @@
 ﻿using Assets.Rooms;
+using AssetsTests.Fakes;
 using Utils;
 using Xunit;
 using Xunit.Abstractions;
@@ -90,7 +91,8 @@ namespace AssetsTests.RoomTests
 
         private void Should_BuildARoom_FromAFile(int roomIndex, string expectedRoom)
         {
-            var room = ArrangeTest(roomIndex, _testName, _output);
+            Random = new FakeDieBuilder(4, roomIndex, 1);
+            var room = ArrangeTest(_testName, _output);
 
             AssertTest(room, _output, expectedRoom.Trim(CharHelpers.EndOfLine));
         }

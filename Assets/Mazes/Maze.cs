@@ -15,7 +15,7 @@ namespace Assets.Mazes
     public interface IMaze
     {
         bool IsInside(Coordinate coordinate);
-        (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition);
+        (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition, IList<string> checkedTiles);
         TileChanges GetTiles<TTileType>();
         string[] Replace(TileChanges state);
         bool MoveOnto(string name, IFloor floor);
@@ -75,21 +75,42 @@ namespace Assets.Mazes
             return Tiles.IsInside(coordinate);
         }
 
-        public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition)
+        public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition, IList<string> checkedTiles)
         {
             var (maxRows, maxColumns) = UpperBounds;
 
-            IDispatched? tile = null;
-            Coordinate randomCoordinates = Coordinate.NotSet;
+            var (tile, randomCoordinates) = GetRandomTile();
 
-            while (tile == null || ! tileCondition(tile))
+            while (! tileCondition(tile))
             {
-                randomCoordinates = Tiles.RandomCoordinates(DieBuilder, maxRows, maxColumns);
-                var uniqueId = this[randomCoordinates];
-                tile = DispatchRegistry.GetDispatched(uniqueId);
+                if (HasCheckedTile())
+                {
+                    (tile, randomCoordinates) = GetRandomTile();
+                    continue;
+                }
+
+                checkedTiles.Add(tile.UniqueId);
+
+                if(Tiles.Length == checkedTiles.Count) throw new Exception("Searched all tiles in RandomTile");
+
+                (tile, randomCoordinates) = GetRandomTile();
             }
 
+            checkedTiles.Add(tile.UniqueId);
             return (tile, randomCoordinates);
+
+            bool HasCheckedTile()
+            {
+                return checkedTiles.Contains(tile.UniqueId);
+            }
+
+            (IDispatched dispatched, Coordinate randomCoordinates) GetRandomTile()
+            {
+                var coordinates = Tiles.RandomCoordinates(DieBuilder, maxRows, maxColumns);
+                var uniqueId = this[coordinates];
+                var dispatched = DispatchRegistry.GetDispatched(uniqueId);
+                return (dispatched, coordinates);
+            }
         }
 
         public TileChanges GetTiles<TTileType>()

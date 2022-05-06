@@ -2,9 +2,9 @@
 using Assets.Messaging;
 using Assets.Resources;
 using Assets.Rooms;
-using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
+using log4net;
 using Utils;
 using Utils.Random;
 using Xunit;
@@ -17,15 +17,21 @@ namespace AssetsTests.RoomTests
         public static readonly string Divider = '='.ToPaddedString(10);
         public RoomBuilder Builder;
 
-        internal Room ArrangeTest(int roomIndex, string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
-        {
-            var dispatchRegistry = new DispatchRegistry();
-            var actionRegistry = new ActionRegistry();
-            var random = new DieBuilder(loadFolder: testName, reset: reset);
-            var logger = new FakeLogger(output);
-            var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
+        internal DispatchRegistry DispatchRegistry;
+        internal ActionRegistry ActionRegistry;
+        internal DieBuilder Random;
+        internal ILog Logger;
+        internal ResourceBuilder ResourceBuilder;
 
-            Builder = new RoomBuilder(random, logger, dispatchRegistry, actionRegistry, actorBuilder);
+        internal Room ArrangeTest(string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
+        {
+            DispatchRegistry ??= new DispatchRegistry();
+            ActionRegistry ??= new ActionRegistry();
+            Random ??= new DieBuilder(testName, reset);
+            Logger ??= new FakeLogger(output);
+            ResourceBuilder ??= new ResourceBuilder(DispatchRegistry, ActionRegistry);
+            Builder ??= new RoomBuilder(Random, Logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
+
             return Builder.BuildRoom(1);
         }
 

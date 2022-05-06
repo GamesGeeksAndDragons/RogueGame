@@ -13,17 +13,17 @@ namespace Utils.Random
         public const string IndexExtension = "index";
         public const string FolderSuffix = "RandomNumbers";
 
-        public virtual IDice D2 { get; }
-        public virtual IDice D3 { get; }
-        public virtual IDice D4 { get; }
-        public virtual IDice D5 { get; }
-        public virtual IDice D6 { get; }
-        public virtual IDice D7 { get; }
-        public virtual IDice D8 { get; }
-        public virtual IDice D9 { get; }
-        public virtual IDice D10 { get; }
-        public virtual IDice D12 { get; }
-        public virtual IDice D20 { get; }
+        public virtual IDice D2 { get; protected set; }
+        public virtual IDice D3 { get; protected set; }
+        public virtual IDice D4 { get; protected set; }
+        public virtual IDice D5 { get; protected set; }
+        public virtual IDice D6 { get; protected set; }
+        public virtual IDice D7 { get; protected set; }
+        public virtual IDice D8 { get; protected set; }
+        public virtual IDice D9 { get; protected set; }
+        public virtual IDice D10 { get; protected set; }
+        public virtual IDice D12 { get; protected set; }
+        public virtual IDice D20 { get; protected set; }
 
         public virtual ICompassDice<Compass4Points> Compass4Die { get; }
         public virtual ICompassDice<Compass8Points> Compass8Die { get; }

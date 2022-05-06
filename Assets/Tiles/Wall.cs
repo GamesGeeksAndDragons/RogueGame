@@ -37,8 +37,6 @@ namespace Assets.Tiles
             return state;
         }
 
-        public bool IsCorner => WallType.HasDirection(WallDirection.Corner);
-
         public Wall Rotate()
         {
             var newDirection = GetRotatedDirection();

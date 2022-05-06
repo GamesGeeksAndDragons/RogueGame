@@ -1,6 +1,8 @@
 ﻿using Assets.Rooms;
+using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using Utils;
+using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,7 +12,6 @@ namespace AssetsTests.RoomTests
     {
         private readonly ITestOutputHelper _output;
         private readonly string _testName;
-
         public RotateRoomTests(ITestOutputHelper output)
         {
             _output = output;
@@ -141,15 +142,10 @@ namespace AssetsTests.RoomTests
 ";
         }
 
-        private void RotateTestImpl(int roomIndex, int rotateTimes, string roomExpectation)
+        private void RotateTestImpl(int roomNumber, int rotateTimes, string roomExpectation)
         {
-            var room = ArrangeTest(roomIndex, _testName, _output);
-
-            var before = room.Maze.Print(room.DispatchRegistry);
-            _output.WriteLine(Divider + " before " + Divider);
-            _output.WriteLine(before);
-
-            room = Builder.BuildRotatedRoom(room, rotateTimes);
+            Random = new FakeDieBuilder(4, roomNumber, rotateTimes+1);
+            var room = ArrangeTest(_testName, _output);
 
             AssertTest(room, _output, roomExpectation.Trim(CharHelpers.EndOfLine));
         }

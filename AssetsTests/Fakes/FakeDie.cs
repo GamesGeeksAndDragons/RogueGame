@@ -10,7 +10,24 @@ namespace AssetsTests.Fakes
 {
     class FakeDie : IDice
     {
-        public string Name { get; internal set; }
-        public int Random { get; internal set; }
+        private readonly List<int> _buffer = new List<int>();
+        private int _index = -1;
+        public FakeDie(int max, params int[] random)
+        {
+            Name = "Fake." + Die.NameFormat(1, max);
+            _buffer.AddRange(random);
+        }
+
+        public string Name { get; }
+
+        public int Random
+        {
+            get
+            {
+                if (++_index == _buffer.Count) _index = 0;
+
+                return _buffer[_index];
+            }
+        }
     }
 }

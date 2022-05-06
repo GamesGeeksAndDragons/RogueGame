@@ -13,6 +13,7 @@ namespace Assets.Deeds
         {
             var maze = (IMaze)dispatchRegistry.GetDispatched(Maze.DispatchedName);
 
+            var checkedTiles = new List<string>();
             var floorTile = RandomEmptyFloorTile();
 
             var moved = maze.MoveOnto(dispatched.UniqueId, floorTile.Floor);
@@ -25,7 +26,7 @@ namespace Assets.Deeds
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {
-                var tile = maze.RandomFloorTile(false, false);
+                var tile = maze.RandomFloorTile(checkedTiles, false, false);
 
                 return ((IFloor) tile.Dispatched, tile.Coordinates);
             }

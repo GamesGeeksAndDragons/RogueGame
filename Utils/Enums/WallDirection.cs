@@ -23,7 +23,7 @@ namespace Utils.Enums
         public static bool HasDirection(this WallDirection direction, WallDirection compare)
         {
             var bitwise = direction & compare;
-            return bitwise == compare;
+            return bitwise == direction;
         }
 
         public static WallDirection ToWallDirection(this string actor)
