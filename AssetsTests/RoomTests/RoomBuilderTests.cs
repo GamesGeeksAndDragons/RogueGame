@@ -92,7 +92,7 @@ namespace AssetsTests.RoomTests
         private void Should_BuildARoom_FromAFile(int roomIndex, string expectedRoom)
         {
             Random = new FakeDieBuilder(4, roomIndex, 1);
-            var room = ArrangeTest(_testName, _output);
+            var room = ArrangeTest(_output, _testName);
 
             AssertTest(room, _output, expectedRoom.Trim(CharHelpers.EndOfLine));
         }

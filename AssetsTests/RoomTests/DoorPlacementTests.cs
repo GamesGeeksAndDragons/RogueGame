@@ -95,7 +95,7 @@ namespace AssetsTests.RoomTests
         {
             Random = new FakeDieBuilder(4, roomIndex, 1);
 
-            var room = ArrangeTest(_testName, _output, Die.RandomiserReset.Index);
+            var room = ArrangeTest(_output, _testName, Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {

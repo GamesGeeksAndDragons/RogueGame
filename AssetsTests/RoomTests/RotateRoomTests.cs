@@ -145,7 +145,7 @@ namespace AssetsTests.RoomTests
         private void RotateTestImpl(int roomNumber, int rotateTimes, string roomExpectation)
         {
             Random = new FakeDieBuilder(4, roomNumber, rotateTimes+1);
-            var room = ArrangeTest(_testName, _output);
+            var room = ArrangeTest(_output, _testName);
 
             AssertTest(room, _output, roomExpectation.Trim(CharHelpers.EndOfLine));
         }

@@ -15,7 +15,7 @@ namespace AssetsTests.RoomTests
     public class RoomTestHelpers
     {
         public static readonly string Divider = '='.ToPaddedString(10);
-        public RoomBuilder Builder;
+        public RoomBuilder RoomBuilder;
 
         internal DispatchRegistry DispatchRegistry;
         internal ActionRegistry ActionRegistry;
@@ -23,16 +23,16 @@ namespace AssetsTests.RoomTests
         internal ILog Logger;
         internal ResourceBuilder ResourceBuilder;
 
-        internal Room ArrangeTest(string testName, ITestOutputHelper output, Die.RandomiserReset reset = Die.RandomiserReset.None)
+        internal Room ArrangeTest(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder, Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
             DispatchRegistry ??= new DispatchRegistry();
             ActionRegistry ??= new ActionRegistry();
             Random ??= new DieBuilder(testName, reset);
             Logger ??= new FakeLogger(output);
             ResourceBuilder ??= new ResourceBuilder(DispatchRegistry, ActionRegistry);
-            Builder ??= new RoomBuilder(Random, Logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
+            RoomBuilder ??= new RoomBuilder(Random, Logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
 
-            return Builder.BuildRoom(1);
+            return RoomBuilder.BuildRoom(1);
         }
 
         internal void AssertTest(Room room, ITestOutputHelper output, string expected = "")
