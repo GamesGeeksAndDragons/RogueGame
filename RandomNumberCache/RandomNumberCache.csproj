@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,12 +6,64 @@
 
   <ItemGroup>
     <Folder Include="DoorPlacementTestsRandomNumbers\" />
-    <Folder Include="MazeTestsRandomNumbers\" />
     <Folder Include="RogueRandomNumbers\" />
-    <Folder Include="RoomTestsRandomNumbers\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_10.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_10.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_11.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_11.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_6.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_6.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_9.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_0_9.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_10.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_10.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_11.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_11.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_4.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_4.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_6.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_6.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_9.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="DoorPlacementTestsRandomNumbers\number_1_9.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RogueRandomNumbers\number_0_10.index">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -418,6 +470,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="RogueRandomNumbers\number_3_8.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="RoomBuilderTestsRandomNumbers\number_1_4.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="RoomBuilderTestsRandomNumbers\number_1_4.random">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="RotateRoomTestsRandomNumbers\number_1_4.index">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="RotateRoomTestsRandomNumbers\number_1_4.random">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
