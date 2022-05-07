@@ -299,7 +299,7 @@ namespace AssetsTests.ActionTests
             var (maze, me) = builder.Build(1);
 
             var before = maze.Print(dispatchRegistry);
-            _output.WriteLine(RoomTestHelpers.Divider + " before " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
             _output.WriteLine(before);
 
             // t+1
@@ -312,9 +312,9 @@ namespace AssetsTests.ActionTests
             var expected = GetExpectation(testNum).Trim(CharHelpers.EndOfLine);
             var actual = maze.Print(dispatchRegistry);
 
-            _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
             _output.WriteLine(expected);
-            _output.WriteLine(RoomTestHelpers.Divider + " actual " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
             _output.WriteLine(actual);
 
             Assert.Equal(expected, actual);

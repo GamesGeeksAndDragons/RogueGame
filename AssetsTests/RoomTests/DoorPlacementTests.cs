@@ -1,5 +1,6 @@
 ﻿using Assets.Rooms;
 using AssetsTests.Fakes;
+using AssetsTests.Helpers;
 using Utils;
 using Utils.Display;
 using Utils.Random;
@@ -8,15 +9,11 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class DoorPlacementTests : RoomTestHelpers
+    public class DoorPlacementTests : RoomBuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _testName;
-
         public DoorPlacementTests(ITestOutputHelper output)
+        : base(output, nameof(DoorPlacementTests))
         {
-            _output = output;
-            _testName = nameof(DoorPlacementTests);
         }
 
         internal static class DoorPlacementExpectations
@@ -94,15 +91,14 @@ namespace AssetsTests.RoomTests
         private void DoorPlacementTest(int roomIndex, int numDoors, string expectation)
         {
             Random = new FakeDieBuilder(4, roomIndex, 1);
-
-            var room = ArrangeTest(_output, _testName, Die.RandomiserReset.Index);
+            ArrangeTest(Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {
-                room.AddDoor(i);
+                Room.AddDoor(i);
             }
 
-            AssertTest(room, _output, expectation.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room.Maze, expectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

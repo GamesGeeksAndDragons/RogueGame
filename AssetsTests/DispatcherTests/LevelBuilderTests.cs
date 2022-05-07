@@ -220,12 +220,12 @@ namespace AssetsTests.DispatcherTests
             var actual = maze.Print(dispatchRegistry);
             var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
 
-            _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
             _output.WriteLine(expected);
-            _output.WriteLine(RoomTestHelpers.Divider + " expected " + RoomTestHelpers.Divider);
-            _output.WriteLine(RoomTestHelpers.Divider + " actual " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
             _output.WriteLine(actual);
-            _output.WriteLine(RoomTestHelpers.Divider + " actual " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
 
             Assert.Equal(expected, actual);
         }
@@ -240,15 +240,15 @@ namespace AssetsTests.DispatcherTests
             var dispatchRegistry = new DispatchRegistry();
             var actionRegistry = new ActionRegistry();
             var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
-            var fakeRandomNumbers = new DieBuilder();
+            var dieBuilder = new DieBuilder();
             var fakeLogger = new FakeLogger(_output);
             var resourceBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, resourceBuilder);
+            var builder = new LevelBuilder(dieBuilder, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, resourceBuilder);
             var (maze, _) = builder.Build(level);
 
             var before = maze.Print(dispatchRegistry);
-            _output.WriteLine(RoomTestHelpers.Divider + " before " + RoomTestHelpers.Divider);
+            _output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
             _output.WriteLine(before);
 
             dispatcher.Dispatch();

@@ -8,14 +8,11 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class RotateRoomTests : RoomTestHelpers
+    public class RoomRotationTests : RoomBuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _testName;
-        public RotateRoomTests(ITestOutputHelper output)
+        public RoomRotationTests(ITestOutputHelper output)
+        : base(output, nameof(RoomRotationTests))
         {
-            _output = output;
-            _testName = nameof(RotateRoomTests);
         }
 
         static class RotatedExpectedResults
@@ -145,9 +142,9 @@ namespace AssetsTests.RoomTests
         private void RotateTestImpl(int roomNumber, int rotateTimes, string roomExpectation)
         {
             Random = new FakeDieBuilder(4, roomNumber, rotateTimes+1);
-            var room = ArrangeTest(_output, _testName);
+            ArrangeTest();
 
-            AssertTest(room, _output, roomExpectation.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room.Maze, roomExpectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

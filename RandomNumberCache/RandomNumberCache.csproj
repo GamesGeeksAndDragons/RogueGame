@@ -478,10 +478,10 @@
     <None Update="RoomBuilderTestsRandomNumbers\number_1_4.random">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="RotateRoomTestsRandomNumbers\number_1_4.index">
+    <None Update="RoomRotationTestsRandomNumbers\number_1_4.index">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="RotateRoomTestsRandomNumbers\number_1_4.random">
+    <None Update="RoomRotationTestsRandomNumbers\number_1_4.random">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

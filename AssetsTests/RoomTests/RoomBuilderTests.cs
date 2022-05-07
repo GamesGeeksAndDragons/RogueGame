@@ -1,20 +1,27 @@
 ﻿using Assets.Rooms;
 using AssetsTests.Fakes;
+using AssetsTests.Helpers;
 using Utils;
+using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class RoomBuilderTests : RoomTestHelpers
+    public class RoomBuilderTests : BuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _testName;
+        private Room _room;
 
-        public RoomBuilderTests(ITestOutputHelper output)
+        public RoomBuilderTests(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder) 
+            : base(output, testName)
         {
-            _output = output;
-            _testName = nameof(RoomBuilderTests);
+        }
+
+        internal override void ArrangeTest(Die.RandomiserReset reset = Die.RandomiserReset.None)
+        {
+            base.ArrangeTest(reset);
+
+            _room = RoomBuilder.BuildRoom(1);
         }
 
         internal static class RoomBuilderExpectations
@@ -92,9 +99,9 @@ namespace AssetsTests.RoomTests
         private void Should_BuildARoom_FromAFile(int roomIndex, string expectedRoom)
         {
             Random = new FakeDieBuilder(4, roomIndex, 1);
-            var room = ArrangeTest(_output, _testName);
+            ArrangeTest();
 
-            AssertTest(room, _output, expectedRoom.Trim(CharHelpers.EndOfLine));
+            AssertTest(_room.Maze, expectedRoom.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]
