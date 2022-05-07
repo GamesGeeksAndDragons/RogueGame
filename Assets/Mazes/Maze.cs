@@ -48,6 +48,40 @@ namespace Assets.Mazes
             Tiles = tiles.CloneStrings();
         }
 
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string maze)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
+        {
+            dieBuilder.ThrowIfNull(nameof(dieBuilder));
+            resourceBuilder.ThrowIfNull(nameof(resourceBuilder));
+
+            DieBuilder = dieBuilder;
+            ResourceBuilder = resourceBuilder;
+
+            Tiles = BuildTiles();
+            
+            string[,] BuildTiles()
+            {
+                var tilesArray = maze.SplitIntoLines();
+                var noRows = tilesArray.Length;
+                var noColumns = tilesArray.Max(row => row.Length);
+
+                var tiles = new string[noRows, noColumns];
+
+                for (int rowIndex = 0; rowIndex < noRows; rowIndex++)
+                {
+                    var row = tilesArray[rowIndex];
+
+                    for (int colIndex = 0; colIndex < noColumns; colIndex++)
+                    {
+                        var actor = row[colIndex].ToString();
+                        tiles[rowIndex, colIndex] = ResourceBuilder.BuildResource(actor).UniqueId;
+                    }
+                }
+
+                return tiles;
+            }
+        }
+
         public string[] Replace(TileChanges state)
         {
             var replaced = new List<string>();

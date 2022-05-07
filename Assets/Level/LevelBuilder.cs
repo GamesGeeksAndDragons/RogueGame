@@ -33,7 +33,7 @@ namespace Assets.Level
             _descriptor = new LevelDescriptor();
         }
 
-        internal (IMaze, Me) Build(int level)
+        internal (IMaze, Me, IList<ICharacter>) Build(int level)
         {
             var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
             var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
@@ -42,19 +42,21 @@ namespace Assets.Level
             var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
 
             var characterBuilder = new LevelCharacters("", _resourceBuilder, _dieBuilder, levelDetail);
+            var me = characterBuilder.Me;
+            var characters = characterBuilder.Characters().ToList();
 
             TeleportMonsters();
-            _dispatcher.EnqueueTeleport(characterBuilder.Me);
+            _dispatcher.EnqueueTeleport(me);
 
             _dispatcher.Dispatch();
 
-            return (maze, characterBuilder.Me);
+            return (maze, me, characters);
 
             void TeleportMonsters()
             {
-                foreach (var monster in characterBuilder.Monsters())
+                foreach (var character in characters)
                 {
-                    _dispatcher.EnqueueTeleport(monster);
+                    _dispatcher.EnqueueTeleport(character);
                 }
             }
         }

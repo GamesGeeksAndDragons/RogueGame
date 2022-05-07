@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Text;
 using Assets.Deeds;
 using Assets.Resources;
 using Assets.Rooms;
@@ -6,6 +7,7 @@ using Assets.Tiles;
 using log4net;
 using Utils;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
 
 namespace Assets.Mazes
@@ -82,10 +84,7 @@ namespace Assets.Mazes
         {
             var rooms = RoomsWithDoors();
 
-            var maxTileRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
-            var maxTileCols = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
-
-            var tiles = MazeHelpers.BuildDefaultTiles(maxTileRows, maxTileCols, _resourceBuilder.DefaultRockBuilder());
+            var tiles = BuildDefaultTiles();
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
             var removed = maze.PositionRoomsInMaze(rooms);
@@ -103,6 +102,21 @@ namespace Assets.Mazes
             maze.ConnectDoorsWithCorridors(tunnel, _dispatchRegistry, _resourceBuilder);
 
             return maze;
+
+            string BuildDefaultTiles()
+            {
+                var maxRows = rooms.Sum(room => room.UpperBounds.Row) * rooms.Count;
+                var maxColumns = rooms.Sum(room => room.UpperBounds.Column) * rooms.Count;
+
+                var row = new string(TilesDisplay.Rock[0], maxColumns);
+                var sb = new StringBuilder();
+                for (var i = 0; i < maxRows; i++)
+                {
+                    sb.AppendLine(row);
+                }
+
+                return sb.ToString();
+            }
 
             IList<Room> RoomsWithDoors()
             {

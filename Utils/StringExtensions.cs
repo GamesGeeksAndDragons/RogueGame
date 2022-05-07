@@ -1,6 +1,7 @@
 ﻿#nullable enable
 #nullable enable
 using System.Globalization;
+using System.Text;
 
 namespace Utils
 {
@@ -81,6 +82,8 @@ namespace Utils
                 .Where(line => ! line.IsNullOrEmpty())
                 .ToArray();
         }
+
+        public static string Join(this IEnumerable<string> toJoin, string separator="") => string.Join(separator, toJoin);
 
         public const string EmptyString = "string.Empty";
 

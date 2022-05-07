@@ -26,7 +26,7 @@ namespace Assets.Level
             }
         }
 
-        public IEnumerable<ICharacter> Monsters()
+        public IEnumerable<ICharacter> Characters()
         {
             foreach (var levelCharacter in _levelCharacters)
             {

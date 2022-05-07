@@ -1,41 +1,28 @@
-﻿using Assets.Deeds;
-using Assets.Mazes;
-using Assets.Messaging;
-using Assets.Resources;
-using Assets.Tiles;
-using Utils.Dispatching;
-using Utils.Random;
+﻿using Assets.Mazes;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.Helpers
 {
-    public abstract class MazeTestHelper
+    public abstract class  MazeTestHelper : LevelBuilderTestHelpers
     {
-        public IDispatchRegistry DispatchRegistry = new DispatchRegistry();
-        public IActionRegistry ActionRegistry = new ActionRegistry();
-        public IResourceBuilder ResourceBuilder;
-        public IDieBuilder DieBuilder = new DieBuilder();
-
         public IMaze Maze { get; protected set; }
 
-        protected readonly ITestOutputHelper Output;
-
-        protected MazeTestHelper(ITestOutputHelper output)
+        protected MazeTestHelper(ITestOutputHelper output) 
+            : base(output)
         {
-            Output = output;
-            ResourceBuilder = new ResourceBuilder(DispatchRegistry, ActionRegistry);
         }
 
         protected virtual void TestArrange(IMazeExpectations expectations)
         {
+            base.ArrangeTest();
+
             Output.OutputMazes(expectations.StartingMaze);
             Maze = LoadMaze(expectations.StartingMaze);
 
             IMaze LoadMaze(string loaded)
             {
-                var tiles = DispatchRegistry.Register(ResourceBuilder, loaded);
-                var maze = new Maze(DispatchRegistry, ActionRegistry, DieBuilder, ResourceBuilder, tiles);
+                var maze = new Maze(DispatchRegistry, ActionRegistry, DieBuilder, ResourceBuilder, loaded);
                 return maze;
             }
         }

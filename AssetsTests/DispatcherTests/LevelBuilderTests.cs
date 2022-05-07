@@ -9,11 +9,8 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.DispatcherTests
 {
-    public class LevelBuilderTests : BuilderTestHelpers
+    public class LevelBuilderTests : LevelBuilderTestHelpers
     {
-        internal Dispatcher Dispatcher;
-        internal LevelBuilder LevelBuilder;
-
         public LevelBuilderTests(ITestOutputHelper output)
         : base(output)
         {
@@ -213,28 +210,18 @@ namespace AssetsTests.DispatcherTests
         [InlineData(3)]
         public void WhenBuiltDispatcher_ShouldHaveLevelCharacters(int level)
         {
-            Arrange();
-            var maze = Act();
-            Assert();
+            ArrangeTest();
 
-            void Arrange()
-            {
-                ArrangeTest();
-                Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
-                LevelBuilder = new LevelBuilder(DieBuilder, FakeLogger, Dispatcher, DispatchRegistry, ActionRegistry, ResourceBuilder);
-            }
+            var maze = Act();
+
+            var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
+            AssertTest(maze, expected);
 
             IMaze Act()
             {
-                var (buildMaze, _) = LevelBuilder.Build(level);
+                var (buildMaze, _, _) = LevelBuilder.Build(level);
                 Dispatcher.Dispatch();
                 return buildMaze;
-            }
-
-            void Assert()
-            {
-                var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
-                AssertTest(maze, expected);
             }
         }
     }

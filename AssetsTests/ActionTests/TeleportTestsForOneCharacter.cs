@@ -10,11 +10,8 @@ namespace AssetsTests.ActionTests
 {
     public class TeleportTestsForOneCharacter : MazeTestHelper
     {
-        public IDispatcher Dispatcher;
-
         public TeleportTestsForOneCharacter(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
         }
 
         protected override void TestArrange(IMazeExpectations expectations)
@@ -33,6 +30,7 @@ namespace AssetsTests.ActionTests
         public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacter(int testNum)
         {
             var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+
             TestArrange(expectations);
             TestAct();
             TestAssert(expectations);
@@ -46,11 +44,8 @@ namespace AssetsTests.ActionTests
 
     public class TeleportTestsForTwoCharacters : MazeTestHelper
     {
-        public IDispatcher Dispatcher;
-
         public TeleportTestsForTwoCharacters(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
         }
 
         protected override void TestArrange(IMazeExpectations expectations)
@@ -74,6 +69,7 @@ namespace AssetsTests.ActionTests
         public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacters(int testNum)
         {
             var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+
             TestArrange(expectations);
             TestAct();
             TestAssert(expectations);

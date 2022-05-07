@@ -7,6 +7,7 @@ using Assets.Resources;
 using Assets.Tiles;
 using log4net;
 using Utils;
+using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
 using Utils.Random;
@@ -28,7 +29,7 @@ namespace Assets.Rooms
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
         private readonly IResourceBuilder _resourceBuilder;
-        private readonly Dictionary<int, string[]> _rooms;
+        private readonly Dictionary<int, string> _rooms;
 
         public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
@@ -45,14 +46,14 @@ namespace Assets.Rooms
 
             _rooms = LoadRooms();
 
-            Dictionary<int, string[]> LoadRooms()
+            Dictionary<int, string> LoadRooms()
             {
                 var filenames = GetRoomFilenamesToLoad(FileAndDirectoryHelpers.LoadFolder);
 
-                var rooms = new Dictionary<int, string[]>();
+                var rooms = new Dictionary<int, string>();
                 foreach (var filename in filenames)
                 {
-                    var room = File.ReadAllLines(filename);
+                    var room = File.ReadAllLines(filename).Join(Environment.NewLine);
                     var name = Path.GetFileNameWithoutExtension(filename);
                     var splitName = name.Split('-');
                     var index = splitName[0];
@@ -76,30 +77,19 @@ namespace Assets.Rooms
         {
             var roomIndex = _dieBuilder.D4.Random;
             var roomDescription = _rooms[roomIndex];
-            var maxRows = roomDescription.Length;
-            var maxCols = roomDescription.Max(row => row.Length);
+
+            var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, roomDescription);
 
             var floorBuilder = _resourceBuilder.FloorBuilder();
-            IDispatched FloorForRoom() => floorBuilder(roomNumber, "");
 
-            var tiles = MazeHelpers.BuildDefaultTiles(maxRows, maxCols, FloorForRoom);
-
-            for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
+            var floorTiles = maze.GetTiles<Floor>();
+            foreach (var floorTile in floorTiles)
             {
-                var row = roomDescription[rowIndex];
-
-                for (int colIndex = 0; colIndex < maxCols; colIndex++)
-                {
-                    var actor = row[colIndex].ToString();
-                    if (actor.IsFloorActor()) continue;
-
-                    var dispatched = _resourceBuilder.BuildResource(actor);
-
-                    tiles[rowIndex, colIndex] = dispatched.UniqueId;
-                }
+                var coordinates = floorTile.Coordinates;
+                var floor = floorBuilder(roomNumber, "");
+                maze[coordinates] = floor.UniqueId;
+                _dispatchRegistry.Unregister(floorTile.UniqueId);
             }
-
-            var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, tiles);
 
             var room = new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
 

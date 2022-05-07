@@ -100,14 +100,6 @@ namespace Assets.Mazes
             }
         }
 
-        public static string[,] BuildDefaultTiles(int maxRows, int maxColumns, Func<IDispatched> actorBuilder)
-        {
-            var tiles = new string[maxRows,maxColumns];
-            tiles.DefaultTiles(actorBuilder);
-            return tiles;
-        }
-
-
         public static void ConnectDoorsWithCorridors(this IMaze maze, TileChanges changes, IDispatchRegistry dispatchRegistry, IResourceBuilder builder)
         {
             var floorBuilder = builder.FloorBuilder();

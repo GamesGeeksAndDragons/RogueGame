@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Deeds;
 using Assets.Level;
+using Assets.Mazes;
 using Assets.Messaging;
 using Assets.Resources;
 using Assets.Tiles;
@@ -16,13 +17,11 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.ActionTests
 {
-    public class MoveActionTests
+    public class MoveActionTests : LevelBuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
-
         public MoveActionTests(ITestOutputHelper output)
+        : base(output)
         {
-            _output = output;
         }
 
         internal static string GetExpectation(int testNum)
@@ -288,36 +287,31 @@ namespace AssetsTests.ActionTests
 
         private void Move_Me_Test(int testNum, params Compass8Points[] directions)
         {
-            var dispatchRegistry = new DispatchRegistry();
-            var actionRegistry = new ActionRegistry();
-            var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
-            var actorBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
-            var fakeRandomNumbers = new FakeDieBuilder(1);
-            var fakeLogger = new FakeLogger(_output);
+            var maze = Arrange();
 
-            var builder = new LevelBuilder(fakeRandomNumbers, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, actorBuilder);
-            var (maze, me) = builder.Build(1);
-
-            var before = maze.Print(dispatchRegistry);
-            _output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
-            _output.WriteLine(before);
-
-            // t+1
-            foreach (var direction in directions)
-            {
-                dispatcher.EnqueueMove(me, direction);
-            }
-            dispatcher.Dispatch();
+            Dispatcher.Dispatch();
 
             var expected = GetExpectation(testNum).Trim(CharHelpers.EndOfLine);
-            var actual = maze.Print(dispatchRegistry);
+            AssertTest(maze, expected);
 
-            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
-            _output.WriteLine(expected);
-            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
-            _output.WriteLine(actual);
+            IMaze Arrange()
+            {
+                DieBuilder = new FakeDieBuilder(1);
+                ArrangeTest();
 
-            Assert.Equal(expected, actual);
+                var (builtMaze, me, _) = LevelBuilder.Build(1);
+
+                var before = builtMaze.Print(DispatchRegistry);
+                Output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
+                Output.WriteLine(before);
+
+                foreach (var direction in directions)
+                {
+                    Dispatcher.EnqueueMove(me, direction);
+                }
+
+                return builtMaze;
+            }
         }
 
         [Fact]
