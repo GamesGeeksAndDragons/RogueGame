@@ -98,7 +98,7 @@ namespace AssetsTests.RoomTests
 
         private void Should_BuildARoom_FromAFile(int roomIndex, string expectedRoom)
         {
-            Random = new FakeDieBuilder(4, roomIndex, 1);
+            DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
             ArrangeTest();
 
             AssertTest(_room.Maze, expectedRoom.Trim(CharHelpers.EndOfLine));

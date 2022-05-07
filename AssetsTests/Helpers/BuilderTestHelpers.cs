@@ -22,8 +22,8 @@ namespace AssetsTests.Helpers
 
         internal DispatchRegistry DispatchRegistry;
         internal ActionRegistry ActionRegistry;
-        internal DieBuilder Random;
-        internal ILog Logger;
+        internal DieBuilder DieBuilder;
+        internal ILog FakeLogger;
         internal ResourceBuilder ResourceBuilder;
 
         public BuilderTestHelpers(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder)
@@ -36,10 +36,10 @@ namespace AssetsTests.Helpers
         {
             DispatchRegistry ??= new DispatchRegistry();
             ActionRegistry ??= new ActionRegistry();
-            Random ??= new DieBuilder(TestName, reset);
-            Logger ??= new FakeLogger(Output);
+            DieBuilder ??= new DieBuilder(TestName, reset);
+            FakeLogger ??= new FakeLogger(Output);
             ResourceBuilder ??= new ResourceBuilder(DispatchRegistry, ActionRegistry);
-            RoomBuilder ??= new RoomBuilder(Random, Logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
+            RoomBuilder ??= new RoomBuilder(DieBuilder, FakeLogger, DispatchRegistry, ActionRegistry, ResourceBuilder);
         }
 
         internal virtual void AssertTest(IMaze maze, string expected = "")

@@ -1,30 +1,22 @@
 ﻿using System;
-using Assets.Characters;
-using Assets.Deeds;
 using Assets.Level;
 using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Resources;
-using Assets.Tiles;
-using AssetsTests.Fakes;
 using AssetsTests.Helpers;
-using AssetsTests.RoomTests;
 using Utils;
-using Utils.Dispatching;
-using Utils.Display;
-using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.DispatcherTests
 {
-    public class LevelBuilderTests
+    public class LevelBuilderTests : BuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
+        internal Dispatcher Dispatcher;
+        internal LevelBuilder LevelBuilder;
 
         public LevelBuilderTests(ITestOutputHelper output)
+        : base(output)
         {
-            _output = output;
         }
 
         static class LevelExpectedResults
@@ -215,45 +207,35 @@ namespace AssetsTests.DispatcherTests
             }
         }
 
-        internal void AssertTest(IMaze maze, int level, IDispatchRegistry dispatchRegistry)
-        {
-            var actual = maze.Print(dispatchRegistry);
-            var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
-
-            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
-            _output.WriteLine(expected);
-            _output.WriteLine(BuilderTestHelpers.Divider + " expected " + BuilderTestHelpers.Divider);
-            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
-            _output.WriteLine(actual);
-            _output.WriteLine(BuilderTestHelpers.Divider + " actual " + BuilderTestHelpers.Divider);
-
-            Assert.Equal(expected, actual);
-        }
-
-
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
         public void WhenBuiltDispatcher_ShouldHaveLevelCharacters(int level)
         {
-            var dispatchRegistry = new DispatchRegistry();
-            var actionRegistry = new ActionRegistry();
-            var dispatcher = new Dispatcher(dispatchRegistry, actionRegistry);
-            var dieBuilder = new DieBuilder();
-            var fakeLogger = new FakeLogger(_output);
-            var resourceBuilder = new ResourceBuilder(dispatchRegistry, actionRegistry);
+            Arrange();
+            var maze = Act();
+            Assert();
 
-            var builder = new LevelBuilder(dieBuilder, fakeLogger, dispatcher, dispatchRegistry, actionRegistry, resourceBuilder);
-            var (maze, _) = builder.Build(level);
+            void Arrange()
+            {
+                ArrangeTest();
+                Dispatcher = new Dispatcher(DispatchRegistry, ActionRegistry);
+                LevelBuilder = new LevelBuilder(DieBuilder, FakeLogger, Dispatcher, DispatchRegistry, ActionRegistry, ResourceBuilder);
+            }
 
-            var before = maze.Print(dispatchRegistry);
-            _output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
-            _output.WriteLine(before);
+            IMaze Act()
+            {
+                var (buildMaze, _) = LevelBuilder.Build(level);
+                Dispatcher.Dispatch();
+                return buildMaze;
+            }
 
-            dispatcher.Dispatch();
-
-            AssertTest(maze, level, dispatchRegistry);
+            void Assert()
+            {
+                var expected = LevelExpectedResults.GetExpectation(level).Trim(CharHelpers.EndOfLine);
+                AssertTest(maze, expected);
+            }
         }
     }
 }
