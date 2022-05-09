@@ -13,7 +13,7 @@ namespace Assets.Mazes
         public const int TooCloseToRoom = 4;
         public const int TooCloseToEdge = 3;
 
-        internal static string[] PositionRoomsInMaze(this IMaze maze, IEnumerable<Room> rooms)
+        internal static string[] PositionRoomsInMaze(this IMaze maze, IEnumerable<IRoom> rooms)
         {
             var removedTiles = new List<string>();
 
@@ -109,7 +109,7 @@ namespace Assets.Mazes
         }
 
         private static (Coordinate TopLeft, Coordinate TopRight, Coordinate BottomLeft, Coordinate BottomRight)
-            AttemptToPositionRoomInsideTiles(IMaze maze, Room room)
+            AttemptToPositionRoomInsideTiles(IMaze maze, IRoom room)
         {
             var checkedTiles = new List<string>();
             for (var attempts = 0; attempts < NumAttemptTillGrowMaze; ++attempts)
@@ -137,7 +137,7 @@ namespace Assets.Mazes
             return (Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet, Coordinate.NotSet);
         }
 
-        private static TileChanges PositionRoom(Room room, Coordinate topLeft)
+        private static TileChanges PositionRoom(IRoom room, Coordinate topLeft)
         {
             var (rows, columns) = room.UpperBounds;
 
@@ -157,7 +157,7 @@ namespace Assets.Mazes
             (string UniqueId, Coordinate Coordinates) GetTileChange(int row, int column)
             {
                 var roomCoordinates = new Coordinate(row, column);
-                var uniqueId = room[roomCoordinates];
+                var uniqueId = room.Maze[roomCoordinates];
 
                 var mazeCoordinates = topLeft + roomCoordinates;
                 return (uniqueId, mazeCoordinates);

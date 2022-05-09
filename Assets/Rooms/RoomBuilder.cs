@@ -22,7 +22,12 @@ namespace Assets.Rooms
         public const int OShaped = 4;
     }
 
-    public class RoomBuilder
+    public interface IRoomBuilder
+    {
+        IRoom BuildRoom(int roomNumber);
+    }
+
+    public class RoomBuilder : IRoomBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;
@@ -73,7 +78,7 @@ namespace Assets.Rooms
             }
         }
 
-        internal Room BuildRoom(int roomNumber)
+        public IRoom BuildRoom(int roomNumber)
         {
             var roomIndex = _dieBuilder.D4.Random;
             var roomDescription = _rooms[roomIndex];
@@ -95,7 +100,7 @@ namespace Assets.Rooms
 
             return RotateRoom();
 
-            Room RotateRoom()
+            IRoom RotateRoom()
             {
                 var rotation = _dieBuilder.D4.Random - 1;
                 if (rotation == 0) return room;
@@ -132,7 +137,7 @@ namespace Assets.Rooms
             return rotated;
         }
 
-        internal Room BuildRotatedRoom(Room room, int numTimes = 1)
+        internal IRoom BuildRotatedRoom(Room room, int numTimes = 1)
         {
             numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
 
@@ -146,7 +151,7 @@ namespace Assets.Rooms
 
             var newTiles = new Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ResourceBuilder, rotatedTiles);
 
-            return new Room(room, newTiles);
+            return new Room((Room)room, newTiles);
 
             string[,] Rotate(string[,] tiles)
             {

@@ -299,7 +299,7 @@ namespace AssetsTests.ActionTests
                 DieBuilder = new FakeDieBuilder(1);
                 ArrangeTest();
 
-                var (builtMaze, me, _) = LevelBuilder.Build(1);
+                var (builtMaze, me, _) = LevelBuilder.BuildNewGame(1);
 
                 var before = builtMaze.Print(DispatchRegistry);
                 Output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);

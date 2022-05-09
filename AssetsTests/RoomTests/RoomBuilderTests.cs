@@ -8,20 +8,11 @@ using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class RoomBuilderTests : BuilderTestHelpers
+    public class RoomBuilderTests : RoomBuilderTestHelpers
     {
-        private Room _room;
-
         public RoomBuilderTests(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder) 
             : base(output, testName)
         {
-        }
-
-        internal override void ArrangeTest(Die.RandomiserReset reset = Die.RandomiserReset.None)
-        {
-            base.ArrangeTest(reset);
-
-            _room = RoomBuilder.BuildRoom(1);
         }
 
         internal static class RoomBuilderExpectations
@@ -101,7 +92,7 @@ namespace AssetsTests.RoomTests
             DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
             ArrangeTest();
 
-            AssertTest(_room.Maze, expectedRoom.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room.Maze, expectedRoom.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

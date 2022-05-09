@@ -7,7 +7,7 @@ namespace AssetsTests.Helpers
 {
     public class RoomBuilderTestHelpers : BuilderTestHelpers
     {
-        internal Room Room;
+        internal IRoom Room;
         public RoomBuilderTestHelpers(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder)
         : base(output, testName)
         {

@@ -7,31 +7,33 @@ namespace Assets.Level
 {
     internal class LevelCharacters
     {
-        public Me Me { get; }
+        private readonly Func<string, ICharacter> _meBuilder;
+        private readonly Func<string, ICharacter> _monsterBuilder;
+        private readonly int _monsterCount;
 
-        private readonly List<ICharacter> _levelCharacters = new List<ICharacter>();
-
-        public LevelCharacters(string meState, IResourceBuilder resourceBuilder, IDieBuilder dieBuilder, LevelDetail levelDetail)
+        public LevelCharacters(IResourceBuilder resourceBuilder, IDieBuilder dieBuilder, LevelDetail levelDetail)
         {
-            var meBuilder = resourceBuilder.MeBuilder();
-            Me = (Me)meBuilder("");
-
-            var monsterBuilder = resourceBuilder.MonsterBuilder();
-
-            var numMonsters = dieBuilder.Between(levelDetail.MonsterCount).Random;
-            for (int i = 0; i < numMonsters; i++)
-            {
-                var monster = monsterBuilder("");
-                _levelCharacters.Add(monster);
-            }
+            _meBuilder = resourceBuilder.MeBuilder();
+            _monsterBuilder = resourceBuilder.MonsterBuilder();
+            _monsterCount = dieBuilder.Between(levelDetail.MonsterCount).Random;
         }
 
-        public IEnumerable<ICharacter> Characters()
+        public Me BuildMe(string state)
         {
-            foreach (var levelCharacter in _levelCharacters)
+            return (Me)_meBuilder(state);
+        }
+
+        public IReadOnlyList<ICharacter> BuildCharacters()
+        {
+            var monsters = new List<ICharacter>();
+
+            for (int i = 0; i < _monsterCount; i++)
             {
-                yield return levelCharacter;
+                var monster = _monsterBuilder("");
+                monsters.Add(monster);
             }
+
+            return monsters;
         }
     }
 }

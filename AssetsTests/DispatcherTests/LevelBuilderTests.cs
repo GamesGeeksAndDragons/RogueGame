@@ -219,7 +219,7 @@ namespace AssetsTests.DispatcherTests
 
             IMaze Act()
             {
-                var (buildMaze, _, _) = LevelBuilder.Build(level);
+                var (buildMaze, _, _) = LevelBuilder.BuildNewGame(level);
                 Dispatcher.Dispatch();
                 return buildMaze;
             }

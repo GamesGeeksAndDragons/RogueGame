@@ -3,7 +3,6 @@ using System.Text;
 using Assets.Deeds;
 using Assets.Resources;
 using Assets.Rooms;
-using Assets.Tiles;
 using log4net;
 using Utils;
 using Utils.Dispatching;
@@ -36,9 +35,9 @@ namespace Assets.Mazes
             _resourceBuilder = resourceBuilder;
         }
 
-        private IList<Room> BuildRooms(string numRoomsBetween)
+        private IList<IRoom> BuildRooms(string numRoomsBetween)
         {
-            var rooms = new List<Room>();
+            var rooms = new List<IRoom>();
 
             var dice = _dieBuilder.Between(numRoomsBetween);
             var numRooms = dice.Random;
@@ -52,11 +51,11 @@ namespace Assets.Mazes
             return rooms;
         }
 
-        private void AddDoors(IList<Room> rooms)
+        private void AddDoors(IList<IRoom> rooms)
         {
             if (rooms.Count == 1) return;
 
-            var roomsWithDoors = new List<Room>(rooms);
+            var roomsWithDoors = new List<IRoom>(rooms);
 
             for (var index = 0; index < roomsWithDoors.Count; index++)
             {
@@ -69,7 +68,7 @@ namespace Assets.Mazes
                 connectedRoom.AddDoor(doorNumber);
             }
 
-            Room GetRoomToConnectTo(Room toConnect)
+            IRoom GetRoomToConnectTo(IRoom toConnect)
             {
                 var connectableRooms = roomsWithDoors.Where(room => !room.UniqueId.IsSame(toConnect.UniqueId)).ToArray();
                 if (connectableRooms.Length == 0) throw new ArgumentException("AddDoors: Unable to find a room to add a door to.");
@@ -118,7 +117,7 @@ namespace Assets.Mazes
                 return sb.ToString();
             }
 
-            IList<Room> RoomsWithDoors()
+            IList<IRoom> RoomsWithDoors()
             {
                 var roomsWithDoors = BuildRooms(numRooms);
                 AddDoors(roomsWithDoors);

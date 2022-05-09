@@ -1,6 +1,8 @@
 ﻿#nullable enable
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using Utils;
 
 namespace Assets.Game
 {
@@ -8,9 +10,17 @@ namespace Assets.Game
     {
         public GameConfig()
         {
-            IConfiguration Configuration = new ConfigurationBuilder()
-                .AddJsonFile("game.json", optional: true, reloadOnChange: true)
-                .Build();
+            //IConfiguration Configuration = new ConfigurationBuilder()
+            //    .AddJsonFile("game.json", optional: true, reloadOnChange: true)
+            //    .BuildNewGame();
+
+            Id = Guid.NewGuid();
+            Name = string.Empty;
+            Folder = Path.Join(".", FileAndDirectoryHelpers.LoadFolder, "Id");
         }
+
+        public Guid Id { get; }
+        public string Name { get; }
+        public string Folder { get; }
     }
 }

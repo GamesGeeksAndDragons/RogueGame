@@ -20,12 +20,18 @@ namespace Utils
         public static string CreateLoadFolder(string folder)
         {
             var fqn = GetLoadDirectory(folder);
-            if (!Directory.Exists(fqn))
-            {
-                Directory.CreateDirectory(fqn);
-            }
+            
+            CreateFolder(fqn);
 
             return fqn;
+        }
+
+        public static void CreateFolder(string folder)
+        {
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
         }
 
         public static string GetLoadDirectory(string folder)

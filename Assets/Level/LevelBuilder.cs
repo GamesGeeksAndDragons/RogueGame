@@ -12,7 +12,12 @@ using Utils.Random;
 
 namespace Assets.Level
 {
-    internal class LevelBuilder
+    internal interface ILevelBuilder
+    {
+        (IMaze, Me, IReadOnlyList<ICharacter>) BuildNewGame(int level);
+    }
+
+    internal class LevelBuilder : ILevelBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;
@@ -33,7 +38,7 @@ namespace Assets.Level
             _descriptor = new LevelDescriptor();
         }
 
-        internal (IMaze, Me, IList<ICharacter>) Build(int level)
+        public (IMaze, Me, IReadOnlyList<ICharacter>) BuildNewGame(int level)
         {
             var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
             var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
@@ -41,9 +46,9 @@ namespace Assets.Level
             var levelDetail = _descriptor[level];
             var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
 
-            var characterBuilder = new LevelCharacters("", _resourceBuilder, _dieBuilder, levelDetail);
-            var me = characterBuilder.Me;
-            var characters = characterBuilder.Characters().ToList();
+            var characterBuilder = new LevelCharacters(_resourceBuilder, _dieBuilder, levelDetail);
+            var me = characterBuilder.BuildMe("");
+            var characters = characterBuilder.BuildCharacters();
 
             TeleportMonsters();
             _dispatcher.EnqueueTeleport(me);

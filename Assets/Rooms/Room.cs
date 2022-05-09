@@ -13,10 +13,12 @@ using Utils.Random;
 
 namespace Assets.Rooms
 {
-    interface IRoom
+    public interface IRoom : IDispatched
     {
-        string Name { get; }
         (int Row, int Column) UpperBounds { get; }
+        void AddDoor(int doorNumber);
+        (Coordinate topLeft, Coordinate topRight, Coordinate bottomLeft, Coordinate bottomRight) GetSize();
+        IMaze Maze { get; }
     }
 
     internal class Room : Dispatched<Room>, IRoom
@@ -41,10 +43,8 @@ namespace Assets.Rooms
 
         public (int Row, int Column) UpperBounds => Maze.UpperBounds;
 
-        internal readonly IMaze Maze;
+        public IMaze Maze { get; }
         private readonly Func<int, string, IDispatched> _doorBuilder;
-
-        public string this[Coordinate coordinate] => Maze[coordinate];
 
         public void AddDoor(int doorNumber)
         {
