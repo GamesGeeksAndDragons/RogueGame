@@ -44,11 +44,11 @@ namespace Assets.Rooms
         public (int Row, int Column) UpperBounds => Maze.UpperBounds;
 
         public IMaze Maze { get; }
-        private readonly Func<int, string, IDispatched> _doorBuilder;
+        private readonly Func<string, string, IDispatched> _doorBuilder;
 
         public void AddDoor(int doorNumber)
         {
-            var newDoor = _doorBuilder(doorNumber, "");
+            var newDoor = _doorBuilder(doorNumber.ToDoorNumberString(), "");
 
             var walls = FindWallsWhichCanHoldDoors();
             if (walls.Count == 0) return;

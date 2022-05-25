@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using Assets.Characters;
 using Assets.Level;
 using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Personas;
 using Utils;
 
 namespace Assets.Game
@@ -34,7 +34,8 @@ namespace Assets.Game
         {
             FileAndDirectoryHelpers.CreateFolder(Folder);
 
-            (Maze, Me, Characters) = LevelBuilder.BuildNewGame(++Level);
+            var level = LevelBuilder.BuildNewGame();
+            Level++;
         }
     }
 }

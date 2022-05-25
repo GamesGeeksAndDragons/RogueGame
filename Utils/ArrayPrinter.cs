@@ -29,18 +29,18 @@ namespace Utils
             return GetAxis(array, ArrayHelpers.RowUpperBound);
         }
 
-        private static string[,] GetIntermediateArray<T>(this T[,] array, Func<T, string> printer)
+        private static string[,] GetIntermediateArray<T>(this T[,] array, Func<Coordinate, string> printer)
         {
             var rowMax = array.RowUpperBound();
             var colMax = array.ColumnUpperBound();
 
             var intermediate = new string[rowMax + 1, colMax + 1];
 
-            for (int row = 0; row <= rowMax; row++)
+            for (var row = 0; row <= rowMax; row++)
             {
-                for (int col = 0; col <= colMax; col++)
+                for (var col = 0; col <= colMax; col++)
                 {
-                    var item = array[row, col];
+                    var item = new Coordinate(row, col);
                     intermediate[row, col] = printer(item);
                 }
             }
@@ -170,43 +170,13 @@ namespace Utils
             return sb.ToString();
         }
 
-        public static string Print<T>(this T[,] array, Func<T, string>? printer = null)
+        public static string Print(this string[,] array, Func<Coordinate, string> printer)
         {
-            printer ??= t =>
-            {
-                var printed = t == null ? StringExtensions.EmptyString : t.ToString().RemoveNullable();
-                return printed;
-            };
-
             var intermediate = GetIntermediateArray(array, printer);
             var xAxis = GetColumnAxis(array);
             var yAxis = GetRowAxis(array);
 
             return Print(intermediate, xAxis, yAxis);
-        }
-
-        public static string PrintCoordinates<T>(this T[,] array)
-        {
-            var intermediate = BuildCoordinateArray(array);
-
-            return Print(intermediate);
-        }
-
-        private static Coordinate[,] BuildCoordinateArray<T>(T[,] array)
-        {
-            int maxColumns = array.ColumnUpperBound() + 1;
-            int maxRows = array.RowUpperBound() + 1;
-
-            var coordinateArray = new Coordinate[maxRows, maxColumns];
-            for (var row = 0; row < maxRows; row++)
-            {
-                for (var col = 0; col < maxColumns; col++)
-                {
-                    coordinateArray[row, col] = new Coordinate(row, col);
-                }
-            }
-
-            return coordinateArray;
         }
     }
 }

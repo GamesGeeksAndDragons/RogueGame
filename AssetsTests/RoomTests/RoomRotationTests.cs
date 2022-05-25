@@ -144,7 +144,7 @@ namespace AssetsTests.RoomTests
             DieBuilder = new FakeDieBuilder(4, roomNumber, rotateTimes+1);
             ArrangeTest();
 
-            AssertTest(Room.Maze, roomExpectation.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room, roomExpectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

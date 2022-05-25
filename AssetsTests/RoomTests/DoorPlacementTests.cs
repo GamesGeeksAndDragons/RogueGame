@@ -82,7 +82,7 @@ namespace AssetsTests.RoomTests
 7 |8¹¹¹╚══╝¹¹¹5|7 
 8 |║¹¹¹¹¹¹¹¹¹¹║|8 
 9 |Β¹¹¹¹¹¹¹¹¹¹7|9 
-10|╚Θ═Κ═6═Ι═Ζ═╝|10
+10|╚═Ι══6═Θ═Ζ═╝|10
 ------------------
   |012345678901|  
 ";
@@ -98,7 +98,7 @@ namespace AssetsTests.RoomTests
                 Room.AddDoor(i);
             }
 
-            AssertTest(Room.Maze, expectation.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room, expectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

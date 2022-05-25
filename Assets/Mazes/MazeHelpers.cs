@@ -6,17 +6,19 @@ using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
-using Utils.Enums;
-using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
+using Utils.Random;
+using TilesType = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Mazes
 {
     internal static class MazeHelpers
     {
-        internal static TileChanges GetTiles<TTileType>(this string[,] tiles, Func<string, IDispatched> getDispatched)
+        internal static TilesType GetTiles<TTileType>(this string[,] tiles)
         {
-            var tilesOfType = new TileChanges();
-            var tileType = typeof(TTileType).Name;
+            var tilesOfType = new TilesType();
+            var type = typeof(TTileType);
+            var tileType = type.Name;
+            if (type.IsInterface && tileType[0] == 'I') tileType = tileType.Right(tileType.Length-1);
 
             var (rowMax, colMax) = tiles.UpperBounds();
             for (var row = 0; row <= rowMax; row++)
@@ -26,8 +28,8 @@ namespace Assets.Mazes
                     var uniqueId = tiles[row, col];
                     if (uniqueId.IsNullOrEmpty()) continue;
 
-                    var dispatched = getDispatched(uniqueId);
-                    if(dispatched.Name != tileType) continue;
+                    var isType = uniqueId.StartsWith(tileType);
+                    if(!isType) continue;
 
                     var tile = (UniqueId: uniqueId, Coordinates: new Coordinate(row, col));
                     tilesOfType.Add( tile );
@@ -64,23 +66,16 @@ namespace Assets.Mazes
             return maze.RandomTile(dispatched => dispatched.IsRock(), checkedTiles);
         }
 
-        public static (IDispatched Dispatched, Coordinate Coordinates) RandomFloorTile(this IMaze maze, IList<string> checkedTiles, bool isTunnelTile, bool isOccupied)
+        public static (IFloor Tile, Coordinate Coordinates) RandomFloorTile(this IMaze maze, IDieBuilder dieBuilder, IList<string> checkedTiles, bool isTunnelTile)
         {
-            return maze.RandomTile(dispatched =>
-            {
-                if (!dispatched.IsFloor()) return false;
+            var floorTiles = maze.GetTiles<IFloor>(tile => 
+                tile.Tile.IsTunnel == isTunnelTile && 
+                ! checkedTiles.Contains(tile.Tile.UniqueId));
 
-                var floor = (Floor) dispatched;
-                
-                if (isTunnelTile != floor.IsTunnel) return false;
-
-                return IsOccupied() == isOccupied;
-
-                bool IsOccupied()
-                {
-                    return ! floor.Contained.IsNull();
-                }
-            }, checkedTiles);
+            var randomIndex = dieBuilder.Between(1, floorTiles.Count).Random - 1;
+            var randomTile = floorTiles[randomIndex];
+            checkedTiles.Add(randomTile.Tile.UniqueId);
+            return randomTile;
         }
 
         public static void DefaultTiles(this string[,] tiles, Func<IDispatched> resourceBuilder)
@@ -100,10 +95,10 @@ namespace Assets.Mazes
             }
         }
 
-        public static void ConnectDoorsWithCorridors(this IMaze maze, TileChanges changes, IDispatchRegistry dispatchRegistry, IResourceBuilder builder)
+        public static void ConnectDoorsWithCorridors(this IMaze maze, TilesType changes, IDispatchRegistry dispatchRegistry, IResourceBuilder builder)
         {
             var floorBuilder = builder.FloorBuilder();
-            IDispatched FloorForTunnel() => floorBuilder(0, "");
+            IDispatched FloorForTunnel() => floorBuilder(TilesDisplay.Tunnel, "");
 
             var tunnel = BuildTunnelTiles(changes);
 
@@ -111,7 +106,7 @@ namespace Assets.Mazes
 
             dispatchRegistry.Unregister(replaced);
             
-            TileChanges BuildTunnelTiles(TileChanges projectedLine)
+            TilesType BuildTunnelTiles(TilesType projectedLine)
             {
                 var extracted = projectedLine.Where(tile => IsTileType<Rock>(maze, tile.Coordinates)).ToList();
                 return extracted

@@ -3,7 +3,7 @@ using Utils;
 
 namespace Assets.Level
 {
-    internal record struct LevelDetail(string NumRooms, string RoomSelection, string MonsterCount);
+    internal record struct LevelDetail(string NumRooms, string RoomSelection, string CharacterDie);
 
     internal interface ILevelDescriptor
     {

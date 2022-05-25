@@ -2,13 +2,12 @@
 using Assets.Deeds;
 using Assets.Messaging;
 using Assets.Resources;
-using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
 using Utils.Random;
-using TileChanges = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
+using TilesType = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Mazes
 {
@@ -16,9 +15,8 @@ namespace Assets.Mazes
     {
         bool IsInside(Coordinate coordinate);
         (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition, IList<string> checkedTiles);
-        TileChanges GetTiles<TTileType>();
-        string[] Replace(TileChanges state);
-        bool MoveOnto(string name, IFloor floor);
+        IReadOnlyList<(TTileType Tile, Coordinate Coordinates)> GetTiles<TTileType>(Predicate<(TTileType Tile, Coordinate Coordinates)>? tilePredicate = null);
+        string[] Replace(TilesType state);
         void Grow();
 
         (int Row, int Column) UpperBounds { get; }
@@ -74,15 +72,31 @@ namespace Assets.Mazes
                     for (int colIndex = 0; colIndex < noColumns; colIndex++)
                     {
                         var actor = row[colIndex].ToString();
-                        tiles[rowIndex, colIndex] = ResourceBuilder.BuildResource(actor).UniqueId;
+                        var builder = GetResourceBuilder(actor);
+                        var resource = builder(actor, "");
+                        tiles[rowIndex, colIndex] = resource.UniqueId;
                     }
                 }
 
                 return tiles;
+
+                Func<string, string, IDispatched> GetResourceBuilder(string actor)
+                {
+                    var resourceType = actor.GetResourceType();
+                    return resourceType switch
+                    {
+                        ResourceType.Floor => ResourceBuilder.FloorBuilder(),
+                        ResourceType.Wall => ResourceBuilder.WallBuilder(),
+                        ResourceType.Rock => ResourceBuilder.RockBuilder(),
+                        ResourceType.Door => ResourceBuilder.DoorBuilder(),
+                        ResourceType.Null => ResourceBuilder.NullBuilder(),
+                        _ => throw new ArgumentException($"Unable to find a builder for [{actor}]")
+                    };
+                }
             }
         }
 
-        public string[] Replace(TileChanges state)
+        public string[] Replace(TilesType state)
         {
             var replaced = new List<string>();
 
@@ -94,14 +108,6 @@ namespace Assets.Mazes
             }
 
             return replaced.ToArray();
-        }
-
-        public bool MoveOnto(string name, IFloor floor)
-        {
-            var mover = DispatchRegistry.GetDispatched(name);
-            floor.Contains(mover);
-
-            return true;
         }
 
         public bool IsInside(Coordinate coordinate)
@@ -147,9 +153,16 @@ namespace Assets.Mazes
             }
         }
 
-        public TileChanges GetTiles<TTileType>()
+        public IReadOnlyList<(TTileType Tile, Coordinate Coordinates)> GetTiles<TTileType>(Predicate<(TTileType Tile, Coordinate Coordinates)>? tilePredicate = null)
         {
-            return Tiles.GetTiles<TTileType>(DispatchRegistry.GetDispatched);
+            tilePredicate ??= _ => true;
+
+            var tiles = Tiles.GetTiles<TTileType>()
+                .Select(tile => ((TTileType)DispatchRegistry.GetDispatched(tile.UniqueId), tile.Coordinates))
+                .Where(tile => tilePredicate(tile))
+                .ToList();
+
+            return tiles;
         }
 
         public string this[Coordinate point]

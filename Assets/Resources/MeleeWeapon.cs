@@ -1,7 +1,7 @@
 ﻿#nullable enable
-using Assets.Characters;
 using Assets.Deeds;
 using Assets.Messaging;
+using Assets.Personas;
 using Utils;
 using Utils.Display;
 using Utils.Random;
@@ -118,7 +118,7 @@ namespace Assets.Resources
 
             for (var i = 0; i < NumRolls; i++)
             {
-                sum += _randomNumbers.Dice(MaxPoints).Random;
+                sum += _randomNumbers.Between(1, MaxPoints).Random;
             }
 
             return sum;

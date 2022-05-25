@@ -92,7 +92,7 @@ namespace AssetsTests.RoomTests
             DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
             ArrangeTest();
 
-            AssertTest(Room.Maze, expectedRoom.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room, expectedRoom.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]

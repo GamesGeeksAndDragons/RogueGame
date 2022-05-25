@@ -1,4 +1,4 @@
-﻿using Assets.Mazes;
+﻿using Assets.Level;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -6,7 +6,7 @@ namespace AssetsTests.Helpers
 {
     public abstract class  MazeTestHelper : LevelBuilderTestHelpers
     {
-        public IMaze Maze { get; protected set; }
+        public IGameLevel GameLevel { get; protected set; }
 
         protected MazeTestHelper(ITestOutputHelper output) 
             : base(output)
@@ -18,20 +18,15 @@ namespace AssetsTests.Helpers
             base.ArrangeTest();
 
             Output.OutputMazes(expectations.StartingMaze);
-            Maze = LoadMaze(expectations.StartingMaze);
 
-            IMaze LoadMaze(string loaded)
-            {
-                var maze = new Maze(DispatchRegistry, ActionRegistry, DieBuilder, ResourceBuilder, loaded);
-                return maze;
-            }
+            GameLevel = LevelBuilder.BuildExistingLevel(1, expectations.StartingMaze);
         }
 
         protected abstract void TestAct();
 
         protected virtual void TestAssert(IMazeExpectations expectations)
         {
-            var actual = Maze.Print(DispatchRegistry);
+            var actual = GameLevel.Print(DispatchRegistry);
             Output.OutputMazes(expectations.ExpectedMaze, actual);
 
             Assert.Equal(expectations.ExpectedMaze, actual);

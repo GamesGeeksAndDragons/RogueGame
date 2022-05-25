@@ -1,5 +1,4 @@
-﻿using Assets.Mazes;
-using AssetsTests.Helpers;
+﻿using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,8 +13,8 @@ namespace AssetsTests.MazeTests
 
         protected override void TestAct()
         {
-            var changes = Maze.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
-            Maze.ConnectDoorsWithCorridors(changes, DispatchRegistry, ResourceBuilder);
+            var changes = GameLevel.Maze.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, DieBuilder);
+            GameLevel.Maze.ConnectDoorsWithCorridors(changes, DispatchRegistry, ResourceBuilder);
         }
 
         private void ConnectDoorTestsImpl(IMazeExpectations expectations)

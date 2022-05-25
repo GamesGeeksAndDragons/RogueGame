@@ -80,29 +80,36 @@ namespace Assets.Rooms
 
         public IRoom BuildRoom(int roomNumber)
         {
-            var roomIndex = _dieBuilder.D4.Random;
-            var roomDescription = _rooms[roomIndex];
-
+            var roomIndex = _dieBuilder.Between(1,4).Random;
+            var roomDescription = GetRoom();
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, roomDescription);
 
             var floorBuilder = _resourceBuilder.FloorBuilder();
 
-            var floorTiles = maze.GetTiles<Floor>();
+            var floorTiles = maze.GetTiles<IFloor>();
+
             foreach (var floorTile in floorTiles)
             {
                 var coordinates = floorTile.Coordinates;
-                var floor = floorBuilder(roomNumber, "");
+                var floor = floorBuilder(roomNumber.ToRoomNumberString(), "");
                 maze[coordinates] = floor.UniqueId;
-                _dispatchRegistry.Unregister(floorTile.UniqueId);
+                _dispatchRegistry.Unregister(floorTile.Tile.UniqueId);
             }
 
             var room = new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
 
             return RotateRoom();
 
+            string GetRoom()
+            {
+                var baseRoom = _rooms[roomIndex];
+                var number = TilesDisplay.RoomNumberOfFloor[roomNumber];
+                return baseRoom.Replace(TilesDisplay.Tunnel, number);
+            }
+
             IRoom RotateRoom()
             {
-                var rotation = _dieBuilder.D4.Random - 1;
+                var rotation = _dieBuilder.Between(1,4).Random - 1;
                 if (rotation == 0) return room;
 
                 return BuildRotatedRoom(room, rotation);

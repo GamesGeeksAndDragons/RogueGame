@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using Assets.Level;
+using Assets.Personas;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
@@ -6,7 +8,7 @@ namespace Assets.Deeds
 {
     class StrikeAction : Action
     {
-        public override void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue)
+        public override void Act(IGameLevel level, ICharacter who, string actionValue)
         {
             //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
             //if (coordindates != Coordinates) return;

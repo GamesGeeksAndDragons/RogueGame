@@ -1,7 +1,5 @@
 ﻿#nullable enable
-using Assets.Characters;
 using Assets.Deeds;
-using Utils;
 using Utils.Dispatching;
 using Utils.Display;
 using Utils.Enums;
@@ -11,14 +9,12 @@ namespace Assets.Resources
 {
     public interface IResourceBuilder
     {
-        IDispatched BuildResource(string actor, string state = "");
-        Func<string, IDispatched> RockBuilder();
         Func<IDispatched> DefaultRockBuilder();
-        Func<int, string, IDispatched> FloorBuilder();
-        Func<int, string, IDispatched> DoorBuilder();
-        Func<WallDirection, string, IDispatched> WallBuilder();
-        Func<string, ICharacter> MeBuilder();
-        Func<string, ICharacter> MonsterBuilder();
+        Func<string, string, IDispatched> RockBuilder();
+        Func<string, string, IDispatched> FloorBuilder();
+        Func<string, string, IDispatched> DoorBuilder();
+        Func<string, string, IDispatched> NullBuilder();
+        Func<string, string, IDispatched> WallBuilder();
     }
 
     internal class ResourceBuilder : IResourceBuilder
@@ -36,8 +32,6 @@ namespace Assets.Resources
             {
                 {TilesDisplay.Rock,  TilesBuilderMethods.BuildRock},
                 {TilesDisplay.Null, TilesBuilderMethods.BuildNull},
-                {CharacterDisplay.Me, CharacterBuilderMethods.BuildMe},
-                {CharacterDisplay.DebugMonster, CharacterBuilderMethods.BuildMonster},
             };
 
             foreach (var wall in TilesDisplay.Walls)
@@ -56,7 +50,7 @@ namespace Assets.Resources
             }
         }
 
-        public IDispatched BuildResource(string actor, string state="")
+        private IDispatched BuildResource(string actor, string state="")
         {
             if (_builderMethods.TryGetValue(actor, out var builder))
             {
@@ -66,12 +60,11 @@ namespace Assets.Resources
             throw new ArgumentException($"Unable to find Actor Builder for [{actor}]");
         }
 
-        public Func<string, IDispatched> RockBuilder() => (state) => BuildResource(TilesDisplay.Rock, state);
         public Func<IDispatched> DefaultRockBuilder() => () => BuildResource(TilesDisplay.Rock, "");
-        public Func<int, string, IDispatched> FloorBuilder() => (roomNumber, state) => BuildResource(roomNumber.ToRoomNumberString(), state);
-        public Func<int, string, IDispatched> DoorBuilder() => (doorNumber, state) => BuildResource(doorNumber.ToDoorNumberString(), state);
-        public Func<WallDirection, string, IDispatched> WallBuilder() => (wall, state) => BuildResource(wall.ToString(), state);
-        public Func<string, ICharacter> MeBuilder() => (state) => (ICharacter)BuildResource(CharacterDisplay.Me, state);
-        public Func<string, ICharacter> MonsterBuilder() => (state) => (ICharacter)BuildResource(CharacterDisplay.DebugMonster, state);
+        public Func<string, string, IDispatched> RockBuilder() => BuildResource;
+        public Func<string, string, IDispatched> FloorBuilder() => BuildResource;
+        public Func<string, string, IDispatched> DoorBuilder() => BuildResource;
+        public Func<string, string, IDispatched> NullBuilder() => BuildResource;
+        public Func<string, string, IDispatched> WallBuilder() => BuildResource;
     }
 }

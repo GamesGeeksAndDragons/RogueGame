@@ -1,5 +1,4 @@
-﻿using Assets.Characters;
-using Assets.Deeds;
+﻿using Assets.Deeds;
 using Assets.Tiles;
 using Utils.Dispatching;
 using Utils.Enums;

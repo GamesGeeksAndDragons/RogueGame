@@ -1,4 +1,6 @@
 ﻿#nullable enable
+using Assets.Level;
+using Assets.Personas;
 using Utils;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
@@ -21,7 +23,7 @@ namespace Assets.Deeds
             //_dispatcher.EnqueueStrike(Owner, hit, damage);
         }
 
-        public override void Act(IDispatchRegistry dispatchRegistry, IDispatched dispatched, string actionValue)
+        public override void Act(IGameLevel level, ICharacter who, string actionValue)
         {
             throw new System.NotImplementedException();
         }

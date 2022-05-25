@@ -43,7 +43,7 @@ namespace Assets.Mazes
                 var doors = maze.GetTiles<Door>();
 
                 return doors
-                    .Select(tile => (Door)dispatchRegistry.GetDispatched(tile.UniqueId))
+                    .Select(tile => tile.Tile)
                     .ToList();
             }
         }

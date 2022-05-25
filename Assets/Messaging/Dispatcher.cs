@@ -1,6 +1,7 @@
 ﻿#nullable enable
-using Assets.Characters;
 using Assets.Deeds;
+using Assets.Level;
+using Assets.Personas;
 using Utils;
 using Utils.Dispatching;
 using Utils.Enums;
@@ -9,10 +10,10 @@ namespace Assets.Messaging
 {
     public interface IDispatcher
     {
-        void EnqueueTeleport(ICharacter who);
-        void EnqueueMove(ICharacter who, Compass8Points direction);
-        void EnqueueUse(ICharacter who, Compass8Points direction);
-        void EnqueueStrike(string name, int hit, int damage);
+        void EnqueueTeleport(IGameLevel level, ICharacter who);
+        void EnqueueMove(IGameLevel level, ICharacter who, Compass8Points direction);
+        void EnqueueUse(IGameLevel level, ICharacter who, Compass8Points direction);
+        void EnqueueStrike(IGameLevel level, string name, int hit, int damage);
         void Dispatch();
     }
 
@@ -20,7 +21,7 @@ namespace Assets.Messaging
     {
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
-        private readonly Queue<(ICharacter Dispatched, string Parameters)> _actionQueue = new Queue<(ICharacter Dispatched, string Parameters)>();
+        private readonly Queue<(IGameLevel Level, ICharacter Who, string ActionValue)> _actionQueue = new Queue<(IGameLevel Level, ICharacter Who, string ActionValue)>();
 
         public Dispatcher(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry)
         {
@@ -28,30 +29,30 @@ namespace Assets.Messaging
             _actionRegistry = actionRegistry;
         }
 
-        private void Enqueue(ICharacter who, string parameters)
+        private void Enqueue(IGameLevel level, ICharacter who, string parameters)
         {
-            _actionQueue.Enqueue((who, parameters));
+            _actionQueue.Enqueue((level, who, parameters));
         }
 
 
-        public void EnqueueTeleport(ICharacter who)
+        public void EnqueueTeleport(IGameLevel level, ICharacter who)
         {
-            var parameters = Deed.Teleport.FormatParameter("");
-            Enqueue(who, parameters);
+            var parameters = Deed.Teleport.FormatParameter(who.Position);
+            Enqueue(level, who, parameters);
         }
 
-        public void EnqueueMove(ICharacter who, Compass8Points direction)
+        public void EnqueueMove(IGameLevel level, ICharacter who, Compass8Points direction)
         {
             var parameters = Deed.Move.FormatParameter(direction);
-            Enqueue(who, parameters);
+            Enqueue(level, who, parameters);
         }
 
-        public void EnqueueUse(ICharacter who, Compass8Points direction)
+        public void EnqueueUse(IGameLevel level, ICharacter who, Compass8Points direction)
         {
-            EnqueueMove(who, direction);
+            EnqueueMove(level, who, direction);
         }
 
-        public void EnqueueStrike(string name, int hit, int damage)
+        public void EnqueueStrike(IGameLevel level, string name, int hit, int damage)
         {
             var who = (ICharacter)_dispatchRegistry.GetDispatched(name);
 
@@ -59,25 +60,25 @@ namespace Assets.Messaging
 //                .AppendParameter("Damage", damage)
                 ;
 
-            Enqueue(who, parameters);
+            Enqueue(level, who, parameters);
         }
 
         public void Dispatch()
         {
             while (_actionQueue.Count != 0)
             {
-                var (who, parameters) = _actionQueue.Dequeue();
-                ActionDispatch(who, parameters);
+                var (level, who, parameters) = _actionQueue.Dequeue();
+                ActionDispatch(level, who, parameters);
             }
 
-            void ActionDispatch(ICharacter who, string parameters)
+            void ActionDispatch(IGameLevel level, ICharacter who, string parameters)
             {
                 var parametersList = parameters.ToParameters();
 
                 foreach (var parameter in parametersList)
                 {
                     var action = _actionRegistry.GetAction(who.Name, parameter.Name);
-                    action.Act(_dispatchRegistry, who, parameter.Value);
+                    action.Act(level, who, parameter.Value);
                 }
             }
     }

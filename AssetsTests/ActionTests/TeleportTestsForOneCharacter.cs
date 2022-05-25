@@ -1,8 +1,7 @@
-﻿using Assets.Characters;
-using Assets.Messaging;
+﻿using System.Linq;
+using Assets.Level;
+using AssetsTests.Fakes;
 using AssetsTests.Helpers;
-using Utils;
-using Utils.Display;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,21 +13,12 @@ namespace AssetsTests.ActionTests
         {
         }
 
-        protected override void TestArrange(IMazeExpectations expectations)
-        {
-            base.TestArrange(expectations);
-
-            var meBuilder = ResourceBuilder.MeBuilder();
-            var me = meBuilder("");
-
-            Dispatcher.EnqueueTeleport(me);
-        }
-
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
         public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacter(int testNum)
         {
+            DieBuilder = new FakeDieBuilder(1, testNum-1, 1, 1, 1);
             var expectations = ActionTestsDefinitions.GetExpectations(testNum);
 
             TestArrange(expectations);
@@ -50,17 +40,8 @@ namespace AssetsTests.ActionTests
 
         protected override void TestArrange(IMazeExpectations expectations)
         {
+            DieBuilder = new FakeDieBuilder(1, 1);
             base.TestArrange(expectations);
-
-            var monsterBuilder = ResourceBuilder.MonsterBuilder();
-            var monster = monsterBuilder("");
-
-            Dispatcher.EnqueueTeleport(monster);
-
-            var meBuilder = ResourceBuilder.MeBuilder();
-            var me = meBuilder("");
-
-            Dispatcher.EnqueueTeleport(me);
         }
 
         [Theory]

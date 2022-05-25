@@ -2,7 +2,7 @@
 using Assets.Deeds;
 using Utils.Dispatching;
 
-namespace Assets.Characters
+namespace Assets.Personas
 {
     internal class Me : Character<Me>
     {
