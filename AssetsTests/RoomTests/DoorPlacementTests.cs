@@ -104,7 +104,7 @@ namespace AssetsTests.RoomTests
 ";
         }
 
-        public void DoorPlacementTest(string roomName, int numDoors, string expectation)
+        private void DoorPlacementTest(string roomName, int numDoors, string expectation)
         {
             var room = ArrangeTest(roomName, _testName, _output, Die.RandomiserReset.Index);
 
