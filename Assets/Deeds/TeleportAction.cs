@@ -1,29 +1,32 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Level;
+using Assets.Mazes;
+using Assets.Personas;
 using Assets.Tiles;
 using Utils.Coordinates;
-using Utils.Dispatching;
 
 namespace Assets.Deeds
 {
     internal class TeleportAction : Action
     {
-        public override void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IGameLevel level, ICharacter who, string actionValue)
         {
+            var maze = level.Maze;
+
+            var checkedTiles = new List<string>();
             var floorTile = RandomEmptyFloorTile();
 
-            var moved = Tiles.MoveOnto(dispatchee.UniqueId, floorTile.Floor);
-
-            if (moved)
-            {
-                var character = (ICharacter)dispatchee;
-                character.Position = floorTile.Coordinates;
-            }
+            who.Position = floorTile.Coordinates;
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {
-                var tile = Tiles.RandomFloorTile(false);
+                var tile = maze.RandomFloorTile(level.DieBuilder, checkedTiles, false);
+                while (level[tile.Coordinates] != null)
+                {
+                    tile = maze.RandomFloorTile(level.DieBuilder, checkedTiles, false);
+                }
 
-                return ((IFloor) tile.Dispatchee, tile.Coordinates);
+                return ((IFloor) tile.Tile, tile.Coordinates);
             }
         }
     }

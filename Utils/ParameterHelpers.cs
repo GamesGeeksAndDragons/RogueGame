@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿#nullable enable
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
@@ -14,27 +12,21 @@ namespace Utils
     public static class ParameterHelpers
     {
         private const char NameParameterTerminator = ';';
-        private const string EmptyString = "string.Empty";
 
         public static (string Name, string Value) ToParameter(this string name, string value)
         {
             return (Name: name, Value: value);
         }
 
-        public static string FormatParameter(this Coordinate coordinate, string name = null)
+        public static string FormatParameter(this Coordinate coordinate, string name = StringExtensions.EmptyString)
         {
-            if (name.IsNullOrEmpty())
-            {
-                name = EmptyString;
-            }
-
             return FormatParameter(name, coordinate.ToString());
         }
 
-        public static string FormatParameter(this string name, string value)
+        public static string FormatParameter(this string name, string value = StringExtensions.EmptyString)
         {
             name.ThrowIfEmpty(nameof(name));
-            if (value.IsNullOrEmptyOrWhiteSpace()) value = EmptyString;
+            if (value.IsNullOrEmpty()) value = StringExtensions.EmptyString;
 
             return $"{name} {value}{NameParameterTerminator}";
         }
@@ -42,7 +34,8 @@ namespace Utils
         public static string FormatParameter<T>(this string name, T value) 
             where T : struct
         {
-            return FormatParameter(name, value.ToString());
+            var str = value.ToString().RemoveNullable();
+            return FormatParameter(name, str);
         }
 
         public static Parameters AppendParameter(this Parameters parameters, string name, string value)
@@ -55,7 +48,7 @@ namespace Utils
         public static Parameters AppendParameter<T>(this Parameters parameters, string name, T value)
             where T : struct
         {
-            var str = value.ToString();
+            var str = value.ToString().RemoveNullable();
             return parameters.AppendParameter(name, str);
         }
 
@@ -84,12 +77,12 @@ namespace Utils
             var parameters = new List<(string name, string parameter)>();
             for (var i = 0; i < matches.Count; i += 2)
             {
-                parameters.Add(ToParameter(i));
+                parameters.Add(ToIntParameter(i));
             }
 
             return parameters;
 
-            (string Name, string Value) ToParameter(int i)
+            (string Name, string Value) ToIntParameter(int i)
             {
                 return (matches[i], matches[i + 1]);
             }
@@ -129,11 +122,11 @@ namespace Utils
             return parameters.Single(param => param.Name == name).Value;
         }
 
-        public static IDispatchee GetDispatchee(this Parameters parameters, string name, IDispatchRegistry registry)
+        public static IDispatched GetDispatched(this Parameters parameters, string name, IDispatchRegistry registry)
         {
             var value = parameters.ToString(name);
 
-            return registry.GetDispatchee(value);
+            return registry.GetDispatched(value);
         }
 
         public static bool HasValue(this Parameters parameters, string name)

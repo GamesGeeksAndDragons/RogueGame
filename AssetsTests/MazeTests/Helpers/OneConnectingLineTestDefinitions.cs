@@ -1,43 +1,43 @@
 ﻿using AssetsTests.Helpers;
 
-namespace AssetsTests.MazeTests.Helpers
+namespace AssetsTests.MazeTests.Helpers;
+
+internal static class OneConnectingLineTestDefinitions
 {
-    internal static class OneConnectingLineTestDefinitions
+    class Test1 : MazeExpectations
     {
-        class Test1 : MazeExpectations
-        {
-            protected override string Start => @"
+        protected override string Start => @"
 ██████████████████
 ██████████████████
 ██████████████████
 ███╔═╗██████╔═╗███
-███║ ║██████║ ║███
+███║ω║██████║ψ║███
 ███╚1╝██████╚2╝███
 ██████████████████
 ██████████████████
 ██████████████████
 ███╔1╗██████╔2╗███
-███║ ║██████║ ║███
+███║χ║██████║φ║███
 ███╚═╝██████╚═╝███
 ██████████████████
 ██████████████████
 ██████████████████
 ";
 
-            protected override string Expected => @"
+        protected override string Expected => @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
 1 |██████████████████|1 
 2 |██████████████████|2 
 3 |███╔═╗██████╔═╗███|3 
-4 |███║ ║██████║ ║███|4 
+4 |███║ω║██████║ψ║███|4 
 5 |███╚1╝██████╚2╝███|5 
-6 |████ ████████ ████|6 
-7 |████ ████████ ████|7 
-8 |████ ████████ ████|8 
+6 |████⁰████████⁰████|6 
+7 |████⁰████████⁰████|7 
+8 |████⁰████████⁰████|8 
 9 |███╔1╗██████╔2╗███|9 
-10|███║ ║██████║ ║███|10
+10|███║χ║██████║φ║███|10
 11|███╚═╝██████╚═╝███|11
 12|██████████████████|12
 13|██████████████████|13
@@ -45,42 +45,42 @@ namespace AssetsTests.MazeTests.Helpers
 ------------------------
   |012345678901234567|  
 ";
-        }
+    }
 
-        class Test2 : MazeExpectations
-        {
-            protected override string Start => @"
+    class Test2 : MazeExpectations
+    {
+        protected override string Start => @"
 ██████████████████
 ██████████████████
 ██████████████████
 ███╔═╗██████╔═╗███
-███║ 1██████1 ║███
+███║υ1██████1τ║███
 ███╚═╝██████╚═╝███
 ██████████████████
 ██████████████████
 ██████████████████
 ███╔═╗██████╔═╗███
-███║ 2██████2 ║███
+███║σ2██████2ς║███
 ███╚═╝██████╚═╝███
 ██████████████████
 ██████████████████
 ██████████████████
 ";
 
-            protected override string Expected => @"
+        protected override string Expected => @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
 1 |██████████████████|1 
 2 |██████████████████|2 
 3 |███╔═╗██████╔═╗███|3 
-4 |███║ 1      1 ║███|4 
+4 |███║υ1⁰⁰⁰⁰⁰⁰1τ║███|4 
 5 |███╚═╝██████╚═╝███|5 
 6 |██████████████████|6 
 7 |██████████████████|7 
 8 |██████████████████|8 
 9 |███╔═╗██████╔═╗███|9 
-10|███║ 2      2 ║███|10
+10|███║σ2⁰⁰⁰⁰⁰⁰2ς║███|10
 11|███╚═╝██████╚═╝███|11
 12|██████████████████|12
 13|██████████████████|13
@@ -88,18 +88,17 @@ namespace AssetsTests.MazeTests.Helpers
 ------------------------
   |012345678901234567|  
 ";
-        }
+    }
 
-        internal static IMazeExpectations GetExpectations(int testNumber)
+    internal static IMazeExpectations GetExpectations(int testNumber)
+    {
+        switch (testNumber)
         {
-            switch (testNumber)
-            {
-                case 1: return new Test1();
-                case 2: return new Test2();
-            }
-
-            testNumber.ThrowUnknownTest();
-            return null;
+            case 1: return new Test1();
+            case 2: return new Test2();
         }
+
+        testNumber.ThrowUnknownTest();
+        return null;
     }
 }

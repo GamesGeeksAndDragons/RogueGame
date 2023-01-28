@@ -1,5 +1,8 @@
-﻿using Assets.Actors;
+﻿#nullable enable
+using Assets.Level;
+using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Personas;
 using Assets.Tiles;
 using Utils;
 using Utils.Coordinates;
@@ -8,33 +11,22 @@ using Utils.Enums;
 
 namespace Assets.Deeds
 {
-    internal abstract class Action : IAction
-    {
-        internal ITiles Tiles { get; set; }
-
-        public abstract void Act(IDispatchee dispatchee, string actionValue);
-    }
-
     class MoveAction : Action
     {
-        public override void Act(IDispatchee dispatchee, string actionValue)
+        public override void Act(IGameLevel level, ICharacter who, string actionValue)
         {
-            var character = (ICharacter)dispatchee;
-
-            var oldCoordinates = character.Position;
+            var oldCoordinates = who.Position;
             var direction = actionValue.ToEnum<Compass8Points>();
             var newCoordinates = oldCoordinates.Move(direction);
 
-            var newTile = Tiles.GetDispatchee(newCoordinates);
-            if (!newTile.IsFloor()) return;
-            var to = (Floor)newTile;
+            var tile = level.Maze.GetDispatched(newCoordinates);
+            var canWalkTo = tile.IsFloor() || tile.IsDoor();
+            if (!canWalkTo) return;
 
-            var moved = Tiles.MoveOnto(dispatchee.UniqueId, to);
-            if (!moved) return;
+            var atNewCoordinates = level[newCoordinates];
+            if (atNewCoordinates != null) return;
 
-            character.Position = newCoordinates;
-            var from = (Floor)Tiles.GetDispatchee(oldCoordinates);
-            from.Contains = null;
+            who.Position = newCoordinates;
         }
     }
 }

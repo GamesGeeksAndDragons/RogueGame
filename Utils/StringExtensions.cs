@@ -1,5 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿#nullable enable
+#nullable enable
+using System.Globalization;
+using System.Text;
 
 namespace Utils
 {
@@ -40,12 +42,12 @@ namespace Utils
             return str.Any(char.IsWhiteSpace);
         }
 
-        public static bool IsNullOrEmpty(this string str)
+        public static bool IsNullOrEmpty(this string? str)
         {
             return string.IsNullOrEmpty(str);
         }
 
-        public static bool IsNullOrEmptyOrWhiteSpace(this string str)
+        public static bool IsNullOrEmptyOrWhiteSpace(this string? str)
         {
             return string.IsNullOrWhiteSpace(str);
         }
@@ -79,6 +81,37 @@ namespace Utils
             return str.Split(CharHelpers.EndOfLine)
                 .Where(line => ! line.IsNullOrEmpty())
                 .ToArray();
+        }
+
+        public static string Join(this IEnumerable<string> toJoin, string separator="") => string.Join(separator, toJoin);
+
+        public const string EmptyString = "string.Empty";
+
+        public static string RemoveNullable(this string? str, string nullValue = EmptyString)
+        {
+            return str ?? nullValue;
+        }
+
+        public static string ToHexString(this int num, bool useHexPrefix=false)
+        {
+            var hex = num.ToString("X");
+            if (!useHexPrefix) return hex;
+            return "0x" + hex;
+        }
+
+        public static int FromHexString(this string value)
+        {
+            if (value.IsSame("0x"))
+            {
+                value = value.Substring(2);
+            }
+
+            return int.Parse(value, NumberStyles.HexNumber);
+        }
+
+        public static string Intern(this string str)
+        {
+            return string.Intern(str);
         }
     }
 

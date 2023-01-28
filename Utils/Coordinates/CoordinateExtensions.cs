@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿#nullable enable
 using Utils.Enums;
 
 namespace Utils.Coordinates

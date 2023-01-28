@@ -27,7 +27,7 @@ namespace UtilsTests
 
             for (int i = 0; i < numRolls; i++)
             {
-                rolls[i] = generator.Dice(points).Random;
+                rolls[i] = generator.Between(1, points).Random;
             }
 
             var keys = new List<int>();

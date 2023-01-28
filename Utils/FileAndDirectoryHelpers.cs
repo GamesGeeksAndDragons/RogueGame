@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-
+﻿#nullable enable
 namespace Utils
 {
     public static class FileAndDirectoryHelpers
@@ -10,17 +8,28 @@ namespace Utils
             return Path.ChangeExtension(file, extension);
         }
 
+        public static bool HasExtension(this string filename, string extension)
+        {
+            return Path.HasExtension(filename) && Path.GetExtension(filename).IsSame(extension);
+        }
+
         public const string LoadFolder = "Rogue";
 
         public static string CreateLoadFolder(string folder)
         {
             var fqn = GetLoadDirectory(folder);
-            if (!Directory.Exists(fqn))
-            {
-                Directory.CreateDirectory(fqn);
-            }
+            
+            CreateFolder(fqn);
 
             return fqn;
+        }
+
+        public static void CreateFolder(string folder)
+        {
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
         }
 
         public static string GetLoadDirectory(string folder)

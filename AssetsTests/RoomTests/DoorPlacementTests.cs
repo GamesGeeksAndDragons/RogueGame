@@ -1,19 +1,19 @@
-﻿using Utils;
+﻿using Assets.Rooms;
+using AssetsTests.Fakes;
+using AssetsTests.Helpers;
+using Utils;
+using Utils.Display;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.RoomTests
 {
-    public class DoorPlacementTests : RoomTestHelpers
+    public class DoorPlacementTests : RoomBuilderTestHelpers
     {
-        private readonly ITestOutputHelper _output;
-        private readonly string _testName;
-
         public DoorPlacementTests(ITestOutputHelper output)
+        : base(output, nameof(DoorPlacementTests))
         {
-            _output = output;
-            _testName = nameof(DoorPlacementTests);
         }
 
         internal static class DoorPlacementExpectations
@@ -21,15 +21,15 @@ namespace AssetsTests.RoomTests
             public const string RectangleWithOneDoor = @"
  |0123456| 
 -----------
-0|╔══1══╗|0
-1|║     ║|1
-2|║     ║|2
-3|║     ║|3
-4|║     ║|4
-5|║     ║|5
-6|║     ║|6
-7|║     ║|7
-8|║     ║|8
+0|╔═════╗|0
+1|║¹¹¹¹¹║|1
+2|║¹¹¹¹¹║|2
+3|║¹¹¹¹¹║|3
+4|║¹¹¹¹¹1|4
+5|║¹¹¹¹¹║|5
+6|║¹¹¹¹¹║|6
+7|║¹¹¹¹¹║|7
+8|║¹¹¹¹¹║|8
 9|╚═════╝|9
 -----------
  |0123456| 
@@ -38,15 +38,15 @@ namespace AssetsTests.RoomTests
             public const string SquareWithTwoDoors = @"
  |0123456789| 
 --------------
-0|╔══2═════╗|0
-1|║        ║|1
-2|║        ║|2
-3|1        ║|3
-4|║        ║|4
-5|║        ║|5
-6|║        ║|6
-7|║        ║|7
-8|║        ║|8
+0|╔════1══2╗|0
+1|║¹¹¹¹¹¹¹¹║|1
+2|║¹¹¹¹¹¹¹¹║|2
+3|║¹¹¹¹¹¹¹¹║|3
+4|║¹¹¹¹¹¹¹¹║|4
+5|║¹¹¹¹¹¹¹¹║|5
+6|║¹¹¹¹¹¹¹¹║|6
+7|║¹¹¹¹¹¹¹¹║|7
+8|║¹¹¹¹¹¹¹¹║|8
 9|╚════════╝|9
 --------------
  |0123456789| 
@@ -55,95 +55,74 @@ namespace AssetsTests.RoomTests
             public const string LShapedWithThreeDoors = @"
  |0123456789| 
 --------------
-0|╔══2═╗####|0
-1|║    ║####|1
-2|3    ║####|2
-3|1    ╚═══╗|3
-4|║        ║|4
-5|║        ║|5
-6|║        ║|6
-7|║        ║|7
-8|║        ║|8
-9|╚════════╝|9
---------------
- |0123456789| 
-";
-            public const string LShapedWithDoorsCappedAt12 = @"
- |0123456789| 
---------------
-0|╔B729╗####|0
-1|4    ║####|1
-2|3    ║####|2
-3|1    ╚══C╗|3
-4|8        ║|4
-5|5        ║|5
-6|A        ║|6
-7|6        ║|7
-8|D        ║|8
-9|╚════════╝|9
+0|╔════╗####|0
+1|║¹¹¹¹║####|1
+2|3¹¹¹¹║####|2
+3|║¹¹¹¹╚═══╗|3
+4|║¹¹¹¹¹¹¹¹║|4
+5|║¹¹¹¹¹¹¹¹║|5
+6|║¹¹¹¹¹¹¹¹║|6
+7|║¹¹¹¹¹¹¹¹2|7
+8|║¹¹¹¹¹¹¹¹║|8
+9|╚══1═════╝|9
 --------------
  |0123456789| 
 ";
 
-            public const string OShapedWithFifteenDoors = @"
+            public const string OShapedWithCappedDoors = @"
   |012345678901|  
 ------------------
-0 |╔2══DFBC567╗|0 
-1 |║          ║|1 
-2 |3          ║|2 
-3 |1   ╔══╗   ║|3 
-4 |9   ║  ║   ║|4 
-5 |4   ║      ║|5 
-6 |║   ║  ║   ║|6 
-7 |E   ╚══╝   ║|7 
-8 |8          ║|8 
-9 |A          ║|9 
-10|╚══════════╝|10
+0 |╔Δ═Γ═3═2═Ε═╗|0 
+1 |4¹¹¹¹¹¹¹¹¹¹9|1 
+2 |║¹¹¹¹¹¹¹¹¹¹║|2 
+3 |Η¹¹¹╔══╗¹¹¹║|3 
+4 |║¹¹¹║¹¹║¹¹¹Α|4 
+5 |1¹¹¹║¹¹¹¹¹¹║|5 
+6 |║¹¹¹║¹¹║¹¹¹║|6 
+7 |8¹¹¹╚══╝¹¹¹5|7 
+8 |║¹¹¹¹¹¹¹¹¹¹║|8 
+9 |Β¹¹¹¹¹¹¹¹¹¹7|9 
+10|╚═Ι══6═Θ═Ζ═╝|10
 ------------------
   |012345678901|  
 ";
         }
 
-        public void DoorPlacementTest(string roomName, int numDoors, string expectation)
+        private void DoorPlacementTest(int roomIndex, int numDoors, string expectation)
         {
-            var room = ArrangeTest(roomName, _testName, _output, Die.RandomiserReset.Index);
+            DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
+            ArrangeTest(Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {
-                room.AddDoor(i);
+                Room.AddDoor(i);
             }
 
-            AssertTest(room, _output, expectation.Trim(CharHelpers.EndOfLine));
+            AssertTest(Room, expectation.Trim(CharHelpers.EndOfLine));
         }
 
         [Fact]
-        public void PlaceOneDoorInSquareRoom_ShouldSuccessfullyPlaceDoor()
+        public void PlaceOneDoorInRectangleRoom_ShouldSuccessfullyPlaceDoor()
         {
-            DoorPlacementTest("Rectangle", 1, DoorPlacementExpectations.RectangleWithOneDoor);
+            DoorPlacementTest(KnownRooms.Rectangle, 1, DoorPlacementExpectations.RectangleWithOneDoor);
         }
 
         [Fact]
         public void PlaceTwoDoorsInSquareRoom_ShouldSuccessfullyPlaceDoors()
         {
-            DoorPlacementTest("Square", 2, DoorPlacementExpectations.SquareWithTwoDoors);
+            DoorPlacementTest(KnownRooms.Square, 2, DoorPlacementExpectations.SquareWithTwoDoors);
         }
 
         [Fact]
         public void PlaceThreeDoorsInLShapedRoom_ShouldSuccessfullyPlaceDoors()
         {
-            DoorPlacementTest("LShaped", 3, DoorPlacementExpectations.LShapedWithThreeDoors);
-        }
-
-        [Fact]
-        public void PlaceFifteenDoorsInOShapedRoom_ShouldSuccessfullyPlaceDoors()
-        {
-            DoorPlacementTest("OShaped", 15, DoorPlacementExpectations.OShapedWithFifteenDoors);
+            DoorPlacementTest(KnownRooms.LShaped, 3, DoorPlacementExpectations.LShapedWithThreeDoors);
         }
 
         [Fact]
         public void PlaceMoreDoorsThanRoomCanHave_ShouldResultCapTheNumberOfDoorsAdded()
         {
-            DoorPlacementTest("LShaped", 15, DoorPlacementExpectations.LShapedWithDoorsCappedAt12);
+            DoorPlacementTest(KnownRooms.OShaped, TilesDisplay.Doors.Count-1, DoorPlacementExpectations.OShapedWithCappedDoors);
         }
     }
 }

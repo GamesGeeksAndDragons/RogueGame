@@ -1,28 +1,16 @@
-﻿using Assets.Actors;
-using Assets.Messaging;
+﻿using System.Linq;
+using Assets.Level;
+using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace AssetsTests.ActionTests
 {
-    public class TeleportTestsForOneCharacter : TilesTestHelper
+    public class TeleportTestsForOneCharacter : MazeTestHelper
     {
-        public IDispatcher Dispatcher;
-
         public TeleportTestsForOneCharacter(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry);
-        }
-
-        protected override void TestArrange(IMazeExpectations expectations)
-        {
-            base.TestArrange(expectations);
-            ActionRegistry.RegisterTiles(Tiles);
-
-            var me = new Me(DispatchRegistry, ActionRegistry, "");
-
-            Dispatcher.EnqueueTeleport(me);
         }
 
         [Theory]
@@ -30,7 +18,9 @@ namespace AssetsTests.ActionTests
         [InlineData(2)]
         public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacter(int testNum)
         {
+            DieBuilder = new FakeDieBuilder(1, testNum-1, 1, 1, 1);
             var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+
             TestArrange(expectations);
             TestAct();
             TestAssert(expectations);
@@ -42,25 +32,16 @@ namespace AssetsTests.ActionTests
         }
     }
 
-    public class TeleportTestsForTwoCharacters : TilesTestHelper
+    public class TeleportTestsForTwoCharacters : MazeTestHelper
     {
-        public IDispatcher Dispatcher;
-
         public TeleportTestsForTwoCharacters(ITestOutputHelper output) : base(output)
         {
-            Dispatcher = new Dispatcher(DispatchRegistry);
         }
 
         protected override void TestArrange(IMazeExpectations expectations)
         {
+            DieBuilder = new FakeDieBuilder(1, 1);
             base.TestArrange(expectations);
-            ActionRegistry.RegisterTiles(Tiles);
-
-            var monster = new Monster(DispatchRegistry, ActionRegistry, "");
-            Dispatcher.EnqueueTeleport(monster);
-
-            var me = new Me(DispatchRegistry, ActionRegistry, "");
-            Dispatcher.EnqueueTeleport(me);
         }
 
         [Theory]
@@ -69,6 +50,7 @@ namespace AssetsTests.ActionTests
         public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacters(int testNum)
         {
             var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+
             TestArrange(expectations);
             TestAct();
             TestAssert(expectations);

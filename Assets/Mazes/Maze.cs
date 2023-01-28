@@ -1,85 +1,204 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Actors;
+﻿#nullable enable
 using Assets.Deeds;
 using Assets.Messaging;
-using Assets.Rooms;
-using Assets.Tiles;
+using Assets.Resources;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
-using TileChanges = System.Collections.Generic.List<(string Name, Utils.Coordinates.Coordinate Coordinates)>;
+using TilesType = System.Collections.Generic.List<(string UniqueId, Utils.Coordinates.Coordinate Coordinates)>;
 
 namespace Assets.Mazes
 {
     public interface IMaze
     {
-        IDispatchee this[Coordinate coordinate] { get; }
-        string Name { get; }
-        string UniqueId { get; }
-        (IDispatchee Dispatchee, Coordinate Coordinates) RandomTile(Predicate<IDispatchee> condition);
-        void Update(TileChanges state);
-        bool IsInMaze(string uniqueId);
+        bool IsInside(Coordinate coordinate);
+        (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition, IList<string> checkedTiles);
+        IReadOnlyList<(TTileType Tile, Coordinate Coordinates)> GetTiles<TTileType>(Predicate<(TTileType Tile, Coordinate Coordinates)>? tilePredicate = null);
+        string[] Replace(TilesType state);
+        void Grow();
+
+        (int Row, int Column) UpperBounds { get; }
+        string this[Coordinate point] { get; set; }
+        Coordinate this[string uniqueId] { get; }
+        IDispatched GetDispatched(Coordinate point);
     }
 
-    internal class Maze : Dispatchee<Maze>, IMaze
+    internal class Maze : Dispatched<Maze>, IMaze
     {
-        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IActorBuilder actorBuilder, int rows, int columns) 
-            : base(dispatchRegistry, actionRegistry)
+        internal IDieBuilder DieBuilder { get; }
+        internal IResourceBuilder ResourceBuilder { get; }
+
+        protected internal string[,] Tiles;
+
+        public (int Row, int Column) UpperBounds => Tiles.UpperBounds();
+
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string[,] tiles)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
+            resourceBuilder.ThrowIfNull(nameof(resourceBuilder));
 
-            _dieBuilder = dieBuilder;
-            _actorBuilder = actorBuilder;
+            DieBuilder = dieBuilder;
+            ResourceBuilder = resourceBuilder;
 
-            Tiles = new Tiles.Tiles(rows, columns, dispatchRegistry, actionRegistry, dieBuilder, actorBuilder);
-
-            ActionRegistry.RegisterTiles(Tiles);
+            Tiles = tiles.CloneStrings();
         }
 
-        private readonly IDieBuilder _dieBuilder;
-        private readonly IActorBuilder _actorBuilder;
-        internal ITiles Tiles { get; }
-
-        public IDispatchee this[Coordinate coordinate]
+        internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string maze)
+            : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
         {
-            get
+            dieBuilder.ThrowIfNull(nameof(dieBuilder));
+            resourceBuilder.ThrowIfNull(nameof(resourceBuilder));
+
+            DieBuilder = dieBuilder;
+            ResourceBuilder = resourceBuilder;
+
+            Tiles = BuildTiles();
+            
+            string[,] BuildTiles()
             {
-                var name = Tiles[coordinate];
-                return DispatchRegistry.GetDispatchee(name);
+                var tilesArray = maze.SplitIntoLines();
+                var noRows = tilesArray.Length;
+                var noColumns = tilesArray.Max(row => row.Length);
+
+                var tiles = new string[noRows, noColumns];
+
+                for (int rowIndex = 0; rowIndex < noRows; rowIndex++)
+                {
+                    var row = tilesArray[rowIndex];
+
+                    for (int colIndex = 0; colIndex < noColumns; colIndex++)
+                    {
+                        var actor = row[colIndex].ToString();
+                        var builder = GetResourceBuilder(actor);
+                        var resource = builder(actor, "");
+                        tiles[rowIndex, colIndex] = resource.UniqueId;
+                    }
+                }
+
+                return tiles;
+
+                Func<string, string, IDispatched> GetResourceBuilder(string actor)
+                {
+                    var resourceType = actor.GetResourceType();
+                    return resourceType switch
+                    {
+                        ResourceType.Floor => ResourceBuilder.FloorBuilder(),
+                        ResourceType.Wall => ResourceBuilder.WallBuilder(),
+                        ResourceType.Rock => ResourceBuilder.RockBuilder(),
+                        ResourceType.Door => ResourceBuilder.DoorBuilder(),
+                        ResourceType.Null => ResourceBuilder.NullBuilder(),
+                        _ => throw new ArgumentException($"Unable to find a builder for [{actor}]")
+                    };
+                }
             }
         }
 
-        public bool IsInMaze(string uniqueId) => Tiles.TileExists(uniqueId);
-
-        protected internal override void RegisterActions()
+        public string[] Replace(TilesType state)
         {
+            var replaced = new List<string>();
+
+            foreach (var (replacement, coordinates) in state)
+            {
+                var current = this[coordinates];
+                replaced.Add(current);
+                this[coordinates] = replacement;
+            }
+
+            return replaced.ToArray();
         }
 
-        public void Update(TileChanges state)
+        public bool IsInside(Coordinate coordinate)
         {
-            Tiles.Replace(state);
+            return Tiles.IsInside(coordinate);
         }
 
-        public void PositionRoomsInMaze(IList<Room> roomsWithDoors)
+        public (IDispatched Dispatched, Coordinate Coordinates) RandomTile(Predicate<IDispatched> tileCondition, IList<string> checkedTiles)
         {
-            var removed = Tiles.PositionRoomsInTiles(roomsWithDoors);
-            DispatchRegistry.Unregister(removed);
+            var (maxRows, maxColumns) = UpperBounds;
 
-            ActionRegistry.RegisterTiles(Tiles);
+            var (tile, randomCoordinates) = GetRandomTile();
+
+            while (! tileCondition(tile))
+            {
+                if (HasCheckedTile())
+                {
+                    (tile, randomCoordinates) = GetRandomTile();
+                    continue;
+                }
+
+                checkedTiles.Add(tile.UniqueId);
+
+                if(Tiles.Length == checkedTiles.Count) throw new Exception("Searched all tiles in RandomTile");
+
+                (tile, randomCoordinates) = GetRandomTile();
+            }
+
+            checkedTiles.Add(tile.UniqueId);
+            return (tile, randomCoordinates);
+
+            bool HasCheckedTile()
+            {
+                return checkedTiles.Contains(tile.UniqueId);
+            }
+
+            (IDispatched dispatched, Coordinate randomCoordinates) GetRandomTile()
+            {
+                var coordinates = Tiles.RandomCoordinates(DieBuilder, maxRows, maxColumns);
+                var uniqueId = this[coordinates];
+                var dispatched = DispatchRegistry.GetDispatched(uniqueId);
+                return (dispatched, coordinates);
+            }
         }
 
-        public void ConnectDoorsWithCorridors()
+        public IReadOnlyList<(TTileType Tile, Coordinate Coordinates)> GetTiles<TTileType>(Predicate<(TTileType Tile, Coordinate Coordinates)>? tilePredicate = null)
         {
-            var changes = Tiles.GetTunnelToConnectDoors(DispatchRegistry, ActionRegistry, _dieBuilder);
+            tilePredicate ??= _ => true;
 
-            Tiles.ConnectDoorsWithCorridors(changes, DispatchRegistry, _actorBuilder);
+            var tiles = Tiles.GetTiles<TTileType>()
+                .Select(tile => ((TTileType)DispatchRegistry.GetDispatched(tile.UniqueId), tile.Coordinates))
+                .Where(tile => tilePredicate(tile))
+                .ToList();
+
+            return tiles;
         }
 
-        public (IDispatchee Dispatchee, Coordinate Coordinates) RandomTile(Predicate<IDispatchee> condition)
+        public string this[Coordinate point]
         {
-            return Tiles.RandomTile(condition);
+            get => Tiles[point.Row, point.Column];
+            set => Tiles[point.Row, point.Column] = value;
+        }
+        public Coordinate this[string uniqueId] => Tiles.Locate(name => name.IsSame(uniqueId));
+
+        public IDispatched GetDispatched(Coordinate point) => DispatchRegistry.GetDispatched(this[point]);
+
+        public void Grow()
+        {
+            var (currentRows, currentColumns) = UpperBounds;
+
+            var (grownRows, grownColumns) = (currentRows * 2, currentColumns * 2);
+
+            var newTiles = new string[grownRows, grownColumns];
+
+            CopyExistingIntoNew();
+
+            Tiles = newTiles;
+
+            Tiles.DefaultTiles(ResourceBuilder.DefaultRockBuilder());
+
+            void CopyExistingIntoNew()
+            {
+                for (var row = 0; row < currentRows; row++)
+                {
+                    for (var column = 0; column < currentColumns; column++)
+                    {
+                        var coordinate = new Coordinate(row, column);
+                        newTiles[row, column] = this[coordinate];
+                    }
+                }
+            }
         }
     }
 }

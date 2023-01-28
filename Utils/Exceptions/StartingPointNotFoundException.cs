@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿#nullable enable
 namespace Utils.Exceptions
 {
     public class StartingPointNotFoundException : Exception

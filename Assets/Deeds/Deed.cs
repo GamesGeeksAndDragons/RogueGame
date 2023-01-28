@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿#nullable enable
 using Utils;
 
 namespace Assets.Deeds

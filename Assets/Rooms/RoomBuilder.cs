@@ -1,35 +1,42 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
 using System.IO;
-using System.Linq;
-using Assets.Actors;
 using Assets.Deeds;
+using Assets.Mazes;
 using Assets.Messaging;
+using Assets.Resources;
+using Assets.Tiles;
 using log4net;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
+using Utils.Display;
 using Utils.Random;
 
 namespace Assets.Rooms
 {
     public static class KnownRooms
     {
-        public const string Rectangle = nameof(Rectangle);
-        public const string Square = nameof(Square);
-        public const string LShaped = nameof(LShaped);
-        public const string OShaped = nameof(OShaped);
+        public const int Rectangle = 2;
+        public const int Square = 1;
+        public const int LShaped = 3;
+        public const int OShaped = 4;
     }
 
-    public class RoomBuilder
+    public interface IRoomBuilder
+    {
+        IRoom BuildRoom(int roomNumber);
+    }
+
+    public class RoomBuilder : IRoomBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;
         private readonly IDispatchRegistry _dispatchRegistry;
         private readonly IActionRegistry _actionRegistry;
-        private readonly IActorBuilder _actorBuilder;
-        private readonly Dictionary<string, string[]> _rooms;
+        private readonly IResourceBuilder _resourceBuilder;
+        private readonly Dictionary<int, string> _rooms;
 
-        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IActorBuilder actorBuilder)
+        public RoomBuilder(IDieBuilder dieBuilder, ILog logger, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder)
         {
             dieBuilder.ThrowIfNull(nameof(dieBuilder));
             logger.ThrowIfNull(nameof(logger));
@@ -40,21 +47,24 @@ namespace Assets.Rooms
             _logger = logger;
             _dispatchRegistry = dispatchRegistry;
             _actionRegistry = actionRegistry;
-            _actorBuilder = actorBuilder;
+            _resourceBuilder = resourceBuilder;
 
             _rooms = LoadRooms();
 
-            Dictionary<string, string[]> LoadRooms()
+            Dictionary<int, string> LoadRooms()
             {
                 var filenames = GetRoomFilenamesToLoad(FileAndDirectoryHelpers.LoadFolder);
 
-                var rooms = new Dictionary<string, string[]>();
+                var rooms = new Dictionary<int, string>();
                 foreach (var filename in filenames)
                 {
-                    var room = File.ReadAllLines(filename);
+                    var room = File.ReadAllLines(filename).Join(Environment.NewLine);
                     var name = Path.GetFileNameWithoutExtension(filename);
+                    var splitName = name.Split('-');
+                    var index = splitName[0];
+                    var roomIndex = int.Parse(index);
 
-                    rooms[name] = room;
+                    rooms[roomIndex] = room;
                 }
 
                 return rooms;
@@ -63,34 +73,47 @@ namespace Assets.Rooms
                 {
                     var directory = FileAndDirectoryHelpers.GetLoadDirectory(folder);
                     return Directory.EnumerateFiles(directory)
-                        .Where(fqn => Path.HasExtension(".room"));
+                        .Where(fqn => fqn.HasExtension(".room"));
                 }
             }
         }
 
-        internal Room BuildRoom(string roomName)
+        public IRoom BuildRoom(int roomNumber)
         {
-            var roomDescription = _rooms[roomName];
-            var maxRows = roomDescription.Length;
-            var maxCols = roomDescription.Max(row => row.Length);
+            var roomIndex = _dieBuilder.Between(1,4).Random;
+            var roomDescription = GetRoom();
+            var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, roomDescription);
 
-            var tiles = new Tiles.Tiles(maxRows, maxCols, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
+            var floorBuilder = _resourceBuilder.FloorBuilder();
 
-            for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
+            var floorTiles = maze.GetTiles<IFloor>();
+
+            foreach (var floorTile in floorTiles)
             {
-                var row = roomDescription[rowIndex];
-
-                for (int colIndex = 0; colIndex < maxCols; colIndex++)
-                {
-                    var actor = row[colIndex].ToString();
-                    var dispatchee = _actorBuilder.Build(actor);
-
-                    var coordinates = new Coordinate(rowIndex, colIndex);
-                    tiles[coordinates] = dispatchee.UniqueId;
-                }
+                var coordinates = floorTile.Coordinates;
+                var floor = floorBuilder(roomNumber.ToRoomNumberString(), "");
+                maze[coordinates] = floor.UniqueId;
+                _dispatchRegistry.Unregister(floorTile.Tile.UniqueId);
             }
 
-            return new Room(roomName, tiles, _dispatchRegistry, _actionRegistry, _dieBuilder, _actorBuilder);
+            var room = new Room(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, maze);
+
+            return RotateRoom();
+
+            string GetRoom()
+            {
+                var baseRoom = _rooms[roomIndex];
+                var number = TilesDisplay.RoomNumberOfFloor[roomNumber];
+                return baseRoom.Replace(TilesDisplay.Tunnel, number);
+            }
+
+            IRoom RotateRoom()
+            {
+                var rotation = _dieBuilder.Between(1,4).Random - 1;
+                if (rotation == 0) return room;
+
+                return BuildRotatedRoom(room, rotation);
+            }
         }
 
         string[,] BuildRotatedTiles(string[,] tilesToRotate, int maxRows, int maxColumns)
@@ -106,7 +129,7 @@ namespace Assets.Rooms
                 for (int columnIndex = 0; columnIndex < row.Length; columnIndex++)
                 {
                     var uniqueId = row[columnIndex];
-                    var tile = _dispatchRegistry.GetDispatchee(uniqueId);
+                    var tile = _dispatchRegistry.GetDispatched(uniqueId);
 
                     if (tile.IsWall())
                     {
@@ -121,24 +144,27 @@ namespace Assets.Rooms
             return rotated;
         }
 
-        internal Room BuildRotatedRoom(Room room, int numTimes = 1)
+        internal IRoom BuildRotatedRoom(Room room, int numTimes = 1)
         {
             numTimes.ThrowIfAbove(3, $"Attempted to rotate a room {numTimes} times.  No need to rotate more than 3 times.");
 
-            var originalTiles = (Tiles.Tiles) room.Tiles;
-            var tiles = originalTiles.TilesRegistry;
-            var (maxRow, maxColumn) = tiles.UpperBounds();
+            var maze = (Maze) room.Maze;
+            var rotatedTiles = Rotate(maze.Tiles);
 
-            var rotatedTiles = BuildRotatedTiles(tiles, maxRow, maxColumn);
             for (int i = 0; i < numTimes-1; i++)
             {
-                (maxRow, maxColumn) = rotatedTiles.UpperBounds();
-                rotatedTiles = BuildRotatedTiles(rotatedTiles, maxRow, maxColumn);
+                rotatedTiles = Rotate(rotatedTiles);
             }
 
-            var newTiles = new Tiles.Tiles(originalTiles, rotatedTiles);
+            var newTiles = new Maze(maze.DispatchRegistry, maze.ActionRegistry, maze.DieBuilder, maze.ResourceBuilder, rotatedTiles);
 
-            return new Room(room, newTiles);
+            return new Room((Room)room, newTiles);
+
+            string[,] Rotate(string[,] tiles)
+            {
+                var (maxRow, maxColumn) = tiles.UpperBounds();
+                return BuildRotatedTiles(tiles, maxRow, maxColumn);
+            }
         }
     }
 }
