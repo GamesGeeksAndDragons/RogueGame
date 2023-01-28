@@ -88,7 +88,7 @@ namespace AssetsTests.RoomTests
 ";
         }
 
-        private void Should_BuildARoom_FromAFile(string roomName, string expectedRoom)
+        public void Should_BuildARoom_FromAFile(string roomName, string expectedRoom)
         {
             var room = ArrangeTest(roomName, _testName, _output);
 
