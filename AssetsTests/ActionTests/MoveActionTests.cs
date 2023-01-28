@@ -1,16 +1,9 @@
 ﻿using System;
-using Assets.Deeds;
 using Assets.Level;
-using Assets.Messaging;
-using Assets.Resources;
-using Assets.Tiles;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
-using AssetsTests.RoomTests;
 using Utils;
-using Utils.Display;
 using Utils.Enums;
-using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -301,9 +294,9 @@ namespace AssetsTests.ActionTests
                 var level = LevelBuilder.BuildNewGame();
                 level.Dispatcher.Dispatch();
 
-                var before = level.Print(DispatchRegistry);
-                Output.WriteLine(BuilderTestHelpers.Divider + " before " + BuilderTestHelpers.Divider);
-                Output.WriteLine(before);
+                var start = level.Print(DispatchRegistry);
+                Output.WriteLine(BuilderTestHelpers.Divider + " start " + BuilderTestHelpers.Divider);
+                Output.WriteLine(start);
 
                 foreach (var direction in directions)
                 {
@@ -351,7 +344,7 @@ namespace AssetsTests.ActionTests
         }
 
         [Fact]
-        public void Move_Me_AroundCharacterWillNotWallThoughIt()
+        public void Move_Me_AroundCharacterWillNotWalkThoughIt()
         {
             Move_Me_Test(7, Compass8Points.North, Compass8Points.North, Compass8Points.West, Compass8Points.SouthWest, Compass8Points.North, Compass8Points.NorthWest, Compass8Points.East);
         }

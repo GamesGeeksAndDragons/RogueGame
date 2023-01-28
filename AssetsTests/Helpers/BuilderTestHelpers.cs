@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Deeds;
+﻿using Assets.Deeds;
 using Assets.Level;
 using Assets.Messaging;
 using Assets.Resources;
@@ -7,7 +6,6 @@ using Assets.Rooms;
 using AssetsTests.Fakes;
 using log4net;
 using Utils;
-using Utils.Coordinates;
 using Utils.Random;
 using Xunit;
 using Xunit.Abstractions;
