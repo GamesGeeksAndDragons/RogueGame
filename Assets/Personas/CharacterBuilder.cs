@@ -1,10 +1,9 @@
 ﻿using Assets.Deeds;
-using Assets.Personas;
 using Utils.Dispatching;
 using Utils.Display;
 using BuilderMethodType = System.Func<Utils.Dispatching.IDispatchRegistry, Assets.Deeds.IActionRegistry, string, string, Assets.Personas.ICharacter>;
 
-namespace Assets.Resources
+namespace Assets.Personas
 {
     public interface ICharacterBuilder
     {

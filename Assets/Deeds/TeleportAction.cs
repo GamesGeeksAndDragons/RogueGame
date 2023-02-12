@@ -16,7 +16,7 @@ namespace Assets.Deeds
             var checkedTiles = new List<string>();
             var floorTile = RandomEmptyFloorTile();
 
-            who.Position = floorTile.Coordinates;
+            who.Coordinates = floorTile.Coordinates;
 
             (IFloor Floor, Coordinate Coordinates) RandomEmptyFloorTile()
             {

@@ -17,7 +17,7 @@ namespace AssetsTests.Helpers
 
         void AddCharacter(string character, Coordinate position)
         {
-            //var characterBuilder = new CharacterBuilder(_gameLevel.DispatchRegistry, _gameLevel.)
+            //var characterFactory = new CharacterFactory(_gameLevel.DispatchRegistry, _gameLevel.)
             var state = position.FormatParameter();
 
             //_gameLevel.Dispatcher.EnqueueTeleport(_gameLevel, state);

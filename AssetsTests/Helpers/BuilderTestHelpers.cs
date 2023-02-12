@@ -17,7 +17,7 @@ namespace AssetsTests.Helpers
         public string TestName { get; }
         internal ITestOutputHelper Output;
 
-        protected readonly LevelBuilderFactory MazeBuilderFactory = new LevelBuilderFactory();
+        protected readonly GameLevelBuilderFactory MazeBuilderFactory = new GameLevelBuilderFactory();
 
         protected IRoomBuilder RoomBuilder { get; set; }
         protected IResourceBuilder ResourceBuilder => MazeBuilderFactory.ResourceBuilder;

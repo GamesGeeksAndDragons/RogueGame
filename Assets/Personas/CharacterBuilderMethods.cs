@@ -1,8 +1,7 @@
 ﻿using Assets.Deeds;
-using Assets.Personas;
 using Utils.Dispatching;
 
-namespace Assets.Resources
+namespace Assets.Personas
 {
     internal static class CharacterBuilderMethods
     {

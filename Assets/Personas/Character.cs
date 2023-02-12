@@ -13,7 +13,7 @@ namespace Assets.Personas
         Parameters CurrentState();
         int ArmourClass { get; set; }
         int HitPoints { get; set; }
-        Coordinate Position { get; set; }
+        Coordinate Coordinates { get; set; }
     }
 
     internal abstract class Character<T> : Dispatched<T>, ICharacter
@@ -32,6 +32,7 @@ namespace Assets.Personas
 
         public override void UpdateState(Parameters state)
         {
+            if (state.HasValue(nameof(Coordinates))) Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
             if (state.HasValue(nameof(HitPoints))) HitPoints = state.ToValue<int>(nameof(HitPoints));
             if (state.HasValue(nameof(ArmourClass))) ArmourClass = state.ToValue<int>(nameof(ArmourClass));
 
@@ -42,6 +43,7 @@ namespace Assets.Personas
         {
             var state = base.CurrentState();
 
+            state.AppendParameter(nameof(Coordinates), Coordinates);
             if (!IsZero(HitPoints)) state.AppendParameter(nameof(HitPoints), HitPoints);
             if (!IsZero(ArmourClass)) state.AppendParameter(nameof(ArmourClass), ArmourClass);
 
@@ -51,18 +53,18 @@ namespace Assets.Personas
         public int ArmourClass { get; set; }
         public int HitPoints { get; set; }
 
-        private Coordinate _position = Coordinate.NotSet;
-        public Coordinate Position
+        private Coordinate _coordinates = Coordinate.NotSet;
+        public Coordinate Coordinates
         {
-            get => _position;
+            get => _coordinates;
             set
             {
-                var before = _position;
-                _position = value;
+                var before = _coordinates;
+                _coordinates = value;
 
                 foreach (var observer in _observers)
                 {
-                    observer.OnNext(new PositionObservation(UniqueId, (before, Position)) );
+                    observer.OnNext(new PositionObservation(UniqueId, (before, Coordinates)) );
                 }
             }
         }
@@ -101,7 +103,7 @@ namespace Assets.Personas
                 _observers.Add(observer);
             }
 
-            observer.OnNext(new PositionObservation(UniqueId, (Coordinate.NotSet, Position)) );
+            observer.OnNext(new PositionObservation(UniqueId, (Coordinate.NotSet, Coordinates)) );
 
             return new UnsubscribePositionObservation<PositionObservation>(_observers, observer);
         }

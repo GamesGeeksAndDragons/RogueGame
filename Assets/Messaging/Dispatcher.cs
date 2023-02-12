@@ -37,7 +37,7 @@ namespace Assets.Messaging
 
         public void EnqueueTeleport(IGameLevel level, ICharacter who)
         {
-            var parameters = Deed.Teleport.FormatParameter(who.Position);
+            var parameters = Deed.Teleport.FormatParameter(who.Coordinates);
             Enqueue(level, who, parameters);
         }
 

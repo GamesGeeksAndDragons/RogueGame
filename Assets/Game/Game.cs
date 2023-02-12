@@ -13,7 +13,7 @@ namespace Assets.Game
         public string Folder { get; set; }
 
         internal IDispatcher Dispatcher;
-        internal ILevelBuilder LevelBuilder;
+        internal IGameLevelBuilder GameLevelBuilder;
         internal int Level;
 
         internal IMaze? Maze;
@@ -21,20 +21,20 @@ namespace Assets.Game
         internal IReadOnlyList<ICharacter>? Characters;
 
 
-        public Game(GameConfig gameConfig, IDispatcher dispatcher, ILevelBuilder levelBuilder)
+        public Game(GameConfig gameConfig, IDispatcher dispatcher, IGameLevelBuilder gameLevelBuilder)
         {
             Id = gameConfig.Id;
             Folder = gameConfig.Folder;
 
             Dispatcher = dispatcher;
-            LevelBuilder = levelBuilder;
+            GameLevelBuilder = gameLevelBuilder;
         }
 
         public void NewGame()
         {
             FileAndDirectoryHelpers.CreateFolder(Folder);
 
-            var level = LevelBuilder.BuildNewGame();
+            var level = GameLevelBuilder.BuildNewGame();
             Level++;
         }
     }

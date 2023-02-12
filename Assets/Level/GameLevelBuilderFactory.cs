@@ -9,14 +9,14 @@ using Utils.Random;
 
 namespace Assets.Level
 {
-    public class LevelBuilderFactory
+    public class GameLevelBuilderFactory
     {
         internal IDispatchRegistry DispatchRegistry { get; }
         internal IActionRegistry ActionRegistry { get; }
         internal IResourceBuilder ResourceBuilder { get; }
         internal IDispatcher Dispatcher { get; }
 
-        public LevelBuilderFactory()
+        public GameLevelBuilderFactory()
         {
             DispatchRegistry = new DispatchRegistry();
             ActionRegistry = new ActionRegistry();
@@ -27,10 +27,13 @@ namespace Assets.Level
         internal IRoomBuilder CreateRoomBuilder(IDieBuilder dieBuilder, ILog logger) =>
             new RoomBuilder(dieBuilder, logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
 
-        internal IPersonasBuilder CreatePersonasBuilder(IDieBuilder dieBuilder) =>
-            new PersonasBuilder(dieBuilder, new CharacterBuilder(DispatchRegistry, ActionRegistry));
+        internal ICharacterFactory CreateCharacterFactory(IDieBuilder dieBuilder) =>
+            new CharacterFactory(dieBuilder, new CharacterBuilder(DispatchRegistry, ActionRegistry));
 
-        internal ILevelBuilder CreateLevelBuilder(IDieBuilder dieBuilder, ILog logger) =>
-            new GameLevelBuilder(dieBuilder, logger, Dispatcher, DispatchRegistry, ActionRegistry, ResourceBuilder, CreatePersonasBuilder(dieBuilder));
+        internal IGameCharacters CreateGameCharacters(IDieBuilder dieBuilder) =>
+            new GameCharacters(DispatchRegistry, CreateCharacterFactory(dieBuilder));
+
+        internal IGameLevelBuilder CreateLevelBuilder(IDieBuilder dieBuilder, ILog logger) =>
+            new GameLevelBuilder(CreateGameCharacters(dieBuilder), dieBuilder, logger, Dispatcher, DispatchRegistry, ActionRegistry, ResourceBuilder);
     }
 }

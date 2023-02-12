@@ -239,7 +239,7 @@ namespace AssetsTests.DispatcherTests
 
             IGameLevel Act()
             {
-                var levelBuilder = (GameLevelBuilder)LevelBuilder;
+                var levelBuilder = (GameLevelBuilder)GameLevelBuilder;
                 var newLevel = levelBuilder.BuildNewGame(levelNumber);
                 Dispatcher.Dispatch();
                 return newLevel;

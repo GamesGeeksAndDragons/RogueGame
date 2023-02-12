@@ -8,64 +8,33 @@ using Utils.Random;
 
 namespace Assets.Level
 {
-    public interface IGameLevel
+    public interface IGameLevel : ICharacterPosition, IObserver<PositionObservation>
     {
         public IDispatchRegistry DispatchRegistry { get; }
         public IDispatcher Dispatcher { get; }
         public IDieBuilder DieBuilder { get; }
         public IMaze Maze { get; }
-        public IReadOnlyList<ICharacter> Characters { get; }
-        public ICharacter Me { get; }
-        public ICharacter? this[Coordinate position] { get; }
     }
 
-    internal class GameLevel : IGameLevel, IObserver<PositionObservation>, IDisposable
+    internal class GameLevel : IGameLevel
     {
         public IDispatchRegistry DispatchRegistry { get; }
         public IDispatcher Dispatcher { get; }
         public IDieBuilder DieBuilder { get; }
         public IMaze Maze { get; }
-        public ICharacter Me { get; }
+        public IGameCharacters GameCharacters { get; }
 
-        internal readonly List<ICharacter> GameCharacters;
-        internal readonly Dictionary<Coordinate, string> Positions;
-        public IReadOnlyList<ICharacter> Characters => GameCharacters;
-
-        public ICharacter? this[Coordinate position]
-        {
-            get
-            {
-                if (!Positions.ContainsKey(position)) return null;
-
-                var uniqueId = Positions[position];
-                return (ICharacter)DispatchRegistry.GetDispatched(uniqueId);
-            }
-        }
-
-        public GameLevel(IMaze maze, ICharacter me, IReadOnlyList<ICharacter> characters, IDispatchRegistry dispatchRegistry, IDispatcher dispatcher, IDieBuilder dieBuilder)
+        public GameLevel(IMaze maze, IGameCharacters gameCharacters, IDispatchRegistry dispatchRegistry, IDispatcher dispatcher, IDieBuilder dieBuilder)
         {
             Maze = maze;
-            Me = me;
-            GameCharacters = new List<ICharacter>(characters);
-            Positions = new Dictionary<Coordinate, string>();
+            GameCharacters = gameCharacters;
             DispatchRegistry = dispatchRegistry;
             Dispatcher = dispatcher;
             DieBuilder = dieBuilder;
-
-            SubscribeCharacters();
-            me.Subscribe(this);
         }
 
         public void OnCompleted()
         {
-        }
-
-        internal void SubscribeCharacters()
-        {
-            foreach (var character in GameCharacters)
-            {
-                character.Subscribe(this);
-            }
         }
 
         public void OnError(Exception error)
@@ -77,25 +46,14 @@ namespace Assets.Level
             var (before, after) = observation.Change;
             if (before == after && after == Coordinate.NotSet) return;
 
-            if (Positions.ContainsKey(before))
-            {
-                Positions.Remove(before);
-            }
-
             if (after != Coordinate.NotSet)
             {
-                Positions.Add(after, observation.UniqueId);
+                GameCharacters.Move(before, after);
             }
         }
 
-        public void Dispose()
-        {
-            if (GameCharacters.Count == 0) return;
+        public ICharacter? this[Coordinate position] => GameCharacters[position];
 
-            foreach (var character in GameCharacters)
-            {
-                character.Dispose();
-            }
-        }
+        public ICharacter Me => GameCharacters.Me;
     }
 }

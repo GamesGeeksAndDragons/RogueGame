@@ -6,7 +6,7 @@ namespace AssetsTests.Helpers
 {
     public class LevelBuilderTestHelpers : BuilderTestHelpers
     {
-        protected ILevelBuilder LevelBuilder;
+        protected IGameLevelBuilder GameLevelBuilder;
         protected IDispatcher Dispatcher => MazeBuilderFactory.Dispatcher;
 
         public LevelBuilderTestHelpers(ITestOutputHelper output)
@@ -18,7 +18,7 @@ namespace AssetsTests.Helpers
         {
             base.TestArrange(reset);
 
-            LevelBuilder = MazeBuilderFactory.CreateLevelBuilder(DieBuilder, FakeLogger);
+            GameLevelBuilder = MazeBuilderFactory.CreateLevelBuilder(DieBuilder, FakeLogger);
         }
     }
 }
