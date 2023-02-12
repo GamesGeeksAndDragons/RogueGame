@@ -12,6 +12,11 @@ namespace AssetsTests.Helpers
 
     public abstract class MazeExpectations : IMazeExpectations
     {
+        protected MazeExpectations()
+        {
+            Level = -1;
+        }
+
         public int Level { get; protected set; }
 
         private readonly string _startingMaze;
