@@ -36,6 +36,6 @@ namespace AssetsTests.Helpers
 
     static class MazeTestHelpers
     {
-        internal static void ThrowUnknownTest(this int testNumber) => throw new ArgumentException($"Unknown test [{testNumber}]");
+        internal static void ThrowUnknownTest(int testNumber) => throw new ArgumentException($"Unknown test [{testNumber}]");
     }
 }

@@ -150,7 +150,7 @@ namespace AssetsTests.ActionTests
                 case 4: return new TeleportWithWithSixSpacesAndTwoCharacters();
             }
 
-            testNumber.ThrowUnknownTest();
+            MazeTestHelpers.ThrowUnknownTest(testNumber);
             return null;
         }
     }

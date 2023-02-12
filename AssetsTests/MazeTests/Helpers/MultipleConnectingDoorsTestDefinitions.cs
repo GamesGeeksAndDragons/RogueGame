@@ -246,7 +246,7 @@ namespace AssetsTests.MazeTests.Helpers
                 case 5: return new FiveDoors();
             }
 
-            testNumber.ThrowUnknownTest();
+            MazeTestHelpers.ThrowUnknownTest(testNumber);
             return null;
         }
     }

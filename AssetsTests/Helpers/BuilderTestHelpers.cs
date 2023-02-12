@@ -7,8 +7,6 @@ using AssetsTests.Fakes;
 using log4net;
 using Utils;
 using Utils.Random;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AssetsTests.Helpers
 {
@@ -56,9 +54,16 @@ namespace AssetsTests.Helpers
             Assert.Equal(expected, actual);
         }
 
-        private void AssertTest(string actual, string expected)
+        internal virtual void AssertTest(IGameLevel gameLevel, IMazeExpectations expectations)
         {
+            var expected = expectations.ExpectedMaze;
+            AssertTest(gameLevel, expected);
+        }
 
+        internal virtual void AssertTest(IRoom room, IMazeExpectations expectations)
+        {
+            var expected = expectations.ExpectedMaze;
+            AssertTest(room, expected);
         }
 
         internal virtual void AssertTest(IRoom room, string expected)

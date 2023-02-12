@@ -104,7 +104,7 @@ namespace AssetsTests.MazeTests.Helpers
                 case 2: return new Test2();
             }
 
-            testNumber.ThrowUnknownTest();
+            MazeTestHelpers.ThrowUnknownTest(testNumber);
             return null;
         }
     }
