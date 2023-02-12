@@ -142,7 +142,7 @@ namespace AssetsTests.RoomTests
         private void RotateTestImpl(int roomNumber, int rotateTimes, string roomExpectation)
         {
             DieBuilder = new FakeDieBuilder(4, roomNumber, rotateTimes+1);
-            ArrangeTest();
+            TestArrange();
 
             AssertTest(Room, roomExpectation.Trim(CharHelpers.EndOfLine));
         }

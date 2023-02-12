@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Level;
+﻿using Assets.Level;
 using Assets.Personas;
 using Assets.Rooms;
 using Utils;

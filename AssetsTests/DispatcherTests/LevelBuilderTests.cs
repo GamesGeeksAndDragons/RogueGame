@@ -230,7 +230,7 @@ namespace AssetsTests.DispatcherTests
         [InlineData(3)]
         public void WhenBuiltDispatcher_ShouldHaveLevelCharacters(int levelNumber)
         {
-            ArrangeTest();
+            TestArrange();
 
             var level = Act();
 
@@ -239,7 +239,8 @@ namespace AssetsTests.DispatcherTests
 
             IGameLevel Act()
             {
-                var newLevel = LevelBuilder.BuildNewGame(levelNumber);
+                var levelBuilder = (GameLevelBuilder)LevelBuilder;
+                var newLevel = levelBuilder.BuildNewGame(levelNumber);
                 Dispatcher.Dispatch();
                 return newLevel;
             }

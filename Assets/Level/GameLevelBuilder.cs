@@ -11,12 +11,13 @@ using Utils.Random;
 
 namespace Assets.Level
 {
-    internal interface ILevelBuilder
+    public interface ILevelBuilder
     {
-        GameLevel BuildNewGame();
+        IGameLevel BuildNewGame();
+        IGameLevel BuildExistingLevel(int level, string savedMaze);
     }
 
-    internal class LevelBuilder : ILevelBuilder
+    internal class GameLevelBuilder : ILevelBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;
@@ -27,7 +28,7 @@ namespace Assets.Level
         private readonly IPersonasBuilder _personasBuilder;
         private readonly ILevelDescriptor _descriptor;
 
-        public LevelBuilder(IDieBuilder dieBuilder, ILog logger, IDispatcher dispatcher, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder, IPersonasBuilder personasBuilder)
+        public GameLevelBuilder(IDieBuilder dieBuilder, ILog logger, IDispatcher dispatcher, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IResourceBuilder resourceBuilder, IPersonasBuilder personasBuilder)
         {
             _dieBuilder = dieBuilder;
             _logger = logger;
@@ -39,7 +40,7 @@ namespace Assets.Level
             _descriptor = new LevelDescriptor();
         }
 
-        private GameLevel BuildLevel(IMaze maze, string characterDie)
+        private IGameLevel BuildLevel(IMaze maze, string characterDie)
         {
             var me = _personasBuilder.BuildMe();
             var personaCount = _dieBuilder.Between(characterDie).Random;
@@ -61,7 +62,7 @@ namespace Assets.Level
             }
         }
 
-        internal GameLevel BuildNewGame(int level)
+        internal IGameLevel BuildNewGame(int level)
         {
             var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
             var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
@@ -72,12 +73,12 @@ namespace Assets.Level
             return BuildLevel(maze, levelDetail.CharacterDie);
         }
 
-        public GameLevel BuildNewGame()
+        public IGameLevel BuildNewGame()
         {
             return BuildNewGame(1);
         }
         
-        public GameLevel BuildExistingLevel(int level, string savedMaze)
+        public IGameLevel BuildExistingLevel(int level, string savedMaze)
         {
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, savedMaze);
             var levelDetail = _descriptor[level];

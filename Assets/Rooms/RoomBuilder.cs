@@ -7,7 +7,6 @@ using Assets.Resources;
 using Assets.Tiles;
 using log4net;
 using Utils;
-using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
 using Utils.Random;
@@ -27,7 +26,7 @@ namespace Assets.Rooms
         IRoom BuildRoom(int roomNumber);
     }
 
-    public class RoomBuilder : IRoomBuilder
+    internal class RoomBuilder : IRoomBuilder
     {
         private readonly IDieBuilder _dieBuilder;
         private readonly ILog _logger;

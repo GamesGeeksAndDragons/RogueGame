@@ -1,11 +1,11 @@
 ﻿using Assets.Deeds;
 using Assets.Level;
-using Assets.Messaging;
 using Assets.Resources;
 using Assets.Rooms;
 using AssetsTests.Fakes;
-using log4net;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Utils;
+using Utils.Dispatching;
 using Utils.Random;
 
 namespace AssetsTests.Helpers
@@ -16,28 +16,29 @@ namespace AssetsTests.Helpers
 
         public string TestName { get; }
         internal ITestOutputHelper Output;
-        public RoomBuilder RoomBuilder;
 
-        internal DispatchRegistry DispatchRegistry;
-        internal ActionRegistry ActionRegistry;
-        internal DieBuilder DieBuilder;
-        internal ILog FakeLogger;
-        internal ResourceBuilder ResourceBuilder;
+        protected readonly LevelBuilderFactory MazeBuilderFactory = new LevelBuilderFactory();
+
+        protected IRoomBuilder RoomBuilder { get; set; }
+        protected IResourceBuilder ResourceBuilder => MazeBuilderFactory.ResourceBuilder;
+        protected IDispatchRegistry DispatchRegistry => MazeBuilderFactory.DispatchRegistry;
+        protected IActionRegistry ActionRegistry => MazeBuilderFactory.ActionRegistry;
+
+        protected IDieBuilder DieBuilder { get; set; }
+        protected FakeLogger FakeLogger { get; }
 
         public BuilderTestHelpers(ITestOutputHelper output, string testName = FileAndDirectoryHelpers.LoadFolder)
         {
             TestName = testName;
             Output = output;
+
+            DieBuilder = new DieBuilder(TestName, Die.RandomiserReset.None);
+            FakeLogger = new FakeLogger(Output);
         }
 
-        internal virtual void ArrangeTest(Die.RandomiserReset reset = Die.RandomiserReset.None)
+        internal virtual void TestArrange(Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
-            DispatchRegistry ??= new DispatchRegistry();
-            ActionRegistry ??= new ActionRegistry();
-            DieBuilder ??= new DieBuilder(TestName, reset);
-            FakeLogger ??= new FakeLogger(Output);
-            ResourceBuilder ??= new ResourceBuilder(DispatchRegistry, ActionRegistry);
-            RoomBuilder ??= new RoomBuilder(DieBuilder, FakeLogger, DispatchRegistry, ActionRegistry, ResourceBuilder);
+            RoomBuilder = MazeBuilderFactory.CreateRoomBuilder(DieBuilder, FakeLogger);
         }
 
         internal virtual void AssertTest(IGameLevel gameLevel, string expected)

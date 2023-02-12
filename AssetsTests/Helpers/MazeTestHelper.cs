@@ -1,6 +1,4 @@
 ﻿using Assets.Level;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AssetsTests.Helpers
 {
@@ -15,11 +13,11 @@ namespace AssetsTests.Helpers
 
         protected virtual void TestArrange(IMazeExpectations expectations)
         {
-            base.ArrangeTest();
+            base.TestArrange();
 
-            Output.OutputMazes(expectations.StartingMaze);
+            GameLevel = LevelBuilder.BuildExistingLevel(expectations.Level, expectations.StartingMaze);
 
-            GameLevel = LevelBuilder.BuildExistingLevel(1, expectations.StartingMaze);
+            Output.OutputMazes(GameLevel.Maze.ToString());
         }
 
         protected abstract void TestAct();

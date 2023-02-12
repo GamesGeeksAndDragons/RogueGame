@@ -90,7 +90,7 @@ namespace AssetsTests.RoomTests
         private void Should_BuildARoom_FromAFile(int roomIndex, string expectedRoom)
         {
             DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
-            ArrangeTest();
+            TestArrange();
 
             AssertTest(Room, expectedRoom.Trim(CharHelpers.EndOfLine));
         }

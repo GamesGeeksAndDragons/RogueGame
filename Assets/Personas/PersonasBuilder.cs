@@ -21,7 +21,7 @@ namespace Assets.Personas
         private Me? _me;
         private readonly List<ICharacter> _characters = new List<ICharacter>();
 
-        public PersonasBuilder(IDieBuilder dieBuilder, ICharacterBuilder characterBuilder, string characterDie)
+        public PersonasBuilder(IDieBuilder dieBuilder, ICharacterBuilder characterBuilder)
         {
             _dieBuilder = dieBuilder;
             _characterBuilder = characterBuilder;

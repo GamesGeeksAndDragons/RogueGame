@@ -91,7 +91,7 @@ namespace AssetsTests.RoomTests
         private void DoorPlacementTest(int roomIndex, int numDoors, string expectation)
         {
             DieBuilder = new FakeDieBuilder(4, roomIndex, 1);
-            ArrangeTest(Die.RandomiserReset.Index);
+            TestArrange(Die.RandomiserReset.Index);
 
             for (int i = 1; i <= numDoors; i++)
             {

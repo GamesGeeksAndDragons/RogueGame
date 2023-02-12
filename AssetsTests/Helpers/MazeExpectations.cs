@@ -1,5 +1,4 @@
-﻿using System;
-using Utils;
+﻿using Utils;
 
 namespace AssetsTests.Helpers
 {
@@ -14,7 +13,7 @@ namespace AssetsTests.Helpers
     {
         protected MazeExpectations()
         {
-            Level = -1;
+            Level = 1;
         }
 
         public int Level { get; protected set; }

@@ -1,7 +1,6 @@
 ﻿using Assets.Rooms;
 using Utils;
 using Utils.Random;
-using Xunit.Abstractions;
 
 namespace AssetsTests.Helpers
 {
@@ -13,9 +12,9 @@ namespace AssetsTests.Helpers
         {
         }
 
-        internal override void ArrangeTest(Die.RandomiserReset reset = Die.RandomiserReset.None)
+        internal override void TestArrange(Die.RandomiserReset reset = Die.RandomiserReset.None)
         {
-            base.ArrangeTest(reset);
+            base.TestArrange(reset);
 
             Room = RoomBuilder.BuildRoom(1);
         }

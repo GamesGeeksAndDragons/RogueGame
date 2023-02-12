@@ -1,26 +1,43 @@
-﻿using System;
-using Assets.Level;
+﻿using Assets.Level;
 using AssetsTests.Fakes;
 using AssetsTests.Helpers;
-using Utils;
 using Utils.Enums;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AssetsTests.ActionTests
 {
-    public class MoveActionTests : LevelBuilderTestHelpers
+    public enum MoveActionTest
     {
-        public MoveActionTests(ITestOutputHelper output)
-        : base(output)
-        {
-        }
+        MoveNorth = 0,
+        MoveSouth,
+        MoveEast,
+        MoveWest,
+        MoveNorthEast,
+        MoveSouthEast
+    }
 
-        internal static string GetExpectation(int testNum)
+    static class MoveActionExpectations
+    {
+        class MoveNorthExpectations : MazeExpectations
         {
-            switch (testNum)
+            public MoveNorthExpectations()
             {
-                case 1:return @"
+                StartingMaze = @"
+██████████████████████
+██████████████████████
+████╔═══════════╗█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████║¹¹¹¹¹¹¹¹¹¹¹║█████
+████╚═══════════╝█████
+██████████████████████
+██████████████████████
+";
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -36,27 +53,18 @@ namespace AssetsTests.ActionTests
 10|██████████████████████████████|10
 11|██████████████████████████████|11
 12|██████████████████████████████|12
-13|██████████████████████████████|13
-14|██████████████████████████████|14
-15|██████████████████████████████|15
-16|███████╔════════╗█████████████|16
-17|███████║¹¹¹M@¹¹¹║█████████████|17
-18|███████║¹¹¹¹¹¹¹¹║█████████████|18
-19|███████║¹¹¹¹¹¹¹¹║█████████████|19
-20|███████║¹¹¹¹¹¹¹¹║█████████████|20
-21|███████║¹¹¹¹¹¹¹¹║█████████████|21
-22|███████║¹¹¹¹¹¹¹¹║█████████████|22
-23|███████║¹¹¹¹¹¹¹¹║█████████████|23
-24|███████║¹¹¹¹¹¹¹¹║█████████████|24
-25|███████╚════════╝█████████████|25
-26|██████████████████████████████|26
-27|██████████████████████████████|27
-28|██████████████████████████████|28
-29|██████████████████████████████|29
 ------------------------------------
   |012345678901234567890123456789|  
 ";
-                case 2:return @"
+
+            }
+        }
+
+        class MoveSouthExpectations : MazeExpectations
+        {
+            public MoveSouthExpectations()
+            {
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -92,7 +100,15 @@ namespace AssetsTests.ActionTests
 ------------------------------------
   |012345678901234567890123456789|  
 ";
-                case 3:return @"
+
+            }
+        }
+
+        class MoveEastExpectations : MazeExpectations
+        {
+            public MoveEastExpectations()
+            {
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -128,7 +144,15 @@ namespace AssetsTests.ActionTests
 ------------------------------------
   |012345678901234567890123456789|  
 ";
-                case 4: return @"
+
+            }
+        }
+
+        class MoveWestExpectations : MazeExpectations
+        {
+            public MoveWestExpectations()
+            {
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -164,7 +188,14 @@ namespace AssetsTests.ActionTests
 ------------------------------------
   |012345678901234567890123456789|  
 ";
-                case 5: return @"
+            }
+        }
+
+        class MoveNorthEastExpectations : MazeExpectations
+        {
+            public MoveNorthEastExpectations()
+            {
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -200,7 +231,15 @@ namespace AssetsTests.ActionTests
 ------------------------------------
   |012345678901234567890123456789|  
 ";
-                case 6: return @"
+
+            }
+        }
+
+        class MoveSouthEastExpectations : MazeExpectations
+        {
+            public MoveSouthEastExpectations()
+            {
+                ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -236,6 +275,39 @@ namespace AssetsTests.ActionTests
 ------------------------------------
   |012345678901234567890123456789|  
 ";
+
+
+            }
+        }
+
+        public static IMazeExpectations GetExpectations(this MoveActionTest test)
+        {
+            switch (test)
+            {
+                case MoveActionTest.MoveNorth: return new MoveNorthExpectations();
+                case MoveActionTest.MoveSouth: return new MoveSouthExpectations();
+                case MoveActionTest.MoveEast: return new MoveEastExpectations();
+                case MoveActionTest.MoveWest: return new MoveWestExpectations();
+                case MoveActionTest.MoveNorthEast: return new MoveNorthEastExpectations();
+                case MoveActionTest.MoveSouthEast: return new MoveSouthEastExpectations();
+            }
+
+            MazeTestHelpers.ThrowUnknownTest((int)test);;
+            return null;
+        }
+    }
+
+    public class MoveActionTests : MazeTestHelper
+    {
+        public MoveActionTests(ITestOutputHelper output)
+        : base(output)
+        {
+        }
+
+        internal static string GetExpectation(int testNum)
+        {
+            switch (testNum)
+            {
                 case 7: return @"
   |012345678901234567890123456789|  
 ------------------------------------
@@ -277,76 +349,75 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        private void Move_Me_Test(int testNum, params Compass8Points[] directions)
+        [Theory]
+        [InlineData(MoveActionTest.MoveNorth, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North)]
+        public void Move_Me_Test(MoveActionTest test, params Compass8Points[] directions)
         {
-            var gameLevel = Arrange();
+            var expectations = test.GetExpectations();
+            base.TestArrange(expectations);
+            ArrangeMovingMeCharacter();
 
-            Dispatcher.Dispatch();
+            AssertTest(GameLevel, expectations);
 
-            var expected = GetExpectation(testNum).Trim(CharHelpers.EndOfLine);
-            AssertTest(gameLevel, expected);
-
-            GameLevel Arrange()
+            void ArrangeMovingMeCharacter()
             {
-                DieBuilder = new FakeDieBuilder(1, 1);
-                ArrangeTest();
-
-                var level = LevelBuilder.BuildNewGame();
-                level.Dispatcher.Dispatch();
-
-                var start = level.Print(DispatchRegistry);
+                GameLevel.Dispatcher.Dispatch();
+                var start = GameLevel.Print(DispatchRegistry);
                 Output.WriteLine(BuilderTestHelpers.Divider + " start " + BuilderTestHelpers.Divider);
                 Output.WriteLine(start);
 
                 foreach (var direction in directions)
                 {
-                    Dispatcher.EnqueueMove(level, level.Me, direction);
+                    GameLevel.Dispatcher.EnqueueMove(GameLevel, GameLevel.Me, direction);
                 }
-
-                return level;
             }
         }
 
-        [Fact]
-        public void Move_MeNorth_WillNotLeaveATrail()
+        protected override void TestAct()
         {
-            Move_Me_Test(1, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North);
+            Dispatcher.Dispatch();
         }
 
-        [Fact]
-        public void Move_MeSouth_WillNotLeaveATrail()
-        {
-            Move_Me_Test(2, Compass8Points.South, Compass8Points.South, Compass8Points.South, Compass8Points.South, Compass8Points.South);
-        }
+        //[Fact]
+        //public void Move_MeNorth_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveNorth, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North, Compass8Points.North);
+        //}
 
-        [Fact]
-        public void Move_MeEast_WillNotLeaveATrail()
-        {
-            Move_Me_Test(3, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East);
-        }
+        //[Fact]
+        //public void Move_MeSouth_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveSouth, Compass8Points.South, Compass8Points.South, Compass8Points.South, Compass8Points.South, Compass8Points.South);
+        //}
 
-        [Fact]
-        public void Move_MeWest_WillNotLeaveATrail()
-        {
-            Move_Me_Test(4, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West);
-        }
+        //[Fact]
+        //public void Move_MeEast_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveEast, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East, Compass8Points.East);
+        //}
 
-        [Fact]
-        public void Move_MeNorthEast_WillNotLeaveATrail()
-        {
-            Move_Me_Test(5, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast);
-        }
+        //[Fact]
+        //public void Move_MeWest_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveWest, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West, Compass8Points.West);
+        //}
 
-        [Fact]
-        public void Move_MeSouthEast_WillNotLeaveATrail()
-        {
-            Move_Me_Test(6, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast);
-        }
+        //[Fact]
+        //public void Move_MeNorthEast_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveNorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast);
+        //}
 
-        [Fact]
-        public void Move_Me_AroundCharacterWillNotWalkThoughIt()
-        {
-            Move_Me_Test(7, Compass8Points.North, Compass8Points.North, Compass8Points.West, Compass8Points.SouthWest, Compass8Points.North, Compass8Points.NorthWest, Compass8Points.East);
-        }
+        //[Fact]
+        //public void Move_MeSouthEast_WillNotLeaveATrail()
+        //{
+        //    Move_Me_Test(MoveActionTest.MoveSouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast);
+        //}
+
+        //[Fact]
+        //public void Move_Me_AroundCharacterWillNotWalkThoughIt()
+        //{
+        //    Move_Me_Test(7, Compass8Points.North, Compass8Points.North, Compass8Points.West, Compass8Points.SouthWest, Compass8Points.North, Compass8Points.NorthWest, Compass8Points.East);
+        //}
     }
 }

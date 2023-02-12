@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using Assets.Level;
-using AssetsTests.Fakes;
+﻿using AssetsTests.Fakes;
 using AssetsTests.Helpers;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AssetsTests.ActionTests
 {

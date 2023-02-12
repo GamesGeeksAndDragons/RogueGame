@@ -1,7 +1,5 @@
 ﻿using AssetsTests.Helpers;
 using AssetsTests.MazeTests.Helpers;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace AssetsTests.MazeTests
 {
