@@ -6,7 +6,9 @@ namespace AssetsTests.ActionTests
     {
         class TeleportWithOneValidSpace : MazeExpectations
         {
-            protected override string Start => @"
+            public TeleportWithOneValidSpace()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -18,7 +20,7 @@ namespace AssetsTests.ActionTests
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
  |012345678901| 
 ----------------
 0|████████████|0
@@ -33,11 +35,14 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+            }
         }
 
         class TeleportWithSixValidSpaces : MazeExpectations
         {
-            protected override string Start => @"
+            public TeleportWithSixValidSpaces()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -49,7 +54,7 @@ namespace AssetsTests.ActionTests
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
  |012345678901| 
 ----------------
 0|████████████|0
@@ -64,11 +69,14 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+            }
         }
 
         class TeleportWithWithTwoSpacesAndTwoCharacters : MazeExpectations
         {
-            protected override string Start => @"
+            public TeleportWithWithTwoSpacesAndTwoCharacters()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -80,7 +88,7 @@ namespace AssetsTests.ActionTests
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
  |012345678901| 
 ----------------
 0|████████████|0
@@ -95,11 +103,14 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+            }
         }
 
         class TeleportWithWithSixSpacesAndTwoCharacters : MazeExpectations
         {
-            protected override string Start => @"
+            public TeleportWithWithSixSpacesAndTwoCharacters()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -111,7 +122,7 @@ namespace AssetsTests.ActionTests
 ████████████
 ";
 
-            protected override string Expected => @"
+    ExpectedMaze = @"
  |012345678901| 
 ----------------
 0|████████████|0
@@ -126,6 +137,7 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+}
         }
 
         internal static IMazeExpectations GetExpectations(int testNumber)

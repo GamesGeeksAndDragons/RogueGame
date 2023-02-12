@@ -5,17 +5,28 @@ namespace AssetsTests.Helpers
 {
     public interface IMazeExpectations
     {
+        int Level { get; }
         string StartingMaze { get; }
         string ExpectedMaze { get; }
     }
 
     public abstract class MazeExpectations : IMazeExpectations
     {
-        public string StartingMaze => Start.Trim(CharHelpers.EndOfLine);
-        public string ExpectedMaze => Expected.Trim(CharHelpers.EndOfLine);
+        public int Level { get; protected set; }
 
-        protected abstract string Start { get; }
-        protected abstract string Expected { get; }
+        private readonly string _startingMaze;
+        public string StartingMaze
+        {
+            get => _startingMaze;
+            init => _startingMaze = value.Trim(CharHelpers.EndOfLine);
+        }
+
+        private readonly string _expectedMaze;
+        public string ExpectedMaze
+        {
+            get => _expectedMaze;
+            init => _expectedMaze = value.Trim(CharHelpers.EndOfLine);
+        }
     }
 
     static class MazeTestHelpers

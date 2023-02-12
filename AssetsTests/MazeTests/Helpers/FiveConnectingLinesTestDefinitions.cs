@@ -6,7 +6,9 @@ namespace AssetsTests.MazeTests.Helpers
     {
         class Test1 : MazeExpectations
         {
-            protected override string Start => @"
+            public Test1()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -24,7 +26,7 @@ namespace AssetsTests.MazeTests.Helpers
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901|  
 ------------------
 0 |████████████|0 
@@ -45,11 +47,14 @@ namespace AssetsTests.MazeTests.Helpers
 ------------------
   |012345678901|  
 ";
-        }
+            }
+    }
 
         class Test2 : MazeExpectations
         {
-            protected override string Start => @"
+            public Test2()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -67,7 +72,7 @@ namespace AssetsTests.MazeTests.Helpers
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901|  
 ------------------
 0 |████████████|0 
@@ -88,11 +93,14 @@ namespace AssetsTests.MazeTests.Helpers
 ------------------
   |012345678901|  
 ";
-        }
+            }
+}
 
         class Test3 : MazeExpectations
         {
-            protected override string Start => @"
+            public Test3()
+            {
+            StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -110,7 +118,7 @@ namespace AssetsTests.MazeTests.Helpers
 ████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901|  
 ------------------
 0 |████████████|0 
@@ -131,11 +139,14 @@ namespace AssetsTests.MazeTests.Helpers
 ------------------
   |012345678901|  
 ";
+            }
         }
 
         class Test4 : MazeExpectations
         {
-            protected override string Start => @"
+            public Test4()
+            {
+            StartingMaze = @"
 ████████████████████
 ████████████████████
 ████████████████████
@@ -153,7 +164,7 @@ namespace AssetsTests.MazeTests.Helpers
 ████████████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |01234567890123456789|  
 --------------------------
 0 |████████████████████|0 
@@ -174,6 +185,7 @@ namespace AssetsTests.MazeTests.Helpers
 --------------------------
   |01234567890123456789|  
 ";
+            }
         }
 
         internal static IMazeExpectations GetExpectations(int testNumber)

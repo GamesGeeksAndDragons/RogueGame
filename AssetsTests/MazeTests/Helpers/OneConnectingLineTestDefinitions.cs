@@ -6,7 +6,9 @@ internal static class OneConnectingLineTestDefinitions
 {
     class Test1 : MazeExpectations
     {
-        protected override string Start => @"
+        public Test1()
+        {
+            StartingMaze = @"
 ██████████████████
 ██████████████████
 ██████████████████
@@ -24,7 +26,7 @@ internal static class OneConnectingLineTestDefinitions
 ██████████████████
 ";
 
-        protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
@@ -45,11 +47,14 @@ internal static class OneConnectingLineTestDefinitions
 ------------------------
   |012345678901234567|  
 ";
+        }
     }
 
     class Test2 : MazeExpectations
     {
-        protected override string Start => @"
+        public Test2()
+        {
+            StartingMaze = @"
 ██████████████████
 ██████████████████
 ██████████████████
@@ -67,7 +72,7 @@ internal static class OneConnectingLineTestDefinitions
 ██████████████████
 ";
 
-        protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901234567|  
 ------------------------
 0 |██████████████████|0 
@@ -88,6 +93,7 @@ internal static class OneConnectingLineTestDefinitions
 ------------------------
   |012345678901234567|  
 ";
+        }
     }
 
     internal static IMazeExpectations GetExpectations(int testNumber)

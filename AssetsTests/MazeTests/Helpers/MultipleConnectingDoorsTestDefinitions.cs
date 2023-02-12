@@ -6,7 +6,9 @@ namespace AssetsTests.MazeTests.Helpers
     {
         class TwoDoors : MazeExpectations
         {
-            protected override string Start => @"
+            public TwoDoors()
+            {
+                StartingMaze = @"
 █████████████████████████████████████████████
 █████████████████████████████████████████████
 █████████████████████████████████████████████
@@ -30,7 +32,7 @@ namespace AssetsTests.MazeTests.Helpers
 █████████████████████████████████████████████
 ";
 
-protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901234567890123456789012345678901234|  
 ---------------------------------------------------
 0 |█████████████████████████████████████████████|0 
@@ -57,11 +59,14 @@ protected override string Expected => @"
 ---------------------------------------------------
   |012345678901234567890123456789012345678901234|  
 ";
+            }
         }
 
         class ThreeDoors : MazeExpectations
         {
-            protected override string Start => @"
+            public ThreeDoors()
+            {
+                StartingMaze = @"
 █████████████████████████████████████████████
 █████████████████████████████████████████████
 █████████████████████████████████████████████
@@ -85,7 +90,7 @@ protected override string Expected => @"
 █████████████████████████████████████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901234567890123456789012345678901234|  
 ---------------------------------------------------
 0 |█████████████████████████████████████████████|0 
@@ -112,11 +117,14 @@ protected override string Expected => @"
 ---------------------------------------------------
   |012345678901234567890123456789012345678901234|  
 ";
+            }
         }
 
         class FourDoors : MazeExpectations
         {
-            protected override string Start => @"
+            public FourDoors()
+            {
+                StartingMaze = @"
 █████████████████████████████████████████████
 █████████████████████████████████████████████
 █████████████████████████████████████████████
@@ -140,7 +148,7 @@ protected override string Expected => @"
 █████████████████████████████████████████████
 ";
 
-            protected override string Expected => @"
+            ExpectedMaze = @"
   |012345678901234567890123456789012345678901234|  
 ---------------------------------------------------
 0 |█⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰█████████████████████|0 
@@ -167,11 +175,14 @@ protected override string Expected => @"
 ---------------------------------------------------
   |012345678901234567890123456789012345678901234|  
 ";
+            }
         }
 
         class FiveDoors : MazeExpectations
         {
-            protected override string Start => @"
+            public FiveDoors()
+            {
+                StartingMaze = @"
 █████████████████████████████████████████████
 █████████████████████████████████████████████
 █████████████████████████████████████████████
@@ -195,7 +206,7 @@ protected override string Expected => @"
 █████████████████████████████████████████████
 ";
 
-            protected override string Expected => @"
+                ExpectedMaze = @"
   |012345678901234567890123456789012345678901234|  
 ---------------------------------------------------
 0 |█⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰⁰█████████████████████|0 
@@ -222,6 +233,7 @@ protected override string Expected => @"
 ---------------------------------------------------
   |012345678901234567890123456789012345678901234|  
 ";
+}
         }
 
         internal static MazeExpectations GetExpectations(int testNumber)
