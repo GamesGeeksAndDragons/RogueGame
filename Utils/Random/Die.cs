@@ -35,7 +35,7 @@ namespace Utils.Random
             _min = min;
             _max = max+1; // Generator.Next(min, max); max is exclusive, so adding 1
 
-            (_fileWithRandomNumbers, _fileWithIndex) = GetFilenameWithRandomNumbers(loadFolder);
+            (_fileWithRandomNumbers, _fileWithIndex) = GetFilenameWithRandomNumbers();
 
             if (reset == RandomiserReset.Full)
             {
@@ -46,20 +46,20 @@ namespace Utils.Random
             {
                 File.WriteAllText(_fileWithIndex, "0");
             }
+
+            (string random, string index) GetFilenameWithRandomNumbers()
+            {
+                var filename = Name.ChangeExtension(DieBuilder.RandomExtension);
+                string random = FileAndDirectoryHelpers.GetFullQualifiedName(loadFolder, filename);
+
+                filename = Name.ChangeExtension(DieBuilder.IndexExtension);
+                string index = FileAndDirectoryHelpers.GetFullQualifiedName(loadFolder, filename);
+                return (random, index);
+            }
         }
 
         public const string Prefix = "number";
         public static string NameFormat(int min, int max) => $"{Prefix}_{min}_{max}";
-
-        private (string random, string index) GetFilenameWithRandomNumbers(string loadFolder)
-        {
-            var filename = Name.ChangeExtension(DieBuilder.RandomExtension);
-            var random = FileAndDirectoryHelpers.GetFullQualifiedName(loadFolder, filename);
-
-            filename = Name.ChangeExtension(DieBuilder.IndexExtension);
-            var index = FileAndDirectoryHelpers.GetFullQualifiedName(loadFolder, filename);
-            return (random, index);
-        }
 
 
         internal void Populate()
