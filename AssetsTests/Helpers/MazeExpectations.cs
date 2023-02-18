@@ -1,4 +1,5 @@
 ﻿using Utils;
+using Utils.Coordinates;
 
 namespace AssetsTests.Helpers
 {
@@ -7,10 +8,14 @@ namespace AssetsTests.Helpers
         int Level { get; }
         string StartingMaze { get; }
         string ExpectedMaze { get; }
+
+        string[] CharactersState { get; }
     }
 
     public abstract class MazeExpectations : IMazeExpectations
     {
+        private readonly List<string> _characterState = new List<string>();
+
         protected MazeExpectations()
         {
             Level = 1;
@@ -31,6 +36,12 @@ namespace AssetsTests.Helpers
             get => _expectedMaze;
             init => _expectedMaze = value.Trim(CharHelpers.EndOfLine);
         }
+
+        public string[] CharactersState => _characterState.ToArray();
+
+        protected string ActorCoordinates(string actor, int row, int column) => $"{actor} " + new Coordinate(row, column).FormatParameter();
+
+        protected void AddCharacter(string state) => _characterState.Add(state);
     }
 
     static class MazeTestHelpers

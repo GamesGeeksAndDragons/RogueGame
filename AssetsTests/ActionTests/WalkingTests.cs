@@ -31,10 +31,6 @@ namespace AssetsTests.ActionTests
 
             void ArrangeMovingMeCharacter()
             {
-                GameLevel.Dispatcher.Dispatch();
-
-                GameLevelBuilder.AddCharacter(GameLevel, expectations.Me);
-
                 var maze = GameLevel.Print(DispatchRegistry);
                 Output.WriteLine(BuilderTestHelpers.Divider + " start " + BuilderTestHelpers.Divider);
                 Output.WriteLine(maze);

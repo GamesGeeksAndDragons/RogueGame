@@ -15,7 +15,7 @@ namespace AssetsTests.Helpers
         {
             base.TestArrange();
 
-            GameLevel = GameLevelBuilder.BuildExistingLevel(expectations.Level, expectations.StartingMaze);
+            GameLevel = GameLevelBuilder.BuildExistingLevel(expectations.Level, expectations.StartingMaze, expectations.CharactersState);
 
             Output.OutputMazes(GameLevel.Maze.ToString());
         }

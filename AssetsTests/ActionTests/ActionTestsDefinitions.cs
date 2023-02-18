@@ -1,13 +1,12 @@
 ﻿#nullable enable
 using AssetsTests.Helpers;
-using System.Diagnostics.CodeAnalysis;
 using Utils.Display;
 
 namespace AssetsTests.ActionTests
 {
     static class ActionTestsDefinitions
     {
-        class TeleportWithOneValidSpace : MazeAndCharacterExpectations
+        class TeleportWithOneValidSpace : MazeExpectations
         {
             public TeleportWithOneValidSpace()
             {
@@ -38,12 +37,13 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+
+                var me = ActorCoordinates(CharacterDisplay.Me, 4, 5);
+                AddCharacter(me);
             }
+    }
 
-            public override string Me => ActorCoordinates(CharacterDisplay.Me, 4, 5);
-        }
-
-        class TeleportWithSixValidSpaces : MazeAndCharacterExpectations
+        class TeleportWithSixValidSpaces : MazeExpectations
         {
             public TeleportWithSixValidSpaces()
             {
@@ -77,7 +77,7 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        class TeleportWithWithTwoSpacesAndTwoCharacters : MazeAndCharacterExpectations
+        class TeleportWithWithTwoSpacesAndTwoCharacters : MazeExpectations
         {
             public TeleportWithWithTwoSpacesAndTwoCharacters()
             {
@@ -111,7 +111,7 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        class TeleportWithWithSixSpacesAndTwoCharacters : MazeAndCharacterExpectations
+        class TeleportWithWithSixSpacesAndTwoCharacters : MazeExpectations
         {
             public TeleportWithWithSixSpacesAndTwoCharacters()
             {
@@ -145,7 +145,7 @@ namespace AssetsTests.ActionTests
 }
         }
 
-        internal static ICharacterExpectations GetExpectations(int testNumber)
+        internal static IMazeExpectations GetExpectations(int testNumber)
         {
             switch (testNumber)
             {

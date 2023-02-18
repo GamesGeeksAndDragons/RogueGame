@@ -34,7 +34,7 @@ static class WalkingAloneExpectations
 ██████████████████████
 ██████████████████████
 ";
-    class WalkNorthExpectations : MazeAndCharacterExpectations
+    class WalkNorthExpectations : MazeExpectations
     {
         public WalkNorthExpectations()
         {
@@ -60,12 +60,12 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
+            string me = ActorCoordinates(CharacterDisplay.Me, 10, 10);
+            AddCharacter(me);
         }
+}
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 10, 10);
-    }
-
-    class WalkSouthExpectations : MazeAndCharacterExpectations
+    class WalkSouthExpectations : MazeExpectations
     {
         public WalkSouthExpectations()
         {
@@ -91,11 +91,12 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
+            string me = ActorCoordinates(CharacterDisplay.Me, 3, 11);
+            AddCharacter(me);
         }
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 3, 11);
     }
 
-    class WalkEastExpectations : MazeAndCharacterExpectations
+    class WalkEastExpectations : MazeExpectations
     {
         public WalkEastExpectations()
         {
@@ -121,12 +122,13 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-        }
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 7, 5);
+            string me = ActorCoordinates(CharacterDisplay.Me, 7, 5);
+            AddCharacter(me);
+        }
     }
 
-    class WalkWestExpectations : MazeAndCharacterExpectations
+    class WalkWestExpectations : MazeExpectations
     {
         public WalkWestExpectations()
         {
@@ -152,12 +154,13 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-        }
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 6, 15);
+            string me = ActorCoordinates(CharacterDisplay.Me, 6, 15);
+            AddCharacter(me);
+        }
     }
 
-    class WalkNorthEastExpectations : MazeAndCharacterExpectations
+    class WalkNorthEastExpectations : MazeExpectations
     {
         public WalkNorthEastExpectations()
         {
@@ -183,12 +186,13 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-        }
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 10, 5);
+            string me = ActorCoordinates(CharacterDisplay.Me, 10, 5);
+            AddCharacter(me);
+        }
     }
 
-    class WalkSouthEastExpectations : MazeAndCharacterExpectations
+    class WalkSouthEastExpectations : MazeExpectations
     {
         public WalkSouthEastExpectations()
         {
@@ -214,12 +218,13 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-        }
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 3, 5);
+            var me = ActorCoordinates(CharacterDisplay.Me, 3, 5);
+            AddCharacter(me);
+        }
     }
 
-    class WalkMultipleDirectionsExpectations : MazeAndCharacterExpectations
+    class WalkMultipleDirectionsExpectations : MazeExpectations
     {
         public WalkMultipleDirectionsExpectations()
         {
@@ -245,12 +250,13 @@ static class WalkingAloneExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-        }
 
-        public override string Me => ActorCoordinates(CharacterDisplay.Me, 3, 5);
+            string me = ActorCoordinates(CharacterDisplay.Me, 3, 5);
+            AddCharacter(me);
+        }
     }
 
-    public static ICharacterExpectations GetExpectations(this WalkAloneTest test)
+    public static IMazeExpectations GetExpectations(this WalkAloneTest test)
     {
         switch (test)
         {

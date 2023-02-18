@@ -15,9 +15,7 @@ namespace Assets.Level
     public interface IGameLevelBuilder
     {
         IGameLevel BuildNewGame();
-        IGameLevel BuildExistingLevel(int level, string savedMaze);
-
-        void AddCharacter(IGameLevel gameLevel, string state);
+        IGameLevel BuildExistingLevel(int level, string savedMaze, string[] charactersState);
     }
 
     internal class GameLevelBuilder : IGameLevelBuilder
@@ -53,9 +51,14 @@ namespace Assets.Level
 
         private IGameLevel BuildLevel(IMaze maze, params string[] charactersState)
         {
-            _gameCharacters.Load(charactersState);
+            var characters = _gameCharacters.Load(charactersState);
 
             var level = new GameLevel(maze, _gameCharacters, _dispatchRegistry, _dispatcher, _dieBuilder);
+
+            foreach (var character in characters)
+            {
+                character.Subscribe(level);
+            }
 
             return level;
         }
@@ -76,10 +79,11 @@ namespace Assets.Level
             return BuildNewGame(1);
         }
         
-        public IGameLevel BuildExistingLevel(int level, string savedMaze)
+        public IGameLevel BuildExistingLevel(int level, string savedMaze, string[] charactersState)
         {
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, savedMaze);
-            return BuildLevel(maze);
+            var gameLevel = BuildLevel(maze, charactersState);
+            return gameLevel;
         }
 
         public void AddRandomCharacters(IGameLevel gameLevel, string characterDie)
@@ -103,15 +107,6 @@ namespace Assets.Level
                     _dispatcher.EnqueueTeleport(gameLevel, character);
                 }
                 //_dispatcher.EnqueueTeleport(level, me);
-            }
-        }
-
-        public void AddCharacter(IGameLevel gameLevel, string state)
-        {
-            var characters = _gameCharacters.Load(state);
-            foreach (var character in characters)
-            {
-                character.Subscribe(gameLevel);
             }
         }
     }
