@@ -1,10 +1,11 @@
-﻿using AssetsTests.Helpers;
+﻿#nullable enable
+using AssetsTests.Helpers;
 
 namespace AssetsTests.ActionTests
 {
     static class ActionTestsDefinitions
     {
-        class TeleportWithOneValidSpace : MazeExpectations
+        class TeleportWithOneValidSpace : MazeAndCharacterExpectations
         {
             public TeleportWithOneValidSpace()
             {

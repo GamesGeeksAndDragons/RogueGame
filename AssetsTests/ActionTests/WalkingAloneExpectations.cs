@@ -1,4 +1,5 @@
-﻿using AssetsTests.Helpers;
+﻿#nullable enable
+using AssetsTests.Helpers;
 using Utils.Display;
 
 namespace AssetsTests.ActionTests;
@@ -249,7 +250,7 @@ static class WalkingAloneExpectations
         public override string Me => ActorCoordinates(CharacterDisplay.Me, 3, 5);
     }
 
-    public static IMazeExpectations GetExpectations(this WalkAloneTest test)
+    public static ICharacterExpectations GetExpectations(this WalkAloneTest test)
     {
         switch (test)
         {

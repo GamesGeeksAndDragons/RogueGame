@@ -1,4 +1,5 @@
-﻿using AssetsTests.Helpers;
+﻿#nullable enable
+using AssetsTests.Helpers;
 using Utils.Enums;
 
 namespace AssetsTests.ActionTests
@@ -32,8 +33,7 @@ namespace AssetsTests.ActionTests
             {
                 GameLevel.Dispatcher.Dispatch();
 
-                var characterExpectations = (ICharacterExpectations)expectations;
-                GameLevelBuilder.AddCharacter(GameLevel, characterExpectations.Me);
+                GameLevelBuilder.AddCharacter(GameLevel, expectations.Me);
 
                 var maze = GameLevel.Print(DispatchRegistry);
                 Output.WriteLine(BuilderTestHelpers.Divider + " start " + BuilderTestHelpers.Divider);
