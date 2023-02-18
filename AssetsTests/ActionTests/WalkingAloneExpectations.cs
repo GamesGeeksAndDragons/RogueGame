@@ -264,6 +264,6 @@ static class WalkingAloneExpectations
         }
 
         MazeTestHelpers.ThrowUnknownTest((int)test); ;
-        return null;
+        return null!;
     }
 }

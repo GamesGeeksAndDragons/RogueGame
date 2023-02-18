@@ -1,5 +1,7 @@
 ﻿#nullable enable
 using AssetsTests.Helpers;
+using System.Diagnostics.CodeAnalysis;
+using Utils.Display;
 
 namespace AssetsTests.ActionTests
 {
@@ -9,7 +11,7 @@ namespace AssetsTests.ActionTests
         {
             public TeleportWithOneValidSpace()
             {
-            StartingMaze = @"
+                StartingMaze = @"
 ████████████
 ████████████
 ████████████
@@ -21,7 +23,7 @@ namespace AssetsTests.ActionTests
 ████████████
 ";
 
-            ExpectedMaze = @"
+                ExpectedMaze = @"
  |012345678901| 
 ----------------
 0|████████████|0
@@ -37,9 +39,11 @@ namespace AssetsTests.ActionTests
  |012345678901| 
 ";
             }
+
+            public override string Me => ActorCoordinates(CharacterDisplay.Me, 4, 5);
         }
 
-        class TeleportWithSixValidSpaces : MazeExpectations
+        class TeleportWithSixValidSpaces : MazeAndCharacterExpectations
         {
             public TeleportWithSixValidSpaces()
             {
@@ -73,7 +77,7 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        class TeleportWithWithTwoSpacesAndTwoCharacters : MazeExpectations
+        class TeleportWithWithTwoSpacesAndTwoCharacters : MazeAndCharacterExpectations
         {
             public TeleportWithWithTwoSpacesAndTwoCharacters()
             {
@@ -107,7 +111,7 @@ namespace AssetsTests.ActionTests
             }
         }
 
-        class TeleportWithWithSixSpacesAndTwoCharacters : MazeExpectations
+        class TeleportWithWithSixSpacesAndTwoCharacters : MazeAndCharacterExpectations
         {
             public TeleportWithWithSixSpacesAndTwoCharacters()
             {
@@ -141,7 +145,7 @@ namespace AssetsTests.ActionTests
 }
         }
 
-        internal static IMazeExpectations GetExpectations(int testNumber)
+        internal static ICharacterExpectations GetExpectations(int testNumber)
         {
             switch (testNumber)
             {
@@ -152,7 +156,7 @@ namespace AssetsTests.ActionTests
             }
 
             MazeTestHelpers.ThrowUnknownTest(testNumber);
-            return null;
+            return null!;
         }
     }
 }

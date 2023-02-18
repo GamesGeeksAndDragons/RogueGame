@@ -8,8 +8,8 @@ public class Die : IDice
 
     private readonly List<int> _randomNumbers = new List<int>();
     private int _diceIndex;
-    private readonly string _fileWithRandomNumbers;
-    private readonly string _fileWithIndex;
+    private readonly string _fileWithRandomNumbers = null!;
+    private readonly string _fileWithIndex = null!;
 
     private readonly int _min;
     private readonly int _max;
@@ -37,8 +37,8 @@ public class Die : IDice
 
         string GetFullyQualifiedName(string extension) => FileAndDirectoryHelpers.GetFullQualifiedName(loadFolder, Name.ChangeExtension(extension));
 
-        _fileWithRandomNumbers = GetFullyQualifiedName(DieBuilder.RandomExtension) ?? throw new ArgumentException("");
-        _fileWithIndex = GetFullyQualifiedName(DieBuilder.IndexExtension) ?? string.Empty;
+        _fileWithRandomNumbers = GetFullyQualifiedName(DieBuilder.RandomExtension);
+        _fileWithIndex = GetFullyQualifiedName(DieBuilder.IndexExtension);
 
         if (reset == RandomiserReset.Full)
         {
