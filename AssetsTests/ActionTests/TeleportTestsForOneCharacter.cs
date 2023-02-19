@@ -30,12 +30,6 @@ public class GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITelep
 
         base.TestArrange(expectations);
 
-        var characters = GameLevel.GameCharacters.Characters;
-        foreach (var character in characters)
-        {
-            GameLevel.Dispatcher.EnqueueTeleport(GameLevel, character);
-        }
-
         return expectations;
     }
 

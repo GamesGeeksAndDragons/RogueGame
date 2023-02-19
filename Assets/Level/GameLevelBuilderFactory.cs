@@ -27,7 +27,7 @@ public class GameLevelBuilderFactory
         new RoomBuilder(dieBuilder, logger, DispatchRegistry, ActionRegistry, ResourceBuilder);
 
     internal ICharacterFactory CreateCharacterFactory(IDieBuilder dieBuilder) =>
-        new CharacterFactory(dieBuilder, new CharacterBuilder(DispatchRegistry, ActionRegistry));
+        new CharacterFactory(dieBuilder, new CharacterBuilder(dieBuilder, DispatchRegistry, ActionRegistry));
 
     internal IGameCharacters CreateGameCharacters(IDieBuilder dieBuilder) =>
         new GameCharacters(DispatchRegistry, CreateCharacterFactory(dieBuilder));

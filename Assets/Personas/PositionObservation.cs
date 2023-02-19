@@ -3,4 +3,4 @@ using Utils.Coordinates;
 
 namespace Assets.Personas;
 
-public record class PositionObservation(string UniqueId, (Coordinate Before, Coordinate After) Change);
+public record class PositionObservation(ICharacter Character, (Coordinate Before, Coordinate After) Change);

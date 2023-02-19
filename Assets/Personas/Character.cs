@@ -30,6 +30,14 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
         UpdateState(extracted);
     }
 
+    protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, Coordinate position, int armourClass, int hitPoints)
+        : base(dispatchRegistry, actionRegistry, actor)
+    {
+        Coordinates = position;
+        ArmourClass = armourClass;
+        HitPoints = hitPoints;
+    }
+
     public override void UpdateState(Parameters state)
     {
         if (state.HasValue(nameof(Coordinates))) Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
@@ -64,7 +72,7 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
 
             foreach (var observer in _observers)
             {
-                observer.OnNext(new PositionObservation(UniqueId, (before, Coordinates)));
+                observer.OnNext(new PositionObservation(this, (before, Coordinates)));
             }
         }
     }
@@ -85,8 +93,8 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
 
         internal UnsubscribePositionObservation(List<IObserver<TPO>> observers, IObserver<TPO> observer)
         {
-            this._observers = observers;
-            this._observer = observer;
+            _observers = observers;
+            _observer = observer;
         }
 
         public void Dispose()
@@ -103,7 +111,7 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
             _observers.Add(observer);
         }
 
-        observer.OnNext(new PositionObservation(UniqueId, (Coordinate.NotSet, Coordinates)));
+        observer.OnNext(new PositionObservation(this, (Coordinate.NotSet, Coordinates)));
 
         return new UnsubscribePositionObservation<PositionObservation>(_observers, observer);
     }

@@ -19,11 +19,10 @@ public interface IGameCharacters : ICharacterPosition, IDisposable
 
     IEnumerable<ICharacter> Load(params string[] charactersState);
 
-    void Move(Coordinate from, Coordinate to);
     void Add(ICharacter character);
     void Position(ICharacter character, Coordinate before);
     void Remove(ICharacter character);
-    IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters);
+    IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters, int level, bool includeMe);
 }
 
 internal class GameCharacters : IGameCharacters
@@ -50,20 +49,10 @@ internal class GameCharacters : IGameCharacters
 
     public ICharacter Me { get; private set; }
 
-    public void Move(Coordinate from, Coordinate to)
-    {
-        var fromCharacter = this[from];
-        var toCharacter = this[to];
-
-        if (fromCharacter != null && toCharacter == null)
-        {
-            _positions.Remove(from);
-            _positions.Add(to, fromCharacter);
-        }
-    }
-
     public void Add(ICharacter character)
     {
+        if (_characters.ContainsKey(character.UniqueId)) return;
+
         _characters.Add(character.UniqueId, character);
     }
 
@@ -91,9 +80,23 @@ internal class GameCharacters : IGameCharacters
         character.Dispose();
     }
 
-    public IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters)
+    public IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters, int level, bool includeMe)
     {
-        throw new NotImplementedException();
+        var characters = new List<ICharacter>(numMonsters + (includeMe ? 1 : 0));
+
+        if (includeMe)
+        {
+            Me = CharacterFactory.RandomCharacter(CharacterDisplay.Me, level);
+            characters.Add(Me);
+        }
+
+        for (int i = 0; i < numMonsters; i++)
+        {
+            var monster = CharacterFactory.RandomCharacter(CharacterDisplay.DebugMonster, level);
+            characters.Add(monster);
+        }
+
+        return characters;
     }
 
     public IEnumerable<ICharacter> Load(params string[] charactersState)

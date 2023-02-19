@@ -10,6 +10,7 @@ namespace Assets.Level;
 
 public interface IGameLevel : ICharacterPosition, IObserver<PositionObservation>
 {
+    int Level { get; }
     IDispatchRegistry DispatchRegistry { get; }
     IDispatcher Dispatcher { get; }
     IDieBuilder DieBuilder { get; }
@@ -22,11 +23,13 @@ internal class GameLevel : IGameLevel
     public IDispatchRegistry DispatchRegistry { get; }
     public IDispatcher Dispatcher { get; }
     public IDieBuilder DieBuilder { get; }
+    public int Level { get; }
     public IMaze Maze { get; }
     public IGameCharacters GameCharacters { get; }
 
-    public GameLevel(IMaze maze, IGameCharacters gameCharacters, IDispatchRegistry dispatchRegistry, IDispatcher dispatcher, IDieBuilder dieBuilder)
+    public GameLevel(int level, IMaze maze, IGameCharacters gameCharacters, IDispatchRegistry dispatchRegistry, IDispatcher dispatcher, IDieBuilder dieBuilder)
     {
+        Level = level;
         Maze = maze;
         GameCharacters = gameCharacters;
         DispatchRegistry = dispatchRegistry;
@@ -44,12 +47,14 @@ internal class GameLevel : IGameLevel
 
     public void OnNext(PositionObservation observation)
     {
+        var character = observation.Character;
         var (before, after) = observation.Change;
-        if (before == after && after == Coordinate.NotSet) return;
 
-        var character = GameCharacters[observation.UniqueId];
-
-        if (after == Coordinate.NotSet)
+        if (before == after && after == Coordinate.NotSet)
+        {
+            GameCharacters.Add(character);
+        }
+        else if (after == Coordinate.NotSet)
         {
             GameCharacters.Remove(character);
         }

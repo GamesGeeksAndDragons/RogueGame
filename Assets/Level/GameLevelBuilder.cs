@@ -6,6 +6,7 @@ using Assets.Personas;
 using Assets.Resources;
 using Assets.Rooms;
 using Utils;
+using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Random;
 
@@ -48,62 +49,58 @@ internal class GameLevelBuilder : IGameLevelBuilder
         _descriptor = new LevelDescriptor();
     }
 
-    private IGameLevel BuildLevel(IMaze maze, params string[] charactersState)
+    private IGameLevel BuildGameLevel(int level, IMaze maze)
     {
-        var characters = _gameCharacters.Load(charactersState);
+        return new GameLevel(level, maze, _gameCharacters, _dispatchRegistry, _dispatcher, _dieBuilder);
+    }
 
-        var level = new GameLevel(maze, _gameCharacters, _dispatchRegistry, _dispatcher, _dieBuilder);
-
+    private void AddCharactersToLevel(IGameLevel gameLevel, IEnumerable<ICharacter> characters)
+    {
         foreach (var character in characters)
         {
-            character.Subscribe(level);
+            character.Subscribe(gameLevel);
+            if (character.Coordinates == Coordinate.NotSet)
+            {
+                _dispatcher.EnqueueTeleport(gameLevel, character);
+            }
         }
-
-        return level;
     }
 
     public IGameLevel BuildNewLevel(int level)
     {
-        var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
-        var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
-
         var levelDetail = _descriptor[level];
-        var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
+        var maze = BuildMaze();
+        var gameLevel = BuildGameLevel(level, maze);
 
-        var numMonsters = _dieBuilder.Between(levelDetail.CharacterDie).Random;
-        _gameCharacters.GenerateRandomCharacters(numMonsters);
+        var characters = AddRandomCharacters();
+        AddCharactersToLevel(gameLevel, characters);
 
-        return BuildLevel(maze);
+        return gameLevel;
+
+        IMaze BuildMaze()
+        {
+            var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
+            var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
+
+            return mazeBuilder.BuildMaze(levelDetail.NumRooms);
+        }
+
+        IEnumerable<ICharacter> AddRandomCharacters()
+        {
+            var numMonsters = _dieBuilder.Between(levelDetail.CharacterDie).Random;
+            return _gameCharacters.GenerateRandomCharacters(numMonsters, level, true);
+        }
     }
 
     public IGameLevel BuildExistingLevel(int level, string savedMaze, string[] charactersState)
     {
         var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, savedMaze);
-        var gameLevel = BuildLevel(maze, charactersState);
+        var gameLevel = BuildGameLevel(level, maze);
+
+        var characters = _gameCharacters.Load(charactersState);
+        AddCharactersToLevel(gameLevel, characters);
+
         return gameLevel;
     }
 
-    public void AddRandomCharacters(IGameLevel gameLevel, string characterDie)
-    {
-        var count = _dieBuilder.Between(characterDie).Random;
-        var characters = _gameCharacters.GenerateRandomCharacters(count).ToList();
-
-        foreach (var character in characters)
-        {
-            character.Subscribe(gameLevel);
-        }
-
-        TeleportCharacters();
-
-        throw new NotImplementedException("have to add random characters to the maze");
-
-        void TeleportCharacters()
-        {
-            foreach (var character in characters)
-            {
-                _dispatcher.EnqueueTeleport(gameLevel, character);
-            }
-            //_dispatcher.EnqueueTeleport(level, me);
-        }
-    }
 }
