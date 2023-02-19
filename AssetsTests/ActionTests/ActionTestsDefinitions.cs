@@ -38,7 +38,7 @@ namespace AssetsTests.ActionTests
  |012345678901| 
 ";
 
-                var me = ActorCoordinates(CharacterDisplay.Me, 4, 5);
+                var me = ActorCoordinates(CharacterDisplay.Me);
                 AddCharacter(me);
             }
     }
@@ -67,13 +67,15 @@ namespace AssetsTests.ActionTests
 2|████████████|2
 3|████████████|3
 4|████╔══╗████|4
-5|████║M²║████|5
-6|████║²@║████|6
+5|████║@²║████|5
+6|████║²M║████|6
 7|████╚══╝████|7
 8|████████████|8
 ----------------
  |012345678901| 
 ";
+                AddCharacter(ActorCoordinates(CharacterDisplay.Me));
+                AddCharacter(ActorCoordinates(CharacterDisplay.DebugMonster));
             }
         }
 
@@ -100,7 +102,7 @@ namespace AssetsTests.ActionTests
 1|████████████|1
 2|████████████|2
 3|████╔══╗████|3
-4|████║@M║████|4
+4|████║M@║████|4
 5|████╚══╝████|5
 6|████████████|6
 7|████████████|7
@@ -108,6 +110,9 @@ namespace AssetsTests.ActionTests
 ----------------
  |012345678901| 
 ";
+
+                AddCharacter(ActorCoordinates(CharacterDisplay.Me));
+                AddCharacter(ActorCoordinates(CharacterDisplay.DebugMonster));
             }
         }
 
@@ -135,14 +140,16 @@ namespace AssetsTests.ActionTests
 2|████████████|2
 3|████████████|3
 4|████╔══╗████|4
-5|████║Mβ║████|5
-6|████║β@║████|6
+5|████║@β║████|5
+6|████║βM║████|6
 7|████╚══╝████|7
 8|████████████|8
 ----------------
  |012345678901| 
 ";
-}
+            AddCharacter(ActorCoordinates(CharacterDisplay.Me));
+            AddCharacter(ActorCoordinates(CharacterDisplay.DebugMonster));
+            }
         }
 
         internal static IMazeExpectations GetExpectations(int testNumber)

@@ -4,9 +4,9 @@ using Utils.Enums;
 
 namespace AssetsTests.ActionTests
 {
-    public class WalkingTests : MazeTestHelper
+    public class GivenMeIsAlone : MazeTestHelper
     {
-        public WalkingTests(ITestOutputHelper output)
+        public GivenMeIsAlone(ITestOutputHelper output)
         : base(output)
         {
         }
@@ -19,7 +19,7 @@ namespace AssetsTests.ActionTests
         [InlineData(WalkAloneTest.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast)]
         [InlineData(WalkAloneTest.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast)]
         [InlineData(WalkAloneTest.MultipleDirections, Compass8Points.West, Compass8Points.NorthWest, Compass8Points.North, Compass8Points.NorthEast, Compass8Points.East, Compass8Points.SouthEast, Compass8Points.South, Compass8Points.SouthWest, Compass8Points.West)]
-        public void WhenIWalkAlone_ICanWalkThroughSpace_ButNotWalls(WalkAloneTest test, params Compass8Points[] directions)
+        public void WhenMeWalks_ThenMeCanWalkThroughSpace_AndNotWalls(WalkAloneTest test, params Compass8Points[] directions)
         {
             var expectations = test.GetExpectations();
             base.TestArrange(expectations);
@@ -31,10 +31,6 @@ namespace AssetsTests.ActionTests
 
             void ArrangeMovingMeCharacter()
             {
-                var maze = GameLevel.Print(DispatchRegistry);
-                Output.WriteLine(BuilderTestHelpers.Divider + " start " + BuilderTestHelpers.Divider);
-                Output.WriteLine(maze);
-
                 foreach (var direction in directions)
                 {
                     GameLevel.Dispatcher.EnqueueMove(GameLevel, GameLevel.Me, direction);

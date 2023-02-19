@@ -10,10 +10,11 @@ namespace Assets.Level
 {
     public interface IGameLevel : ICharacterPosition, IObserver<PositionObservation>
     {
-        public IDispatchRegistry DispatchRegistry { get; }
-        public IDispatcher Dispatcher { get; }
-        public IDieBuilder DieBuilder { get; }
-        public IMaze Maze { get; }
+        IDispatchRegistry DispatchRegistry { get; }
+        IDispatcher Dispatcher { get; }
+        IDieBuilder DieBuilder { get; }
+        IMaze Maze { get; }
+        IGameCharacters GameCharacters { get; }
     }
 
     internal class GameLevel : IGameLevel
@@ -46,9 +47,15 @@ namespace Assets.Level
             var (before, after) = observation.Change;
             if (before == after && after == Coordinate.NotSet) return;
 
-            if (after != Coordinate.NotSet)
+            var character = GameCharacters[observation.UniqueId];
+
+            if (after == Coordinate.NotSet)
             {
-                GameCharacters.Move(before, after);
+                GameCharacters.Remove(character);
+            }
+            else
+            {
+                GameCharacters.Position(character, before);
             }
         }
 

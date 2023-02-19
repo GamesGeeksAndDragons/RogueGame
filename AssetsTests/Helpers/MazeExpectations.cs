@@ -39,6 +39,7 @@ namespace AssetsTests.Helpers
 
         public string[] CharactersState => _characterState.ToArray();
 
+        protected string ActorCoordinates(string actor) => $"{actor} " + new Coordinate(-1, -1).FormatParameter();
         protected string ActorCoordinates(string actor, int row, int column) => $"{actor} " + new Coordinate(row, column).FormatParameter();
 
         protected void AddCharacter(string state) => _characterState.Add(state);

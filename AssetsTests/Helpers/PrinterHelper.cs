@@ -9,10 +9,10 @@ namespace AssetsTests.Helpers
 {
     static class PrinterHelper
     {
-        public static string Print(this IGameLevel level, IDispatchRegistry dispatchRegistry)
+        public static string Print(this IGameLevel gameLevel, IDispatchRegistry dispatchRegistry)
         {
-            var maze = (Maze)level.Maze;
-            ICharacter CharacterGetter(Coordinate position) => level[position];
+            var maze = (Maze)gameLevel.Maze;
+            ICharacter CharacterGetter(Coordinate position) => gameLevel[position];
 
             return maze.Tiles.Print((Func<Coordinate, ICharacter>)CharacterGetter, dispatchRegistry);
         }

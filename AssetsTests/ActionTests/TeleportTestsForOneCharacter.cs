@@ -1,60 +1,46 @@
-﻿using AssetsTests.Fakes;
+﻿#nullable enable
+using AssetsTests.Fakes;
 using AssetsTests.Helpers;
 
-namespace AssetsTests.ActionTests
+namespace AssetsTests.ActionTests;
+
+// ReSharper disable once InconsistentNaming
+public class GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITeleportThem : MazeTestHelper
 {
-    public class TeleportTestsForOneCharacter : MazeTestHelper
+    public GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITeleportThem(ITestOutputHelper output) : base(output)
     {
-        public TeleportTestsForOneCharacter(ITestOutputHelper output) : base(output)
-        {
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacter(int testNum)
-        {
-            DieBuilder = new FakeDieBuilder(1, testNum-1, 1, 1, 1);
-            var expectations = ActionTestsDefinitions.GetExpectations(testNum);
-
-            TestArrange(expectations);
-            TestAct();
-            TestAssert(expectations);
-        }
-
-        protected override void TestAct()
-        {
-            Dispatcher.Dispatch();
-        }
     }
 
-    public class TeleportTestsForTwoCharacters : MazeTestHelper
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void ThenTheyShouldBeTeleportedToAnEmptyTile(int testNum)
     {
-        public TeleportTestsForTwoCharacters(ITestOutputHelper output) : base(output)
+        var expectations = TestArrange(testNum);
+        TestAct();
+        TestAssert(expectations);
+    }
+
+    protected IMazeExpectations TestArrange(int testNum)
+    {
+        DieBuilder = new FakeDieBuilder(1, 1, 1, 1);
+        var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+
+        base.TestArrange(expectations);
+
+        var characters = GameLevel.GameCharacters.Characters;
+        foreach (var character in characters)
         {
+            GameLevel.Dispatcher.EnqueueTeleport(GameLevel, character);
         }
 
-        protected override void TestArrange(IMazeExpectations expectations)
-        {
-            DieBuilder = new FakeDieBuilder(1, 1);
-            base.TestArrange(expectations);
-        }
+        return expectations;
+    }
 
-        [Theory]
-        [InlineData(3)]
-        [InlineData(4)]
-        public void WhenHaveDifferingNumbersOfFloorTiles_ShouldTeleportCharacters(int testNum)
-        {
-            var expectations = ActionTestsDefinitions.GetExpectations(testNum);
-
-            TestArrange(expectations);
-            TestAct();
-            TestAssert(expectations);
-        }
-
-        protected override void TestAct()
-        {
-            Dispatcher.Dispatch();
-        }
+    protected override void TestAct()
+    {
+        Dispatcher.Dispatch();
     }
 }

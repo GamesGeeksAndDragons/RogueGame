@@ -14,7 +14,7 @@ namespace Assets.Level
 {
     public interface IGameLevelBuilder
     {
-        IGameLevel BuildNewGame();
+        IGameLevel BuildNewLevel(int level);
         IGameLevel BuildExistingLevel(int level, string savedMaze, string[] charactersState);
     }
 
@@ -63,7 +63,7 @@ namespace Assets.Level
             return level;
         }
 
-        internal IGameLevel BuildNewGame(int level)
+        public IGameLevel BuildNewLevel(int level)
         {
             var roomBuilder = new RoomBuilder(_dieBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
             var mazeBuilder = new MazeBuilder(_dieBuilder, roomBuilder, _logger, _dispatchRegistry, _actionRegistry, _resourceBuilder);
@@ -71,14 +71,11 @@ namespace Assets.Level
             var levelDetail = _descriptor[level];
             var maze = mazeBuilder.BuildMaze(levelDetail.NumRooms);
 
+            _gameCharacters.GenerateRandomCharacters()
+
             return BuildLevel(maze);
         }
 
-        public IGameLevel BuildNewGame()
-        {
-            return BuildNewGame(1);
-        }
-        
         public IGameLevel BuildExistingLevel(int level, string savedMaze, string[] charactersState)
         {
             var maze = new Maze(_dispatchRegistry, _actionRegistry, _dieBuilder, _resourceBuilder, savedMaze);
@@ -89,7 +86,7 @@ namespace Assets.Level
         public void AddRandomCharacters(IGameLevel gameLevel, string characterDie)
         {
             var count = _dieBuilder.Between(characterDie).Random;
-            var characters = _gameCharacters.GenerateRandomCharacters(count);
+            var characters = _gameCharacters.GenerateRandomCharacters(count).ToList();
             
             foreach (var character in characters)
             {

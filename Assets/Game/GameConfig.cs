@@ -12,7 +12,7 @@ namespace Assets.Game
         {
             //IConfiguration Configuration = new ConfigurationBuilder()
             //    .AddJsonFile("game.json", optional: true, reloadOnChange: true)
-            //    .BuildNewGame();
+            //    .BuildNewLevel();
 
             Id = Guid.NewGuid();
             Name = string.Empty;

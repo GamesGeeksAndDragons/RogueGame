@@ -14,22 +14,22 @@ public interface ICharacterPosition
 
 public interface IGameCharacters : ICharacterPosition, IDisposable
 {
+    IEnumerable<ICharacter> Characters { get; }
     ICharacter this[string uniqueId] { get; }
 
     IEnumerable<ICharacter> Load(params string[] charactersState);
 
     void Move(Coordinate from, Coordinate to);
     void Add(ICharacter character);
+    void Position(ICharacter character, Coordinate before);
     void Remove(ICharacter character);
     IEnumerable<ICharacter> GenerateRandomCharacters(int count);
 }
 
 internal class GameCharacters : IGameCharacters
 {
-    public IDispatchRegistry DispatchRegistry { get; }
-    public ICharacterFactory CharacterFactory { get; }
-    internal readonly Dictionary<Coordinate, ICharacter> Positions = new Dictionary<Coordinate, ICharacter>();
-    internal readonly Dictionary<string, ICharacter> Characters = new Dictionary<string, ICharacter>();
+    private readonly Dictionary<Coordinate, ICharacter> _positions = new Dictionary<Coordinate, ICharacter>();
+    private readonly Dictionary<string, ICharacter> _characters = new Dictionary<string, ICharacter>();
 
     public GameCharacters(IDispatchRegistry dispatchRegistry, ICharacterFactory characterFactory)
     {
@@ -42,8 +42,11 @@ internal class GameCharacters : IGameCharacters
         Me = CharacterFactory.LoadCharacter("@", "");
     }
 
-    public ICharacter? this[Coordinate position] => !Positions.ContainsKey(position) ? null : Positions[position];
-    public ICharacter this[string uniqueId] => Characters[uniqueId];
+    public IDispatchRegistry DispatchRegistry { get; }
+    private ICharacterFactory CharacterFactory { get; }
+    public ICharacter? this[Coordinate position] => !_positions.ContainsKey(position) ? null : _positions[position];
+    public IEnumerable<ICharacter> Characters => _characters.Values;
+    public ICharacter this[string uniqueId] => _characters[uniqueId];
 
     public ICharacter Me { get; private set; }
 
@@ -54,21 +57,37 @@ internal class GameCharacters : IGameCharacters
 
         if (fromCharacter != null && toCharacter == null)
         {
-            Positions.Remove(from);
-            Positions.Add(to, fromCharacter);
+            _positions.Remove(from);
+            _positions.Add(to, fromCharacter);
         }
     }
 
     public void Add(ICharacter character)
     {
-        Positions.Add(character.Coordinates, character);
-        Characters.Add(character.UniqueId, character);
+        _characters.Add(character.UniqueId, character);
+    }
+
+    public void Position(ICharacter character, Coordinate before)
+    {
+        if (before != Coordinate.NotSet)
+        {
+            _positions.Remove(before);
+        }
+
+        if (before != character.Coordinates)
+        {
+            _positions.Add(character.Coordinates, character);
+        }
     }
 
     public void Remove(ICharacter character)
     {
-        Positions.Remove(character.Coordinates);
-        Characters.Remove(character.UniqueId);
+        if (_positions.ContainsKey(character.Coordinates))
+        {
+            _positions.Remove(character.Coordinates);
+        }
+
+        _characters.Remove(character.UniqueId);
         character.Dispose();
     }
 
@@ -94,21 +113,21 @@ internal class GameCharacters : IGameCharacters
             }
         }
 
-        return Positions.Values.ToList();
+        return _characters.Values.ToList();
     }
 
     public void Dispose()
     {
         Me.Dispose();
 
-        if (Characters.Count == 0) return;
+        if (_characters.Count == 0) return;
 
-        foreach (var character in Characters.Values)
+        foreach (var character in _characters.Values)
         {
             character.Dispose();
         }
 
-        Characters.Clear();
-        Positions.Clear();
+        _characters.Clear();
+        _positions.Clear();
     }
 }

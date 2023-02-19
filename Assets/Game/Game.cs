@@ -34,7 +34,7 @@ namespace Assets.Game
         {
             FileAndDirectoryHelpers.CreateFolder(Folder);
 
-            var level = GameLevelBuilder.BuildNewGame();
+            var level = GameLevelBuilder.BuildNewLevel();
             Level++;
         }
     }
