@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using Utils;
 using Utils.Coordinates;
-using Utils.Dispatching;
 using Utils.Display;
+using Utils.Dispatching;
 
 namespace Assets.Personas;
 
@@ -23,7 +23,7 @@ public interface IGameCharacters : ICharacterPosition, IDisposable
     void Add(ICharacter character);
     void Position(ICharacter character, Coordinate before);
     void Remove(ICharacter character);
-    IEnumerable<ICharacter> GenerateRandomCharacters(int count);
+    IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters);
 }
 
 internal class GameCharacters : IGameCharacters
@@ -91,7 +91,7 @@ internal class GameCharacters : IGameCharacters
         character.Dispose();
     }
 
-    public IEnumerable<ICharacter> GenerateRandomCharacters(int count)
+    public IEnumerable<ICharacter> GenerateRandomCharacters(int numMonsters)
     {
         throw new NotImplementedException();
     }

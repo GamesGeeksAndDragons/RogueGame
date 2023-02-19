@@ -1,9 +1,7 @@
 ﻿#nullable enable
-using System.Text;
 using Assets.Deeds;
 using Assets.Resources;
 using Assets.Rooms;
-using log4net;
 using Utils;
 using Utils.Dispatching;
 using Utils.Display;

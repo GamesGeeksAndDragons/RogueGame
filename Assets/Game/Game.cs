@@ -3,39 +3,36 @@ using Assets.Level;
 using Assets.Mazes;
 using Assets.Messaging;
 using Assets.Personas;
-using Utils;
 
-namespace Assets.Game
+namespace Assets.Game;
+
+internal class Game
 {
-    internal class Game
+    public Guid Id { get; }
+    public string Folder { get; set; }
+
+    internal IDispatcher Dispatcher;
+    internal IGameLevelBuilder GameLevelBuilder;
+    internal int Level;
+
+    internal IMaze? Maze;
+    internal Me? Me;
+    internal IReadOnlyList<ICharacter>? Characters;
+
+
+    public Game(GameConfig gameConfig, IDispatcher dispatcher, IGameLevelBuilder gameLevelBuilder)
     {
-        public Guid Id { get; }
-        public string Folder { get; set; }
+        Id = gameConfig.Id;
+        Folder = gameConfig.Folder;
 
-        internal IDispatcher Dispatcher;
-        internal IGameLevelBuilder GameLevelBuilder;
-        internal int Level;
+        Dispatcher = dispatcher;
+        GameLevelBuilder = gameLevelBuilder;
+    }
 
-        internal IMaze? Maze;
-        internal Me? Me;
-        internal IReadOnlyList<ICharacter>? Characters;
+    public void NewGame()
+    {
+        FileAndDirectoryHelpers.CreateFolder(Folder);
 
-
-        public Game(GameConfig gameConfig, IDispatcher dispatcher, IGameLevelBuilder gameLevelBuilder)
-        {
-            Id = gameConfig.Id;
-            Folder = gameConfig.Folder;
-
-            Dispatcher = dispatcher;
-            GameLevelBuilder = gameLevelBuilder;
-        }
-
-        public void NewGame()
-        {
-            FileAndDirectoryHelpers.CreateFolder(Folder);
-
-            var level = GameLevelBuilder.BuildNewLevel();
-            Level++;
-        }
+        var level = GameLevelBuilder.BuildNewLevel(++Level);
     }
 }

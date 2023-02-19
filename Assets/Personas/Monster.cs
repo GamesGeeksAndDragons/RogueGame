@@ -2,8 +2,8 @@
 using Assets.Deeds;
 using Utils.Dispatching;
 
-namespace Assets.Personas
-{
+namespace Assets.Personas;
+
     internal class Monster : Character<Monster>
     {
         public Monster(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
@@ -11,4 +11,3 @@ namespace Assets.Personas
         {
         }
     }
-}

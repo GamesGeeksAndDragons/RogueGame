@@ -1,16 +1,16 @@
 ﻿using Assets.Level;
 using AssetsTests.Helpers;
 
-namespace AssetsTests.DispatcherTests
+namespace AssetsTests.DispatcherTests;
+
+static class LevelBuilderExpectations
 {
-    static class LevelBuilderExpectations
+    private class Level1Expectations : MazeExpectations
     {
-        private class Level1Expectations : MazeExpectations
+        public Level1Expectations()
         {
-            public Level1Expectations()
-            {
-                Level = 1;
-                ExpectedMaze = @"
+            Level = 1;
+            ExpectedMaze = @"
   |012345678901234567890123456789|  
 ------------------------------------
 0 |██████████████████████████████|0 
@@ -47,15 +47,15 @@ namespace AssetsTests.DispatcherTests
   |012345678901234567890123456789|  
 ";
 
-            }
         }
+    }
 
-        private class Level2Expectation : MazeExpectations
+    private class Level2Expectation : MazeExpectations
+    {
+        public Level2Expectation()
         {
-            public Level2Expectation()
-            {
-                Level = 2;
-                ExpectedMaze = @"
+            Level = 2;
+            ExpectedMaze = @"
   |012345678901234567890123456789012345|  
 ------------------------------------------
 0 |████████████████████████████████████|0 
@@ -97,15 +97,15 @@ namespace AssetsTests.DispatcherTests
 ------------------------------------------
   |012345678901234567890123456789012345|  
 ";
-            }
         }
+    }
 
-        private class Level3Expectations : MazeExpectations
+    private class Level3Expectations : MazeExpectations
+    {
+        public Level3Expectations()
         {
-            public Level3Expectations()
-            {
-                Level = 3;
-                ExpectedMaze = @"
+            Level = 3;
+            ExpectedMaze = @"
   |012345678901234567890123456789012345678901234567890123456789012345678901234567890123|  
 ------------------------------------------------------------------------------------------
 0 |████████████████████████████████████████████████████████████████████████████████████|0 
@@ -198,52 +198,51 @@ namespace AssetsTests.DispatcherTests
 ------------------------------------------------------------------------------------------
   |012345678901234567890123456789012345678901234567890123456789012345678901234567890123|  
 ";
-            }
-        }
-
-        public static class LevelExpectedResults
-        {
-            public static IMazeExpectations GetExpectation(int level)
-            {
-                switch (level)
-                {
-                    case 1: return new Level1Expectations();
-                    case 2: return new Level2Expectation();
-                    case 3: return new Level3Expectations();
-                }
-
-                MazeTestHelpers.ThrowUnknownTest(level);
-                return null;
-            }
         }
     }
-    public class LevelBuilderTests : LevelBuilderTestHelpers
+
+    public static class LevelExpectedResults
     {
-        public LevelBuilderTests(ITestOutputHelper output)
-        : base(output)
+        public static IMazeExpectations GetExpectation(int level)
         {
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public void WhenBuiltDispatcher_ShouldHaveLevelCharacters(int levelNumber)
-        {
-            TestArrange();
-
-            var level = Act();
-
-            var expected = LevelBuilderExpectations.LevelExpectedResults.GetExpectation(levelNumber);
-            AssertTest(level, expected);
-
-            IGameLevel Act()
+            switch (level)
             {
-                var levelBuilder = (GameLevelBuilder)GameLevelBuilder;
-                var newLevel = levelBuilder.BuildNewLevel(levelNumber);
-                Dispatcher.Dispatch();
-                return newLevel;
+                case 1: return new Level1Expectations();
+                case 2: return new Level2Expectation();
+                case 3: return new Level3Expectations();
             }
+
+            MazeTestHelpers.ThrowUnknownTest(level);
+            return null;
+        }
+    }
+}
+public class LevelBuilderTests : LevelBuilderTestHelpers
+{
+    public LevelBuilderTests(ITestOutputHelper output)
+    : base(output)
+    {
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void WhenBuiltDispatcher_ShouldHaveLevelCharacters(int levelNumber)
+    {
+        TestArrange();
+
+        var level = Act();
+
+        var expected = LevelBuilderExpectations.LevelExpectedResults.GetExpectation(levelNumber);
+        AssertTest(level, expected);
+
+        IGameLevel Act()
+        {
+            var levelBuilder = (GameLevelBuilder)GameLevelBuilder;
+            var newLevel = levelBuilder.BuildNewLevel(levelNumber);
+            Dispatcher.Dispatch();
+            return newLevel;
         }
     }
 }

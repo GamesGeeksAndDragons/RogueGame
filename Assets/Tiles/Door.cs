@@ -6,42 +6,41 @@ using Utils.Dispatching;
 using Utils.Display;
 using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
-namespace Assets.Tiles
+namespace Assets.Tiles;
+
+internal class Door : Dispatched<Door>
 {
-    internal class Door : Dispatched<Door>
+    internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
+        : base(dispatchRegistry, actionRegistry, actor)
     {
-        internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state) 
-            : base(dispatchRegistry, actionRegistry, actor)
-        {
-            var doorId = actor.FromDoorNumberString();
+        var doorId = actor.FromDoorNumberString();
 
-            DoorId = doorId;
+        DoorId = doorId;
+    }
+
+    public override void UpdateState(Parameters state)
+    {
+        if (state.HasValue(nameof(DoorId)))
+        {
+            DoorId = state.ToValue<int>(nameof(DoorId));
         }
 
-        public override void UpdateState(Parameters state)
+        base.UpdateState(state);
+    }
+
+    public override Parameters CurrentState()
+    {
+        var parameters = base.CurrentState();
+
+        var door = new[]
         {
-            if (state.HasValue(nameof(DoorId)))
-            {
-                DoorId = state.ToValue<int>(nameof(DoorId));
-            }
-
-            base.UpdateState(state);
-        }
-
-        public override Parameters CurrentState()
-        {
-            var parameters = base.CurrentState();
-
-            var door = new[]
-            {
                 (Name: nameof(DoorId), Value: DoorId.ToString()),
             };
 
-            parameters.AddRange(door);
+        parameters.AddRange(door);
 
-            return parameters;
-        }
-
-        public int DoorId { get; private set; }
+        return parameters;
     }
+
+    public int DoorId { get; private set; }
 }
