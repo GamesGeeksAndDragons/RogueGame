@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Utils
 {

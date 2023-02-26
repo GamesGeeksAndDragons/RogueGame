@@ -7,6 +7,8 @@ using Utils.Dispatching;
 
 namespace Assets.Personas;
 
+// https://beej.us/moria/mmspoilers/character.html#attributes
+
 public interface ICharacter : IDispatched, IObservable<PositionObservation>, IDisposable
 {
     Parameters CurrentState();
@@ -38,9 +40,9 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
 
     public override void UpdateState(Parameters state)
     {
-        if (state.HasValue(nameof(Coordinates))) Coordinates = state.ToValue<Coordinate>(nameof(Coordinates));
-        if (state.HasValue(nameof(HitPoints))) HitPoints = state.ToValue<int>(nameof(HitPoints));
-        if (state.HasValue(nameof(ArmourClass))) ArmourClass = state.ToValue<int>(nameof(ArmourClass));
+        Coordinates = state.GetCoordinates();
+        HitPoints = state.GetHitPoints();
+        ArmourClass = state.GetArmourClass();
 
         base.UpdateState(state);
     }
@@ -49,9 +51,10 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
     {
         var state = base.CurrentState();
 
-        state.AppendParameter(nameof(Coordinates), Coordinates);
-        if (HitPoints != 0) state.AppendParameter(nameof(HitPoints), HitPoints);
-        if (ArmourClass != 0) state.AppendParameter(nameof(ArmourClass), ArmourClass);
+        state
+            .AddCoordinates(Coordinates)
+            .AddHitPoints(HitPoints)
+            .AddArmourClass(ArmourClass);
 
         return state;
     }

@@ -44,9 +44,6 @@ internal abstract class Dispatched<T> : IDispatched
 
     public virtual Parameters CurrentState()
     {
-        return new Parameters
-        {
-            (Name: nameof(UniqueId), Value: UniqueId),
-        };
+        return new Parameters().AddUniqueId(UniqueId);
     }
 }

@@ -5,25 +5,22 @@ using Utils.Random;
 
 namespace AssetsTests.ActionTests
 {
-    public class AttackTests
+    public class GivenMePlusOneMonster_AndMeAttacks
     {
         private readonly ITestOutputHelper _output;
 
-        public AttackTests(ITestOutputHelper output)
+        public GivenMePlusOneMonster_AndMeAttacks(ITestOutputHelper output)
         {
             _output = output;
         }
 
-        internal static IDieBuilder GetGenerator(int testNum)
+        [Theory]
+        [InlineData(AttackTest.MeAttacksOneMonster)]
+        public void ThenMeCanKillMonster(AttackTest test)
         {
-            var name = $"{nameof(AttackTests)}_{testNum}";
-            return new DieBuilder(name);
-        }
-
-        [Fact(Skip = "Need to re-implement")]
-        public void AttachingAMonster_WillReduceItsHitPoints()
-        {
-            Assert.False(true);
+            //var expectations = test.GetExpectations();
+            //base.TestArrange(expectations);
+            //ArrangeMovingMeCharacter();
         }
     }
 }

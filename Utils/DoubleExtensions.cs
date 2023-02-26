@@ -8,5 +8,10 @@
 
             return Math.Abs(num) > floatingTolerance;
         }
+
+        public static bool IsZero(this int num)
+        {
+            return num == 0;
+        }
     }
 }

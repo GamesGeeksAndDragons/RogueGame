@@ -3,16 +3,16 @@ using Utils.Display;
 
 namespace AssetsTests.ActionTests;
 
-enum AttackTest
+public enum AttackTest
 {
-    AttackMonster
+    MeAttacksOneMonster
 }
 
 internal static class AttackTestExpectations
 {
-    class WalkNorthExpectations : MazeExpectations
+    class MeAndOneMonster : MazeExpectations
     {
-        public WalkNorthExpectations()
+        public MeAndOneMonster()
         {
             StartingMaze = CommonMaze.EmptyMaze;
 
@@ -22,10 +22,10 @@ internal static class AttackTestExpectations
 0 |██████████████████████|0 
 1 |██████████████████████|1 
 2 |████╔═══════════╗█████|2 
-3 |████║¹¹¹¹¹@¹¹¹¹¹║█████|3 
+3 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|3 
 4 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|4 
 5 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|5 
-6 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|6 
+6 |████║¹¹¹¹¹@¹¹¹¹¹║█████|6 
 7 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|7 
 8 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|8 
 9 |████║¹¹¹¹¹¹¹¹¹¹¹║█████|9 
@@ -36,7 +36,7 @@ internal static class AttackTestExpectations
 ----------------------------
   |0123456789012345678901|  
 ";
-            string me = ActorCoordinates(CharacterDisplay.Me, 10, 10);
+            string me = ActorCoordinates(CharacterDisplay.Me, 6, 10);
             AddCharacter(me);
         }
     }

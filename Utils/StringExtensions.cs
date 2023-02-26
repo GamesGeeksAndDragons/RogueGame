@@ -1,7 +1,5 @@
 ﻿#nullable enable
-#nullable enable
 using System.Globalization;
-using System.Text;
 
 namespace Utils
 {

@@ -2,6 +2,7 @@
 using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
+using Utils.Random;
 
 namespace Assets.Props
 {
@@ -9,44 +10,49 @@ namespace Assets.Props
 
     internal abstract class Prop<T> : Dispatched<T> where T : class, IDispatched
     {
-        protected Prop(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state, string uniqueId) 
+        protected Prop(IDieBuilder randomNumbers, IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state, string uniqueId) 
             : base(dispatchRegistry, actionRegistry, actor, uniqueId)
         {
-            PropName = "";
-            OriginalCost = Weight = 0.0;
-            Level = Damage = 0;
+            randomNumbers.ThrowIfNull(nameof(randomNumbers));
+            RandomNumbers = randomNumbers;
+
+            PropName = Damage = "";
 
             var extracted = state.ToParameters();
             // ReSharper disable once VirtualMemberCallInConstructor
             UpdateState(extracted);
         }
 
+        protected readonly IDieBuilder RandomNumbers;
+
         public string PropName { get; protected set; }
         public double Weight { get; protected set; }
         public int Level { get; protected set; }
-        public double OriginalCost { get; protected set; }
-        public int Damage { get; protected set; }
+        public double BaseCost { get; protected set; }
+        public string Damage { get; protected set; }
 
         public override Parameters CurrentState()
         {
             var state = base.CurrentState();
 
-            if (!PropName.IsNullOrEmpty()) state.AppendParameter(nameof(PropName), PropName);
-            if (!Weight.IsZero()) state.AppendParameter(nameof(Weight), Weight);
-            if (Level != 0) state.AppendParameter(nameof(Level), Level);
-            if (Damage != 0) state.AppendParameter(nameof(Damage), Damage);
-            if (OriginalCost != 0) state.AppendParameter(nameof(OriginalCost), Damage);
+            state
+                .AddPropName(PropName)
+                .AddWeight(Weight)
+                .AddLevel(Level)
+                .AddDamage(Damage)
+                .AddBaseCost(BaseCost)
+                ;
 
             return state;
         }
 
         public override void UpdateState(Parameters state)
         {
-            if (state.HasValue(nameof(PropName))) PropName = state.ToString(nameof(PropName));
-            if (state.HasValue(nameof(Weight))) Weight = state.ToValue<double>(nameof(Weight));
-            if (state.HasValue(nameof(Level))) Level = state.ToValue<int>(nameof(Level));
-            if (state.HasValue(nameof(OriginalCost))) OriginalCost = state.ToValue<double>(nameof(OriginalCost));
-            if (state.HasValue(nameof(Damage))) Damage = state.ToValue<int>(nameof(Damage));
+            PropName = state.GetPropName();
+            Weight = state.GetWeight();
+            Level = state.GetLevel();
+            BaseCost = state.GetOriginalCost();
+            Damage = state.GetDamage();
 
             base.UpdateState(state);
         }
