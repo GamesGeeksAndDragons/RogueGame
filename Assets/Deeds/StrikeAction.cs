@@ -1,29 +1,27 @@
 ﻿#nullable enable
 using Assets.Level;
 using Assets.Personas;
-using Parameters = System.Collections.Generic.IReadOnlyList<(string Name, string Value)>;
 
-namespace Assets.Deeds
+namespace Assets.Deeds;
+
+class StrikeAction : Action
 {
-    class StrikeAction : Action
+    public override void Act(IGameLevel level, ICharacter who, string actionValue)
     {
-        public override void Act(IGameLevel level, ICharacter who, string actionValue)
-        {
-            //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
-            //if (coordindates != Coordinates) return;
+        //var coordindates = parameters.ToValue<Coordinate>(nameof(Coordinates));
+        //if (coordindates != Coordinates) return;
 
-            //var hit = parameters.ToValue<int>(nameof(HitPoints));
-            //if (hit < ArmourClass) return;
+        //var hit = parameters.ToValue<int>(nameof(HitPoints));
+        //if (hit < ArmourClass) return;
 
-            //var damage = parameters.ToValue<int>("Damage");
-            //var newHitPoints = HitPoints - damage;
+        //var damage = parameters.ToValue<int>("Damage");
+        //var newHitPoints = HitPoints - damage;
 
-            // below was commented out before above
+        // below was commented out before above
 
-            //var newState = CurrentState(hitPoints: newHitPoints);
-            //var newCharacter = Clone(newState);
+        //var newState = CurrentState(hitPoints: newHitPoints);
+        //var newCharacter = Clone(newState);
 
-            //DispatchRegistry.Register(newCharacter);
-        }
+        //DispatchRegistry.Register(newCharacter);
     }
 }

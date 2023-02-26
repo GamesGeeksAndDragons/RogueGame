@@ -4,7 +4,6 @@ using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
 using Utils.Display;
-using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Tiles;
 

@@ -4,7 +4,6 @@ using Assets.Messaging;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 namespace Assets.Personas;
 
@@ -34,7 +33,6 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
         : base(dispatchRegistry, actionRegistry, actor)
     {
         Coordinates = position;
-        ArmourClass = armourClass;
         HitPoints = hitPoints;
     }
 
@@ -52,8 +50,8 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
         var state = base.CurrentState();
 
         state.AppendParameter(nameof(Coordinates), Coordinates);
-        if (!IsZero(HitPoints)) state.AppendParameter(nameof(HitPoints), HitPoints);
-        if (!IsZero(ArmourClass)) state.AppendParameter(nameof(ArmourClass), ArmourClass);
+        if (HitPoints != 0) state.AppendParameter(nameof(HitPoints), HitPoints);
+        if (ArmourClass != 0) state.AppendParameter(nameof(ArmourClass), ArmourClass);
 
         return state;
     }

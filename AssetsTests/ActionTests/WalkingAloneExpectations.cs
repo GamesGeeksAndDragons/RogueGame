@@ -15,30 +15,13 @@ public enum WalkAloneTest
     MultipleDirections
 }
 
-
 static class WalkingAloneExpectations
 {
-    static readonly string CommonStartingMaze = @"
-██████████████████████
-██████████████████████
-████╔═══════════╗█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████║¹¹¹¹¹¹¹¹¹¹¹║█████
-████╚═══════════╝█████
-██████████████████████
-██████████████████████
-";
     class WalkNorthExpectations : MazeExpectations
     {
         public WalkNorthExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -69,7 +52,7 @@ static class WalkingAloneExpectations
     {
         public WalkSouthExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -100,7 +83,7 @@ static class WalkingAloneExpectations
     {
         public WalkEastExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -132,7 +115,7 @@ static class WalkingAloneExpectations
     {
         public WalkWestExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -164,7 +147,7 @@ static class WalkingAloneExpectations
     {
         public WalkNorthEastExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -196,7 +179,7 @@ static class WalkingAloneExpectations
     {
         public WalkSouthEastExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  
@@ -228,7 +211,7 @@ static class WalkingAloneExpectations
     {
         public WalkMultipleDirectionsExpectations()
         {
-            StartingMaze = CommonStartingMaze;
+            StartingMaze = CommonMaze.EmptyMaze;
 
             ExpectedMaze = @"
   |0123456789012345678901|  

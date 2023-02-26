@@ -2,7 +2,6 @@
 using Assets.Deeds;
 using Utils;
 using Utils.Dispatching;
-using Parameters = System.Collections.Generic.List<(string Name, string Value)>;
 
 // ReSharper disable VirtualMemberCallInConstructor
 
@@ -49,12 +48,5 @@ internal abstract class Dispatched<T> : IDispatched
         {
             (Name: nameof(UniqueId), Value: UniqueId),
         };
-    }
-
-    protected bool IsZero(double num)
-    {
-        const double floatingTolerance = 0.00001;
-
-        return Math.Abs(num) > floatingTolerance;
     }
 }
