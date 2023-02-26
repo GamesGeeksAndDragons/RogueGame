@@ -5,9 +5,9 @@ using AssetsTests.Helpers;
 namespace AssetsTests.ActionTests;
 
 // ReSharper disable once InconsistentNaming
-public class GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITeleportThem : MazeTestHelper
+public class GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenTeleported : MazeTestHelper
 {
-    public GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITeleportThem(ITestOutputHelper output) : base(output)
+    public GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenTeleported(ITestOutputHelper output) : base(output)
     {
     }
 
@@ -26,7 +26,7 @@ public class GivenThereAreCharactersWhoHaveNotBeenPositionedInTheMaze_WhenITelep
     protected IMazeExpectations TestArrange(int testNum)
     {
         DieBuilder = new FakeDieBuilder(1, 1, 1, 1);
-        var expectations = ActionTestsDefinitions.GetExpectations(testNum);
+        var expectations = TeleportTestExpectations.GetExpectations(testNum);
 
         base.TestArrange(expectations);
 

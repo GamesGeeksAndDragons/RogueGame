@@ -4,9 +4,9 @@ using Utils.Enums;
 
 namespace AssetsTests.ActionTests
 {
-    public class GivenMeIsAlone : MazeTestHelper
+    public class GivenMeIsAlone_WhenMeWalks : MazeTestHelper
     {
-        public GivenMeIsAlone(ITestOutputHelper output)
+        public GivenMeIsAlone_WhenMeWalks(ITestOutputHelper output)
         : base(output)
         {
         }
@@ -19,7 +19,7 @@ namespace AssetsTests.ActionTests
         [InlineData(WalkAloneTest.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast, Compass8Points.NorthEast)]
         [InlineData(WalkAloneTest.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast, Compass8Points.SouthEast)]
         [InlineData(WalkAloneTest.MultipleDirections, Compass8Points.West, Compass8Points.NorthWest, Compass8Points.North, Compass8Points.NorthEast, Compass8Points.East, Compass8Points.SouthEast, Compass8Points.South, Compass8Points.SouthWest, Compass8Points.West)]
-        public void WhenMeWalks_ThenMeCanWalkThroughSpace_AndNotWalls(WalkAloneTest test, params Compass8Points[] directions)
+        public void ThenMeCanWalkThroughSpace_AndNotWalls(WalkAloneTest test, params Compass8Points[] directions)
         {
             var expectations = test.GetExpectations();
             base.TestArrange(expectations);

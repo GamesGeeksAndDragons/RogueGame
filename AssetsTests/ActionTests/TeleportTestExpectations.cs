@@ -4,7 +4,7 @@ using Utils.Display;
 
 namespace AssetsTests.ActionTests
 {
-    static class ActionTestsDefinitions
+    static class TeleportTestExpectations
     {
         class TeleportWithOneValidSpace : MazeExpectations
         {
