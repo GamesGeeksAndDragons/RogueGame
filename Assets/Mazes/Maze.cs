@@ -178,18 +178,15 @@ internal class Maze : Dispatched<Maze>, IMaze
     {
         var (currentRows, currentColumns) = UpperBounds;
 
-        var (grownRows, grownColumns) = (currentRows * 2, currentColumns * 2);
-
-        var newTiles = new string[grownRows, grownColumns];
-
-        CopyExistingIntoNew();
-
-        Tiles = newTiles;
+        Tiles = GrowAndCopyExisting();
 
         Tiles.DefaultTiles(ResourceBuilder.DefaultRockBuilder());
 
-        void CopyExistingIntoNew()
+        string[,] GrowAndCopyExisting()
         {
+            var (grownRows, grownColumns) = (currentRows * 2, currentColumns * 2);
+            var newTiles = new string[grownRows, grownColumns];
+
             for (var row = 0; row < currentRows; row++)
             {
                 for (var column = 0; column < currentColumns; column++)
@@ -198,6 +195,8 @@ internal class Maze : Dispatched<Maze>, IMaze
                     newTiles[row, column] = this[coordinate];
                 }
             }
+
+            return newTiles;
         }
     }
 }
