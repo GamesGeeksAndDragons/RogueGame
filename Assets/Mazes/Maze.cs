@@ -35,7 +35,7 @@ internal class Maze : Dispatched<Maze>, IMaze
     public (int Row, int Column) UpperBounds => Tiles.UpperBounds();
 
     internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string[,] tiles)
-        : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
+        : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, "")
     {
         dieBuilder.ThrowIfNull(nameof(dieBuilder));
         resourceBuilder.ThrowIfNull(nameof(resourceBuilder));
@@ -47,7 +47,7 @@ internal class Maze : Dispatched<Maze>, IMaze
     }
 
     internal Maze(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, string maze)
-        : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, DispatchedName)
+        : base(dispatchRegistry, actionRegistry, TilesDisplay.Maze, "")
     {
         dieBuilder.ThrowIfNull(nameof(dieBuilder));
         resourceBuilder.ThrowIfNull(nameof(resourceBuilder));

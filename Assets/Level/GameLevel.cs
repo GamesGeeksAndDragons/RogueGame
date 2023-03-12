@@ -1,7 +1,8 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Personas;
+using Assets.Player;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Random;

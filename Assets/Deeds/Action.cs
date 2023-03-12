@@ -1,6 +1,6 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Level;
-using Assets.Personas;
 
 namespace Assets.Deeds;
 

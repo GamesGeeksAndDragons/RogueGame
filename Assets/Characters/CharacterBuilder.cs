@@ -1,8 +1,9 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Utils.Dispatching;
 using Utils.Random;
 
-namespace Assets.Personas;
+namespace Assets.Characters;
 
 internal interface ICharacterBuilder
 {

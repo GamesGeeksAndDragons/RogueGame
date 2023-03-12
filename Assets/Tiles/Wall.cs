@@ -12,9 +12,9 @@ internal class Wall : Dispatched<Wall>
     public WallDirection WallType { get; private set; }
 
     internal Wall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
-        : base(dispatchRegistry, actionRegistry, actor)
+        : base(dispatchRegistry, actionRegistry, actor, state)
     {
-        WallType = state.ToEnum<WallDirection>();
+        WallType = actor.ToWallDirection();
     }
 
     public override void UpdateState(Parameters state)
@@ -27,20 +27,23 @@ internal class Wall : Dispatched<Wall>
         base.UpdateState(state);
     }
 
-    public override Parameters CurrentState()
+    public override Parameters CurrentState
     {
-        var state = base.CurrentState();
+        get
+        {
+            var state = base.CurrentState;
 
-        state.AppendParameter(nameof(WallType), WallType);
+            state.AppendParameter(nameof(WallType), WallType);
 
-        return state;
+            return state;
+        }
     }
 
     public Wall Rotate()
     {
         var newDirection = GetRotatedDirection();
         var newActor = newDirection.FromWallDirection();
-        return new Wall(DispatchRegistry, ActionRegistry, newActor, newDirection.ToString());
+        return new Wall(DispatchRegistry, ActionRegistry, newActor, "");
 
         WallDirection GetRotatedDirection()
         {

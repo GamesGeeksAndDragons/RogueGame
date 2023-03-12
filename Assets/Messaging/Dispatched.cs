@@ -10,7 +10,7 @@ namespace Assets.Messaging;
 internal abstract class Dispatched<T> : IDispatched
         where T : class
 {
-    protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string uniqueId = "")
+    protected Dispatched(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
     {
         actor.Length.ThrowIfEqual(0, nameof(actor));
 
@@ -18,9 +18,9 @@ internal abstract class Dispatched<T> : IDispatched
         ActionRegistry = actionRegistry;
         Actor = actor.Intern();
 
-        UniqueId = DispatchRegistry.Register(this, uniqueId);
-
         RegisterActions();
+
+        UpdateState(state.ToParameters());
     }
 
     public override string ToString()
@@ -36,14 +36,13 @@ internal abstract class Dispatched<T> : IDispatched
 
     public static readonly string DispatchedName = typeof(T).Name;
     public string Name => DispatchedName;
-    public string UniqueId { get; protected internal set; }
+    public string UniqueId { get; protected internal set; } = null!;
 
     public virtual void UpdateState(Parameters state)
     {
+        var uniqueId = state.GetUniqueId() ?? "";
+        UniqueId = DispatchRegistry.Register(this, uniqueId);
     }
 
-    public virtual Parameters CurrentState()
-    {
-        return new Parameters().AddUniqueId(UniqueId);
-    }
+    public virtual Parameters CurrentState => new Parameters().AddUniqueId(UniqueId);
 }

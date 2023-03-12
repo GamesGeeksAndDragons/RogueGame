@@ -35,11 +35,6 @@ namespace Assets.Props
             base.UpdateState(state);
         }
 
-        public override Parameters CurrentState()
-        {
-            var state = base.CurrentState();
-
-            return state;
-        }
+        public override Parameters CurrentState => base.CurrentState;
     }
 }

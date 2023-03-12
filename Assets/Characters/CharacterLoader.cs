@@ -1,8 +1,11 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
+using Assets.Monsters;
+using Assets.Player;
 using Utils.Dispatching;
 using Utils.Display;
 
-namespace Assets.Personas;
+namespace Assets.Characters;
 
 internal static class CharacterLoader
 {

@@ -8,7 +8,7 @@ namespace Assets.Tiles;
 class Null : Dispatched<Null>
 {
     public Null(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor)
-        : base(dispatchRegistry, actionRegistry, actor)
+        : base(dispatchRegistry, actionRegistry, actor, "")
     {
     }
 }

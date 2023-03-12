@@ -23,7 +23,7 @@ public interface IRoom : IDispatched
 internal class Room : Dispatched<Room>, IRoom
 {
     internal Room(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, IDieBuilder dieBuilder, IResourceBuilder resourceBuilder, IMaze maze)
-    : base(dispatchRegistry, actionRegistry, TilesDisplay.Room)
+    : base(dispatchRegistry, actionRegistry, TilesDisplay.Room, "")
     {
         _dieBuilder = dieBuilder;
         _resourceBuilder = resourceBuilder;

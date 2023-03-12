@@ -4,15 +4,28 @@ namespace Utils;
 
 public static class NamedParameters
 {
-    public static string Coordinates { get; } = nameof(Coordinates);
-    public static string Weight { get; } = nameof(Weight);
-    public static string PropName { get; } = nameof(PropName);
-    public static string UniqueId { get; } = nameof(UniqueId);
-    public static string Level { get; } = nameof(Level);
-    public static string BaseCost { get; } = nameof(BaseCost);
-    public static string Damage { get; } = nameof(Damage);
-    public static string HitPoints { get; } = nameof(HitPoints);
-    public static string ArmourClass { get; } = nameof(ArmourClass);
+    public const string Coordinates = nameof(Coordinates);
+    public const string Weight = nameof(Weight);
+    public const string PropName = nameof(PropName);
+    public const string UniqueId = nameof(UniqueId);
+    public const string Level = nameof(Level);
+    public const string BaseCost = nameof(BaseCost);
+    public const string Damage = nameof(Damage);
+    public const string HitPoints = nameof(HitPoints);
+    public const string ArmourClass = nameof(ArmourClass);
+    public const string StrengthBase = nameof(StrengthBase);
+    public const string StrengthCurrent = nameof(StrengthCurrent);
+    public const string StrengthBaseExceptional = nameof(StrengthBaseExceptional);
+    public const string StrengthCurrentExceptional = nameof(StrengthCurrentExceptional);
+    public const string StrengthHitBonus = nameof(StrengthHitBonus);
+    public const string StrengthDamageBonus = nameof(StrengthDamageBonus);
+    public const string DexterityBase = nameof(DexterityBase);
+    public const string DexterityCurrent = nameof(DexterityCurrent);
+    public const string DexterityBaseExceptional = nameof(DexterityBaseExceptional);
+    public const string DexterityCurrentExceptional = nameof(DexterityCurrentExceptional);
+    public const string DexterityHitBonus = nameof(DexterityHitBonus);
+    public const string DexterityAcBonus = nameof(DexterityAcBonus);
+    public const string DexterityDisarmBonus = nameof(DexterityDisarmBonus);
 }
 
 public static class SpecificParametersHelpers
@@ -85,15 +98,56 @@ public static class SpecificParametersHelpers
     public static string GetDamage(this Parameters parameters) => Get(parameters, NamedParameters.Damage);
 
     public static Parameters AddBaseCost(this Parameters parameters, double cost) => Add(parameters, NamedParameters.BaseCost, cost);
-    public static double GetOriginalCost(this Parameters parameters) => Get<double>(parameters, NamedParameters.BaseCost);
+    public static double GetBaseCost(this Parameters parameters) => Get<double>(parameters, NamedParameters.BaseCost);
 
     public static Parameters AddCoordinates(this Parameters parameters, Coordinate coordinates) => Add(parameters, NamedParameters.Coordinates, coordinates);
     public static Parameters AddCoordinates(this Parameters parameters, int row, int column) => Add(parameters, NamedParameters.Coordinates, new Coordinate(row, column));
     public static Coordinate GetCoordinates(this Parameters parameters) => Get<Coordinate>(parameters, NamedParameters.Coordinates);
 
-    public static Parameters AddHitPoints(this Parameters parameters, int hitPoints) => Add(parameters, NamedParameters.HitPoints, hitPoints);
+    public static Parameters AddHitPoints(this Parameters parameters, int value) => Add(parameters, NamedParameters.HitPoints, value);
     public static int GetHitPoints(this Parameters parameters) => Get<int>(parameters, NamedParameters.HitPoints);
 
-    public static Parameters AddArmourClass(this Parameters parameters, int hitPoints) => Add(parameters, NamedParameters.ArmourClass, hitPoints);
+    public static Parameters AddArmourClass(this Parameters parameters, int value) => Add(parameters, NamedParameters.ArmourClass, value);
     public static int GetArmourClass(this Parameters parameters) => Get<int>(parameters, NamedParameters.ArmourClass);
+
+    // Strength
+    public static Parameters AddStrengthBase(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthBase, value);
+    public static int GetStrengthBase(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthBase);
+
+    public static Parameters AddStrengthCurrent(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthCurrent, value);
+    public static int GetStrengthCurrent(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthCurrent);
+
+    public static Parameters AddStrengthBaseExceptional(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthBaseExceptional, value);
+    public static int GetStrengthBaseExceptional(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthBaseExceptional);
+
+    public static Parameters AddStrengthCurrentExceptional(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthCurrentExceptional, value);
+    public static int GetStrengthCurrentExceptional(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthCurrentExceptional);
+
+    public static Parameters AddStrengthHitBonus(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthHitBonus, value);
+    public static int GetStrengthHitBonus(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthHitBonus);
+
+    public static Parameters AddStrengthDamageBonus(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthDamageBonus, value);
+    public static int GetStrengthDamageBonus(this Parameters parameters) => Get<int>(parameters, NamedParameters.StrengthDamageBonus);
+
+    // Dexterity
+    public static Parameters AddDexterityBase(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityBase, value);
+    public static int GetDexterityBase(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityBase);
+
+    public static Parameters AddDexterityCurrent(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityCurrent, value);
+    public static int GetDexterityCurrent(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityCurrent);
+
+    public static Parameters AddDexterityBaseExceptional(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityBaseExceptional, value);
+    public static int GetDexterityBaseExceptional(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityBaseExceptional);
+
+    public static Parameters AddDexterityCurrentExceptional(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityCurrentExceptional, value);
+    public static int GetDexterityCurrentExceptional(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityCurrentExceptional);
+
+    public static Parameters AddDexterityHitBonus(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityHitBonus, value);
+    public static int GetDexterityHitBonus(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityHitBonus);
+
+    public static Parameters AddDexterityAcBonus(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityAcBonus, value);
+    public static int GetDexterityAcBonus(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityAcBonus);
+
+    public static Parameters AddDexterityDisarmBonus(this Parameters parameters, int value) => Add(parameters, NamedParameters.DexterityDisarmBonus, value);
+    public static int GetDexterityDisarmBonus(this Parameters parameters) => Get<int>(parameters, NamedParameters.DexterityDisarmBonus);
 }

@@ -1,17 +1,17 @@
 ﻿#nullable enable
 using Assets.Deeds;
 using Assets.Messaging;
+using Assets.Player;
 using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
-namespace Assets.Personas;
+namespace Assets.Characters;
 
 // https://beej.us/moria/mmspoilers/character.html#attributes
 
 public interface ICharacter : IDispatched, IObservable<PositionObservation>, IDisposable
 {
-    Parameters CurrentState();
     int ArmourClass { get; set; }
     int HitPoints { get; set; }
     Coordinate Coordinates { get; set; }
@@ -22,20 +22,10 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
 {
     private readonly List<IObserver<PositionObservation>> _observers = new List<IObserver<PositionObservation>>();
 
+
     protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
-        : base(dispatchRegistry, actionRegistry, actor)
+        : base(dispatchRegistry, actionRegistry, actor, state)
     {
-        var extracted = state.ToParameters();
-
-        // ReSharper disable once VirtualMemberCallInConstructor
-        UpdateState(extracted);
-    }
-
-    protected Character(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, Coordinate position, int armourClass, int hitPoints)
-        : base(dispatchRegistry, actionRegistry, actor)
-    {
-        Coordinates = position;
-        HitPoints = hitPoints;
     }
 
     public override void UpdateState(Parameters state)
@@ -47,17 +37,11 @@ internal abstract class Character<T> : Dispatched<T>, ICharacter
         base.UpdateState(state);
     }
 
-    public override Parameters CurrentState()
-    {
-        var state = base.CurrentState();
-
-        state
+    public override Parameters CurrentState =>
+        base.CurrentState
             .AddCoordinates(Coordinates)
             .AddHitPoints(HitPoints)
             .AddArmourClass(ArmourClass);
-
-        return state;
-    }
 
     public int ArmourClass { get; set; }
     public int HitPoints { get; set; }

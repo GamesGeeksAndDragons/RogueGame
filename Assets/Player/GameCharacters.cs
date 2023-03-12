@@ -1,10 +1,11 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Utils;
 using Utils.Coordinates;
-using Utils.Display;
 using Utils.Dispatching;
+using Utils.Display;
 
-namespace Assets.Personas;
+namespace Assets.Player;
 
 public interface ICharacterPosition
 {

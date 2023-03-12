@@ -18,8 +18,8 @@ internal class Floor : Dispatched<Floor>, IFloor
     public int RoomNumber { get; }
     public bool IsTunnel => RoomNumber == 0;
 
-    internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string _)
-        : base(dispatchRegistry, actionRegistry, actor)
+    internal Floor(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
+        : base(dispatchRegistry, actionRegistry, actor, state)
     {
         if (actor.IsSame(TilesDisplay.Tunnel))
         {
@@ -31,10 +31,5 @@ internal class Floor : Dispatched<Floor>, IFloor
         }
     }
 
-    public override Parameters CurrentState()
-    {
-        var parameters = base.CurrentState();
-
-        return parameters;
-    }
+    public override Parameters CurrentState => base.CurrentState;
 }

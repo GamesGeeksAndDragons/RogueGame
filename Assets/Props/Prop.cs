@@ -1,4 +1,5 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
 using Assets.Messaging;
 using Utils;
 using Utils.Dispatching;
@@ -31,19 +32,22 @@ namespace Assets.Props
         public double BaseCost { get; protected set; }
         public string Damage { get; protected set; }
 
-        public override Parameters CurrentState()
+        public override Parameters CurrentState
         {
-            var state = base.CurrentState();
+            get
+            {
+                var state = base.CurrentState;
 
-            state
-                .AddPropName(PropName)
-                .AddWeight(Weight)
-                .AddLevel(Level)
-                .AddDamage(Damage)
-                .AddBaseCost(BaseCost)
-                ;
+                state
+                    .AddPropName(PropName)
+                    .AddWeight(Weight)
+                    .AddLevel(Level)
+                    .AddDamage(Damage)
+                    .AddBaseCost(BaseCost)
+                    ;
 
-            return state;
+                return state;
+            }
         }
 
         public override void UpdateState(Parameters state)
@@ -51,7 +55,7 @@ namespace Assets.Props
             PropName = state.GetPropName();
             Weight = state.GetWeight();
             Level = state.GetLevel();
-            BaseCost = state.GetOriginalCost();
+            BaseCost = state.GetBaseCost();
             Damage = state.GetDamage();
 
             base.UpdateState(state);

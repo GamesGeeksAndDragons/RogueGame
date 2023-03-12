@@ -24,9 +24,7 @@ internal static class TilesBuilderMethods
 
     internal static IDispatched BuildWall(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
     {
-        var direction = actor.ToWallDirection();
-
-        return new Wall(dispatchRegistry, actionRegistry, actor, direction.ToString());
+        return new Wall(dispatchRegistry, actionRegistry, actor, state);
     }
 
     public static IDispatched BuildNull(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)

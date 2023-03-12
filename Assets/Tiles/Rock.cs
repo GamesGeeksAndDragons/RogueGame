@@ -7,8 +7,8 @@ namespace Assets.Tiles;
 
 internal class Rock : Dispatched<Rock>
 {
-    internal Rock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string _)
-        : base(dispatchRegistry, actionRegistry, actor)
+    internal Rock(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
+        : base(dispatchRegistry, actionRegistry, actor, state)
     {
     }
 }

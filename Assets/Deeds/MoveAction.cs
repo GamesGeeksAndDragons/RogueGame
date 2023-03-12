@@ -1,7 +1,7 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Level;
 using Assets.Messaging;
-using Assets.Personas;
 using Utils;
 using Utils.Coordinates;
 using Utils.Enums;

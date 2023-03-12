@@ -2,7 +2,7 @@
 using Utils.Display;
 using Utils.Random;
 
-namespace Assets.Personas
+namespace Assets.Characters
 {
     public interface ICharacterFactory
     {

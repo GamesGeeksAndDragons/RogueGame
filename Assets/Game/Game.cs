@@ -1,8 +1,9 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Level;
 using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Personas;
+using Assets.Player;
 
 namespace Assets.Game;
 

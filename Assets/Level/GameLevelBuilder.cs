@@ -1,8 +1,9 @@
 ﻿#nullable enable
+using Assets.Characters;
 using Assets.Deeds;
 using Assets.Mazes;
 using Assets.Messaging;
-using Assets.Personas;
+using Assets.Player;
 using Assets.Resources;
 using Assets.Rooms;
 using Utils;

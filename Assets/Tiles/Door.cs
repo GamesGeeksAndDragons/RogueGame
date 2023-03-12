@@ -10,7 +10,7 @@ namespace Assets.Tiles;
 internal class Door : Dispatched<Door>
 {
     internal Door(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
-        : base(dispatchRegistry, actionRegistry, actor)
+        : base(dispatchRegistry, actionRegistry, actor, state)
     {
         var doorId = actor.FromDoorNumberString();
 
@@ -27,18 +27,21 @@ internal class Door : Dispatched<Door>
         base.UpdateState(state);
     }
 
-    public override Parameters CurrentState()
+    public override Parameters CurrentState
     {
-        var parameters = base.CurrentState();
-
-        var door = new[]
+        get
         {
+            var state = base.CurrentState;
+
+            var door = new[]
+            {
                 (Name: nameof(DoorId), Value: DoorId.ToString()),
             };
 
-        parameters.AddRange(door);
+            state.AddRange(door);
 
-        return parameters;
+            return state;
+        }
     }
 
     public int DoorId { get; private set; }

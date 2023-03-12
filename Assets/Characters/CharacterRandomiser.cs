@@ -1,10 +1,13 @@
-﻿using Assets.Deeds;
+﻿#nullable enable
+using Assets.Deeds;
+using Assets.Monsters;
+using Assets.Player;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
 using Utils.Random;
 
-namespace Assets.Personas;
+namespace Assets.Characters;
 
 internal static class CharacterRandomiser
 {
@@ -17,8 +20,8 @@ internal static class CharacterRandomiser
         var hitPoints = Random(config.HitPoints);
 
         if (actor == CharacterDisplay.Me)
-            return new Me(dispatchRegistry, actionRegistry, actor, position, armourClass, hitPoints);
+            return new Me(dispatchRegistry, actionRegistry, actor, "");
 
-        return new Monster(dispatchRegistry, actionRegistry, actor, position, armourClass, hitPoints);
+        return new Monster(dispatchRegistry, actionRegistry, actor, "");
     }
 }

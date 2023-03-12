@@ -1,6 +1,7 @@
-﻿using Assets.Deeds;
+﻿using Assets.Characters;
+using Assets.Deeds;
 using Assets.Messaging;
-using Assets.Personas;
+using Assets.Player;
 using Assets.Resources;
 using Assets.Rooms;
 using Utils.Dispatching;

@@ -1,5 +1,5 @@
-﻿using Assets.Level;
-using Assets.Personas;
+﻿using Assets.Characters;
+using Assets.Level;
 using Assets.Rooms;
 using Utils;
 using Utils.Coordinates;
