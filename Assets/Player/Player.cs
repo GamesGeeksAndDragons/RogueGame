@@ -3,6 +3,8 @@ using Assets.Deeds;
 using Utils;
 using Utils.Dispatching;
 
+// https://github.com/dungeons-of-moria/umoria/blob/master/src/player.cpp
+
 namespace Assets.Player;
 
 interface IPlayer : IPlayerStrength, IPlayerDexterity

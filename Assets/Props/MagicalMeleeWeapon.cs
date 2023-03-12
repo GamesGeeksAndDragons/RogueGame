@@ -10,13 +10,13 @@ using Utils.Random;
 namespace Assets.Props
 {
     //TODO: Change to have a Weapon base class
-    internal class HandWeapon : Prop<HandWeapon>
+    internal class MagicalMeleeWeapon : MeleeWeapon
     {
-        public HandWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string actor)
+        public MagicalMeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string actor)
             : base(randomNumbers, dispatchRegistry, actionRegistry, actor, "", "")
         {
         }
-        public HandWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string actor, string state, string uniqueId)
+        public MagicalMeleeWeapon(IDieBuilder randomNumbers, DispatchRegistry dispatchRegistry, ActionRegistry actionRegistry, string actor, string state, string uniqueId)
             : base(randomNumbers, dispatchRegistry, actionRegistry, TilesDisplay.DebugWeapon, state, uniqueId)
         {
         }

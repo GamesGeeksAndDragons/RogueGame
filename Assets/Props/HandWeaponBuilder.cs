@@ -19,9 +19,9 @@ namespace Assets.Props
             _actionRegistry = actionRegistry;
         }
 
-        HandWeapon BuildSmallSword()
+        MagicalMeleeWeapon BuildSmallSword()
         {
-            return new HandWeapon(_randomNumbers, _dispatchRegistry, _actionRegistry, TilesDisplay.DebugWeapon);
+            return new MagicalMeleeWeapon(_randomNumbers, _dispatchRegistry, _actionRegistry, TilesDisplay.DebugWeapon);
         }
     }
 }
