@@ -24,6 +24,16 @@ internal class Player : Character<Player>, IPlayer
     private IPlayerStrength _playerStrength = null!;
     private IPlayerDexterity _playerDexterity = null!;
 
+    internal class PlayerState
+    {
+        public (int Strength, int Exceptional) StrengthCurrent { get; private set; }
+        public (int Strength, int Exceptional) StrengthBase { get; private set; }
+        public (int Hit, int Damage) StrengthBonuses { get; private set; }
+        public (int Dexterity, int Exceptional) DexterityCurrent { get; private set; }
+        public (int Dexterity, int Exceptional) DexterityBase { get; private set; }
+        public (int Hit, int Armour, int Disarm) DexterityBonuses { get; private set; }
+    }
+
     public Player(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
     : base(dispatchRegistry, actionRegistry, actor, state)
     {
