@@ -1,6 +1,4 @@
-﻿using Assets.PlayerClass;
-
-namespace Assets.StartingPlayerStatistics;
+﻿namespace Assets.StartingPlayerStatistics;
 
 // https://beej.us/moria/mmspoilers/character.html#races
 

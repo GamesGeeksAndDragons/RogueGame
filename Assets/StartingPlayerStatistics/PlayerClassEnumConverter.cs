@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Utils;
 
-namespace Assets.PlayerClass
+namespace Assets.StartingPlayerStatistics
 {
     internal class PlayerClassEnumConverter : JsonConverter<PlayerClassEnum>
     {

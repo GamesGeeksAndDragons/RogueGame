@@ -14,11 +14,6 @@ public static class PlayerRaces
             var races = JsonSerializer.Deserialize<Dictionary<string, PlayerRace>>(json);
             if (races == null) return ImmutableDictionary<string, PlayerRace>.Empty;
 
-            foreach (var (name, race) in races)
-            {
-                race.Name = name;
-            }
-
             return races.ToImmutableDictionary();
         }
     );

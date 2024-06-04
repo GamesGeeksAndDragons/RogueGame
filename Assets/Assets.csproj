@@ -41,6 +41,9 @@
     <None Update="Rogue\1-Square.room">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Rogue\PlayerClasses.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Rogue\PlayerRaces.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

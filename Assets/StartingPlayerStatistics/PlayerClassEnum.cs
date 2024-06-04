@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Assets.PlayerClass;
+namespace Assets.StartingPlayerStatistics;
 
 [Flags]
 [JsonConverter(typeof(PlayerClassEnumConverter))]

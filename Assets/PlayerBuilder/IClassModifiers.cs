@@ -1,4 +1,6 @@
-﻿namespace Assets.PlayerBuilder;
+﻿using Assets.StartingPlayerStatistics;
+
+namespace Assets.PlayerBuilder;
 
 public interface IClassModifiers
 {

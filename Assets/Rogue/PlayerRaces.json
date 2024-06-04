@@ -1,5 +1,6 @@
 {
   "Dewarf": {
+    "Name": "Dewarf",
     "Strength": 2,
     "Intelligence": -3,
     "Wisdom": 1,
@@ -41,6 +42,7 @@
     }
   },
   "Elf": {
+    "Name": "Elf",
     "Strength": -1,
     "Intelligence": 2,
     "Wisdom": 1,
@@ -82,6 +84,7 @@
     }
   },
   "Gnome": {
+    "Name": "Gnome",
     "Strength": -1,
     "Intelligence": 2,
     "Wisdom": 0,
@@ -123,6 +126,7 @@
     }
   },
   "Half-Elf": {
+    "Name": "Half-Elf",
     "Strength": -1,
     "Intelligence": 1,
     "Wisdom": 0,
@@ -164,6 +168,7 @@
     }
   },
   "Halfling": {
+    "Name": "Halfling",
     "Strength": -2,
     "Intelligence": 2,
     "Wisdom": 1,
@@ -205,6 +210,7 @@
     }
   },
   "Half-Orc": {
+    "Name": "Half-Orc",
     "Strength": 2,
     "Intelligence": -1,
     "Wisdom": 0,
@@ -246,6 +252,7 @@
     }
   },
   "Half-Troll": {
+    "Name": "Half-Troll",
     "Strength": 4,
     "Intelligence": -4,
     "Wisdom": -2,
@@ -287,6 +294,7 @@
     }
   },
   "Human": {
+    "Name": "Human",
     "Strength": 0,
     "Intelligence": 0,
     "Wisdom": 0,
