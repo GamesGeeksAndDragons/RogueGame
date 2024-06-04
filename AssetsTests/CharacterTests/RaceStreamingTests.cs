@@ -16,5 +16,7 @@ public class RaceStreamingTests
     public void CanDeserializeClasses()
     {
         var classes = PlayerClasses.Get();
+
+        Assert.Fail("Must have a valid test here");
     }
 }
