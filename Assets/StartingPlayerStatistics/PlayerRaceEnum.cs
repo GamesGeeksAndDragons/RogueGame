@@ -1,4 +1,4 @@
-﻿namespace Assets.PlayerRace;
+﻿namespace Assets.StartingPlayerStatistics;
 
 internal enum PlayerRaceEnum
 {

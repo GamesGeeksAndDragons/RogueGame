@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text.Json;
-using Assets.PlayerRace;
+﻿using Assets.StartingPlayerStatistics;
 
 namespace AssetsTests.CharacterTests;
 
@@ -9,6 +7,6 @@ public class RaceStreamingTests
     [Fact]
     public void CanDeserializeRaces()
     {
-        var races = Races.Get();
+        var races = PlayerRaces.Get();
     }
 }

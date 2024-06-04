@@ -1,10 +1,10 @@
 ﻿using Assets.PlayerClass;
 
-namespace Assets.PlayerRace;
+namespace Assets.StartingPlayerStatistics;
 
 // https://beej.us/moria/mmspoilers/character.html#races
 
-public class Race
+public class PlayerRace
 {
     public string Name { get; set; } = null!;
     public int Strength { get; set; }
