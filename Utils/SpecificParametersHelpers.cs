@@ -103,12 +103,15 @@ public static class SpecificParametersHelpers
     public static Parameters AddCoordinates(this Parameters parameters, Coordinate coordinates) => Add(parameters, NamedParameters.Coordinates, coordinates);
     public static Parameters AddCoordinates(this Parameters parameters, int row, int column) => Add(parameters, NamedParameters.Coordinates, new Coordinate(row, column));
     public static Coordinate GetCoordinates(this Parameters parameters) => Get<Coordinate>(parameters, NamedParameters.Coordinates);
+    public static string ToCoordinateString(this Coordinate coordinate) => coordinate.ToParameter(NamedParameters.Coordinates);
 
     public static Parameters AddHitPoints(this Parameters parameters, int value) => Add(parameters, NamedParameters.HitPoints, value);
     public static int GetHitPoints(this Parameters parameters) => Get<int>(parameters, NamedParameters.HitPoints);
+    public static string ToHitPointsString(this int hitPoints) => hitPoints.ToParameter(NamedParameters.HitPoints);
 
     public static Parameters AddArmourClass(this Parameters parameters, int value) => Add(parameters, NamedParameters.ArmourClass, value);
     public static int GetArmourClass(this Parameters parameters) => Get<int>(parameters, NamedParameters.ArmourClass);
+    public static string ToArmourClassString(this int armourClass) => armourClass.ToParameter(NamedParameters.ArmourClass);
 
     // Strength
     public static Parameters AddStrengthBase(this Parameters parameters, int value) => Add(parameters, NamedParameters.StrengthBase, value);

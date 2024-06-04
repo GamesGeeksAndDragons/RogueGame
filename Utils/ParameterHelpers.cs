@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Text;
 using Utils.Coordinates;
 using Utils.Dispatching;
 
@@ -17,10 +18,18 @@ namespace Utils
             return (Name: name, Value: value);
         }
 
-        public static string FormatParameter(this Coordinate coordinate, string name = StringExtensions.EmptyString)
+        public static string ToParameter(this Coordinate coordinate, string name = StringExtensions.EmptyString)
         {
             return FormatParameter(name, coordinate.ToString());
         }
+
+        public static string ToParameter<T>(this T value, string name)
+            where T : struct
+        {
+            var str = value.ToString().RemoveNullable();
+            return FormatParameter(name, str);
+        }
+
 
         public static string FormatParameter(this string name, string value = StringExtensions.EmptyString)
         {
@@ -147,6 +156,18 @@ namespace Utils
             }
 
             throw new ArgumentException($"Unable to convert [{name}:{value}] to type [{typeof(T).Name}]");
+        }
+
+        public static string ToState(this string parameter, params string[] parameters)
+        {
+            var state = new StringBuilder(parameter);
+
+            foreach (var param in parameters)
+            {
+                state.Append(param);
+            }
+
+            return state.ToString();
         }
     }
 }

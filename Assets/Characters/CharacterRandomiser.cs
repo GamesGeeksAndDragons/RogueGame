@@ -1,7 +1,9 @@
 ﻿#nullable enable
+using System.Data;
 using Assets.Deeds;
 using Assets.Monsters;
 using Assets.Player;
+using Utils;
 using Utils.Coordinates;
 using Utils.Dispatching;
 using Utils.Display;
@@ -15,13 +17,15 @@ internal static class CharacterRandomiser
     {
         int Random(string die) => dieBuilder.Between(die).Random;
 
-        var position = Coordinate.NotSet;
-        var armourClass = Random(config.ArmourClass);
-        var hitPoints = Random(config.HitPoints);
+        var position = Coordinate.NotSet.ToCoordinateString();
+        var armourClass = Random(config.ArmourClass).ToArmourClassString();
+        var hitPoints = Random(config.HitPoints).ToHitPointsString();
+
+        var state = position.ToState(armourClass, hitPoints);
 
         if (actor == CharacterDisplay.Me)
-            return new Me(dispatchRegistry, actionRegistry, actor, "");
+            return new Me(dispatchRegistry, actionRegistry, actor, state);
 
-        return new Monster(dispatchRegistry, actionRegistry, actor, "");
+        return new Monster(dispatchRegistry, actionRegistry, actor, state);
     }
 }
