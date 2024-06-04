@@ -1,0 +1,330 @@
+{
+  "Dewarf": {
+    "Strength": 2,
+    "Intelligence": -3,
+    "Wisdom": 1,
+    "Dexterity": -2,
+    "Constitution": 2,
+    "Charisma": -3,
+    "ExperiencePenalty": 0.2,
+    "Disarm": 2,
+    "Search": 7,
+    "Stealth": -1,
+    "Perception": 0,
+    "Fight": 15,
+    "Bows": 0,
+    "Device": 9,
+    "InfraVision": 5,
+    "HitDie": 9,
+
+    "PlayerClasses": [ "Warrior", "Priest" ],
+
+    "Age": {
+      "Min": 35,
+      "Die": "1d15"
+    },
+    "MaleHeight": {
+      "Min": 48,
+      "Die": "1d3"
+    },
+    "MaleWeight": {
+      "Min": 150,
+      "Die": "1d10"
+    },
+    "FemaleHeight": {
+      "Min": 46,
+      "Die": "1d3"
+    },
+    "FemaleWeight": {
+      "Min": 120,
+      "Die": "1d10"
+    }
+  },
+  "Elf": {
+    "Strength": -1,
+    "Intelligence": 2,
+    "Wisdom": 1,
+    "Dexterity": 1,
+    "Constitution": -2,
+    "Charisma": 1,
+    "ExperiencePenalty": 0.2,
+    "Disarm": 5,
+    "Search": 8,
+    "Stealth": 1,
+    "Perception": -1,
+    "Fight": -1,
+    "Bows": 15,
+    "Device": 6,
+    "InfraVision": 3,
+    "HitDie": 8,
+
+    "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue" ],
+
+    "Age": {
+      "Min": 75,
+      "Die": "1d75"
+    },
+    "MaleHeight": {
+      "Min": 60,
+      "Die": "1d4"
+    },
+    "MaleWeight": {
+      "Min": 100,
+      "Die": "1d6"
+    },
+    "FemaleHeight": {
+      "Min": 54,
+      "Die": "1d4"
+    },
+    "FemaleWeight": {
+      "Min": 80,
+      "Die": "1d6"
+    }
+  },
+  "Gnome": {
+    "Strength": -1,
+    "Intelligence": 2,
+    "Wisdom": 0,
+    "Dexterity": 2,
+    "Constitution": 1,
+    "Charisma": -2,
+    "ExperiencePenalty": 0.25,
+    "Disarm": 10,
+    "Search": 6,
+    "Stealth": 3,
+    "Perception": -3,
+    "Fight": -8,
+    "Bows": 12,
+    "Device": 12,
+    "InfraVision": 4,
+    "HitDie": 7,
+
+    "PlayerClasses": [ "Warrior", "Mage", "Priest", "Rogue" ],
+
+    "Age": {
+      "Min": 50,
+      "Die": "1d40"
+    },
+    "MaleHeight": {
+      "Min": 42,
+      "Die": "1d3"
+    },
+    "MaleWeight": {
+      "Min": 90,
+      "Die": "1d6"
+    },
+    "FemaleHeight": {
+      "Min": 39,
+      "Die": "1d3"
+    },
+    "FemaleWeight": {
+      "Min": 50,
+      "Die": "1d3"
+    }
+  },
+  "Half-Elf": {
+    "Strength": -1,
+    "Intelligence": 1,
+    "Wisdom": 0,
+    "Dexterity": 1,
+    "Constitution": -1,
+    "Charisma": 1,
+    "ExperiencePenalty": 0.1,
+    "Disarm": 2,
+    "Search": 6,
+    "Stealth": 1,
+    "Perception": -1,
+    "Fight": -1,
+    "Bows": 5,
+    "Device": 3,
+    "InfraVision": 2,
+    "HitDie": 9,
+
+    "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue", "Paladin" ],
+
+    "Age": {
+      "Min": 24,
+      "Die": "1d16"
+    },
+    "MaleHeight": {
+      "Min": 66,
+      "Die": "1d6"
+    },
+    "MaleWeight": {
+      "Min": 130,
+      "Die": "1d15"
+    },
+    "FemaleHeight": {
+      "Min": 62,
+      "Die": "1d6"
+    },
+    "FemaleWeight": {
+      "Min": 100,
+      "Die": "1d10"
+    }
+  },
+  "Halfling": {
+    "Strength": -2,
+    "Intelligence": 2,
+    "Wisdom": 1,
+    "Dexterity": 3,
+    "Constitution": 1,
+    "Charisma": 1,
+    "ExperiencePenalty": 0.1,
+    "Disarm": 15,
+    "Search": 12,
+    "Stealth": 4,
+    "Perception": -5,
+    "Fight": -10,
+    "Bows": 20,
+    "Device": 6,
+    "InfraVision": 4,
+    "HitDie": 6,
+
+    "PlayerClasses": [ "Warrior", "Mage", "Rogue" ],
+
+    "Age": {
+      "Min": 21,
+      "Die": "1d12"
+    },
+    "MaleHeight": {
+      "Min": 36,
+      "Die": "1d3"
+    },
+    "MaleWeight": {
+      "Min": 60,
+      "Die": "1d3"
+    },
+    "FemaleHeight": {
+      "Min": 33,
+      "Die": "1d3"
+    },
+    "FemaleWeight": {
+      "Min": 50,
+      "Die": "1d3"
+    }
+  },
+  "Half-Orc": {
+    "Strength": 2,
+    "Intelligence": -1,
+    "Wisdom": 0,
+    "Dexterity": 0,
+    "Constitution": 1,
+    "Charisma": -4,
+    "ExperiencePenalty": 0.1,
+    "Disarm": -3,
+    "Search": 0,
+    "Stealth": -1,
+    "Perception": 3,
+    "Fight": 10,
+    "Bows": -5,
+    "Device": -3,
+    "InfraVision": 3,
+    "HitDie": 10,
+
+    "PlayerClasses": [ "Warrior", "Priest", "Rogue" ],
+
+    "Age": {
+      "Min": 11,
+      "Die": "1d4"
+    },
+    "MaleHeight": {
+      "Min": 67,
+      "Die": ""
+    },
+    "MaleWeight": {
+      "Min": 150,
+      "Die": "1d5"
+    },
+    "FemaleHeight": {
+      "Min": 63,
+      "Die": ""
+    },
+    "FemaleWeight": {
+      "Min": 120,
+      "Die": "1d5"
+    }
+  },
+  "Half-Troll": {
+    "Strength": 4,
+    "Intelligence": -4,
+    "Wisdom": -2,
+    "Dexterity": -4,
+    "Constitution": 3,
+    "Charisma": -6,
+    "ExperiencePenalty": 0.2,
+    "Disarm": -5,
+    "Search": -1,
+    "Stealth": -2,
+    "Perception": 5,
+    "Fight": 20,
+    "Bows": -10,
+    "Device": -8,
+    "InfraVision": 3,
+    "HitDie": 12,
+
+    "PlayerClasses": [ "Warrior", "Priest" ],
+
+    "Age": {
+      "Min": 20,
+      "Die": "1d10"
+    },
+    "MaleHeight": {
+      "Min": 96,
+      "Die": "1d10"
+    },
+    "MaleWeight": {
+      "Min": 255,
+      "Die": "1d50"
+    },
+    "FemaleHeight": {
+      "Min": 84,
+      "Die": "1d8"
+    },
+    "FemaleWeight": {
+      "Min": 255,
+      "Die": "1d40"
+    }
+  },
+  "Human": {
+    "Strength": 0,
+    "Intelligence": 0,
+    "Wisdom": 0,
+    "Dexterity": 0,
+    "Constitution": 0,
+    "Charisma": 6,
+    "ExperiencePenalty": 0.0,
+    "Disarm": 0,
+    "Search": 0,
+    "Stealth": 0,
+    "Perception": 0,
+    "Fight": 0,
+    "Bows": 0,
+    "Device": 0,
+    "InfraVision": 0,
+    "HitDie": 10,
+
+    "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue", "Paladin" ],
+
+    "Age": {
+      "Min": 14,
+      "Die": "1d6"
+    },
+    "MaleHeight": {
+      "Min": 72,
+      "Die": "1d6"
+    },
+    "MaleWeight": {
+      "Min": 180,
+      "Die": "1d25"
+    },
+    "FemaleHeight": {
+      "Min": 66,
+      "Die": "1d4"
+    },
+    "FemaleWeight": {
+      "Min": 150,
+      "Die": "1d20"
+    }
+  }
+}

@@ -1,12 +1,16 @@
-﻿namespace Assets.PlayerClass;
+﻿using System.Text.Json.Serialization;
+
+namespace Assets.PlayerClass;
 
 [Flags]
-internal enum PlayerClassEnum
+[JsonConverter(typeof(PlayerClassEnumConverter))]
+public enum PlayerClassEnum
 {
-    Warrior = 0x00,
-    Mage = 0x01,
-    Priest = 0x02,
-    Rogue = 0x04,
-    Ranger = 0x08,
-    Paladin = 0x10
+    None = 0x00,
+    Warrior = 0x01,
+    Mage = 0x02,
+    Priest = 0x04,
+    Rogue = 0x08,
+    Ranger = 0x10,
+    Paladin = 0x20
 }
