@@ -1,16 +1,12 @@
-﻿namespace Assets.StartingPlayerStatistics;
+﻿using Assets.PlayerBuilder;
+
+namespace Assets.StartingPlayerStatistics;
 
 // https://beej.us/moria/mmspoilers/character.html#races
 
-public class PlayerRace
+public class PlayerRace : PlayerStats
 {
     public string Name { get; set; } = null!;
-    public int Strength { get; set; }
-    public int Intelligence { get; set; }
-    public int Wisdom { get; set; }
-    public int Dexterity { get; set; }
-    public int Constitution { get; set; }
-    public int Charisma { get; set; }
     public PlayerClassEnum PlayerClasses { get; set; }
     public double ExperiencePenalty { get; set; }
     public int Disarm { get; set; }
