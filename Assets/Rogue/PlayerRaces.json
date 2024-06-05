@@ -24,24 +24,24 @@
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue", "Paladin" ],
 
     "Age": {
-      "Min": 14,
-      "Die": "1d6"
+      "Base": 14,
+      "Modifier": 6
     },
     "MaleHeight": {
-      "Min": 72,
-      "Die": "1d6"
+      "Base": 72,
+      "Modifier": 6
     },
     "MaleWeight": {
-      "Min": 180,
-      "Die": "1d25"
+      "Base": 180,
+      "Modifier": 25
     },
     "FemaleHeight": {
-      "Min": 66,
-      "Die": "1d4"
+      "Base": 66,
+      "Modifier": 4
     },
     "FemaleWeight": {
-      "Min": 150,
-      "Die": "1d20"
+      "Base": 150,
+      "Modifier": 20
     }
   },
   "Half-Elf": {
@@ -69,24 +69,24 @@
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue", "Paladin" ],
 
     "Age": {
-      "Min": 24,
-      "Die": "1d16"
+      "Base": 24,
+      "Modifier": 16
     },
     "MaleHeight": {
-      "Min": 66,
-      "Die": "1d6"
+      "Base": 66,
+      "Modifier": 6
     },
     "MaleWeight": {
-      "Min": 130,
-      "Die": "1d15"
+      "Base": 130,
+      "Modifier": 15
     },
     "FemaleHeight": {
-      "Min": 62,
-      "Die": "1d6"
+      "Base": 62,
+      "Modifier": 6
     },
     "FemaleWeight": {
-      "Min": 100,
-      "Die": "1d10"
+      "Base": 100,
+      "Modifier": 10
     }
   },
   "Elf": {
@@ -114,24 +114,24 @@
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue" ],
 
     "Age": {
-      "Min": 75,
-      "Die": "1d75"
+      "Base": 75,
+      "Modifier": 75
     },
     "MaleHeight": {
-      "Min": 60,
-      "Die": "1d4"
+      "Base": 60,
+      "Modifier": 4
     },
     "MaleWeight": {
-      "Min": 100,
-      "Die": "1d6"
+      "Base": 100,
+      "Modifier": 6
     },
     "FemaleHeight": {
-      "Min": 54,
-      "Die": "1d4"
+      "Base": 54,
+      "Modifier": 4
     },
     "FemaleWeight": {
-      "Min": 80,
-      "Die": "1d6"
+      "Base": 80,
+      "Modifier": 6
     }
   },
   "Halfling": {
@@ -159,24 +159,24 @@
     "PlayerClasses": [ "Warrior", "Mage", "Rogue" ],
 
     "Age": {
-      "Min": 21,
-      "Die": "1d12"
+      "Base": 21,
+      "Modifier": 12
     },
     "MaleHeight": {
-      "Min": 36,
-      "Die": "1d3"
+      "Base": 36,
+      "Modifier": 3
     },
     "MaleWeight": {
-      "Min": 60,
-      "Die": "1d3"
+      "Base": 60,
+      "Modifier": 3
     },
     "FemaleHeight": {
-      "Min": 33,
-      "Die": "1d3"
+      "Base": 33,
+      "Modifier": 3
     },
     "FemaleWeight": {
-      "Min": 50,
-      "Die": "1d3"
+      "Base": 50,
+      "Modifier": 3
     }
   },
   "Gnome": {
@@ -204,24 +204,24 @@
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Rogue" ],
 
     "Age": {
-      "Min": 50,
-      "Die": "1d40"
+      "Base": 50,
+      "Modifier": 40
     },
     "MaleHeight": {
-      "Min": 42,
-      "Die": "1d3"
+      "Base": 42,
+      "Modifier": 3
     },
     "MaleWeight": {
-      "Min": 90,
-      "Die": "1d6"
+      "Base": 90,
+      "Modifier": 6
     },
     "FemaleHeight": {
-      "Min": 39,
-      "Die": "1d3"
+      "Base": 39,
+      "Modifier": 3
     },
     "FemaleWeight": {
-      "Min": 50,
-      "Die": "1d3"
+      "Base": 50,
+      "Modifier": 3
     }
   },
   "Dewarf": {
@@ -249,24 +249,24 @@
     "PlayerClasses": [ "Warrior", "Priest" ],
 
     "Age": {
-      "Min": 35,
-      "Die": "1d15"
+      "Base": 35,
+      "Modifier": 15
     },
     "MaleHeight": {
-      "Min": 48,
-      "Die": "1d3"
+      "Base": 48,
+      "Modifier": 3
     },
     "MaleWeight": {
-      "Min": 150,
-      "Die": "1d10"
+      "Base": 150,
+      "Modifier": 10
     },
     "FemaleHeight": {
-      "Min": 46,
-      "Die": "1d3"
+      "Base": 46,
+      "Modifier": 3
     },
     "FemaleWeight": {
-      "Min": 120,
-      "Die": "1d10"
+      "Base": 120,
+      "Modifier": 10
     }
   },
   "Half-Orc": {
@@ -294,24 +294,24 @@
     "PlayerClasses": [ "Warrior", "Priest", "Rogue" ],
 
     "Age": {
-      "Min": 11,
-      "Die": "1d4"
+      "Base": 11,
+      "Modifier": 4
     },
     "MaleHeight": {
-      "Min": 67,
+      "Base": 67,
       "Die": ""
     },
     "MaleWeight": {
-      "Min": 150,
-      "Die": "1d5"
+      "Base": 150,
+      "Modifier": 5
     },
     "FemaleHeight": {
-      "Min": 63,
-      "Die": ""
+      "Base": 63,
+      "Modifier": 0
     },
     "FemaleWeight": {
-      "Min": 120,
-      "Die": "1d5"
+      "Base": 120,
+      "Modifier": 5
     }
   },
   "Half-Troll": {
@@ -339,24 +339,24 @@
     "PlayerClasses": [ "Warrior", "Priest" ],
 
     "Age": {
-      "Min": 20,
-      "Die": "1d10"
+      "Base": 20,
+      "Modifier": 10
     },
     "MaleHeight": {
-      "Min": 96,
-      "Die": "1d10"
+      "Base": 96,
+      "Modifier": 10
     },
     "MaleWeight": {
-      "Min": 255,
-      "Die": "1d50"
+      "Base": 255,
+      "Modifier": 50
     },
     "FemaleHeight": {
-      "Min": 84,
-      "Die": "1d8"
+      "Base": 84,
+      "Modifier": 8
     },
     "FemaleWeight": {
-      "Min": 255,
-      "Die": "1d40"
+      "Base": 255,
+      "Modifier": 40
     }
   }
 }

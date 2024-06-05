@@ -15,7 +15,7 @@ public class PlayerBuilder
         _dieBuilder = dieBuilder;
     }
 
-    public IPlayer Build(string playerClass, string playerRace)
+    public IPlayer Build(string playerClass, string playerRace, Gender gender)
     {
         var race = PlayerRaces.Get()[playerRace];
         var pClass = PlayerClasses.Get()[playerClass];
@@ -23,25 +23,23 @@ public class PlayerBuilder
         var maxStatsBuilder = new MaxStatsBuilder(_dieBuilder);
         var maxStats = maxStatsBuilder.GenerateMaxPlayerStats(race);
 
-        return new Player
-        {
-            Race = race,
-            Class = pClass,
-            Maximum = maxStats,
-            Current = GenerateCurrent()
-        };
+        return new Player(gender, race, pClass, maxStats, GetHeight(), GetWeight());
 
-        PlayerStats GenerateCurrent()
+        int GetHeight()
         {
-            return new PlayerStats
-            {
-                Strength = maxStats.Strength,
-                Intelligence = maxStats.Intelligence,
-                Wisdom = maxStats.Wisdom,
-                Dexterity = maxStats.Dexterity,
-                Constitution = maxStats.Constitution,
-                Charisma = maxStats.Charisma
-            };
+            var startStatistic = Gender.Male == gender ? race!.MaleHeight : race!.FemaleHeight;
+            return GetModifiedStatistic(startStatistic.Base, startStatistic.Modifier);
+        }
+
+        int GetWeight()
+        {
+            var startStatistic = Gender.Male == gender ? race!.MaleHeight : race!.FemaleHeight;
+            return GetModifiedStatistic(startStatistic.Base, startStatistic.Modifier);
+        }
+
+        int GetModifiedStatistic(int statBase, int modifier)
+        {
+            return RandomHelpers.NextGaussian(statBase, modifier);
         }
     }
 }

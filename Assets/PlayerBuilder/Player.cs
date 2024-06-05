@@ -10,15 +10,46 @@ public interface IPlayer
     PlayerStats Current { get; }
 }
 
+public enum Gender
+{
+    Male,
+    Female
+};
+
 internal class Player : IPlayer
 {
-    internal Player()
+    internal Player(Gender gender, PlayerRace race, PlayerClass pClass, PlayerStats maxStats, int height, int weight)
     {
+        Race = race;
+        Class = pClass;
+        Maximum = maxStats;
+        Current = CloneMax();
+        Used = CloneMax();
+        Gender = gender;
+        Height = height;
+        Weight = weight;
+
+        PlayerStats CloneMax()
+        {
+            return new PlayerStats
+            {
+                Strength = maxStats.Strength,
+                Intelligence = maxStats.Intelligence,
+                Wisdom = maxStats.Wisdom,
+                Dexterity = maxStats.Dexterity,
+                Constitution = maxStats.Constitution,
+                Charisma = maxStats.Charisma
+            };
+        }
     }
 
-    public PlayerRace Race { get; init; } = null!;
-    public PlayerClass Class { get; init; } = null!;
-    public PlayerStats Maximum { get; init; } = null!;
-    public PlayerStats Current { get; init; } = null!;
-}
+    public int Height { get; }
+    public int Weight { get; }
+    public Gender Gender { get; }
 
+    public PlayerRace Race { get; }
+    public PlayerClass Class { get; }
+    public PlayerStats Maximum { get; }
+    public PlayerStats Current { get; }
+    public PlayerStats Used { get; }
+}

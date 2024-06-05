@@ -3,7 +3,7 @@ namespace Utils.Random;
 
 public class Die : IDice
 {
-    private static readonly System.Random Generator = new System.Random();
+    private static readonly System.Random Generator = new();
     private const int NumberToAddToQueue = 1000;
 
     private readonly List<int> _randomNumbers = new List<int>();

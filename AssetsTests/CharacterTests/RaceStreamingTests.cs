@@ -14,7 +14,7 @@ public class RaceStreamingTests
 
 
         var builder = new PlayerBuilder(dieBuilder);
-        var player = builder.Build("Mage", "Elf");
+        var player = builder.Build("Mage", "Elf", Gender.Female);
         Assert.NotNull(player);
     }
 }

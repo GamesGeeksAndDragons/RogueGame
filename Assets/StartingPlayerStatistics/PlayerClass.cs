@@ -7,18 +7,6 @@ namespace Assets.StartingPlayerStatistics;
 
 public class PlayerClass : PlayerStats
 {
-    public string Title { get; set; } = null!;
-    public double ExperiencePenalty { get; set; }
-    public int HitDie { get; set; }
-    public int Disarm { get; set; }
-    public int Search { get; set; }
-    public int SearchFrequency { get; set; }
-    public int Stealth { get; set; }
-    public int Perception { get; set; }
-    public int Fight { get; set; } //bth - base to hit
-    public int Bows { get; set; } //bth_bows
-    public int Saving { get; set; }
-
     public SpellsEnum Spells { get; set; }
     public int SpellMinLevel { get; set; }
 

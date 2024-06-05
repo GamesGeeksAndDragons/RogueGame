@@ -1,4 +1,3 @@
 ﻿namespace Assets.StartingPlayerStatistics;
 
-public record StartingStatistic(int Min, string Die);
-
+public record StartingStatistic(int Base, int Modifier);
