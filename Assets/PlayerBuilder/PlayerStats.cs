@@ -11,7 +11,7 @@ public class PlayerStats
     public int Constitution { get; set; }
     public int Charisma { get; set; }
 
-    public double ExperiencePenalty { get; set; }
+    public int ExperiencePenalty { get; set; }
     public int HitDie { get; set; }
     public int Disarm { get; set; }
     public int Search { get; set; }

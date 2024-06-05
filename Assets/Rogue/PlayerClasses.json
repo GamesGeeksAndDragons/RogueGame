@@ -15,7 +15,7 @@
     "Dexterity": 2,
     "Constitution": 2,
     "Charisma": -1,
-    "ExperiencePenalty": 0.0,
+    "ExperiencePenalty": 0,
     "Perception": 38,
 
     "Spells": "None",
@@ -88,7 +88,7 @@
     "Dexterity": 1,
     "Constitution": -2,
     "Charisma": 1,
-    "ExperiencePenalty": 0.3,
+    "ExperiencePenalty": 30,
     "Perception": 20,
 
     "Spells": "Mage",
@@ -161,7 +161,7 @@
     "Dexterity": -1,
     "Constitution": 0,
     "Charisma": 2,
-    "ExperiencePenalty": 0.2,
+    "ExperiencePenalty": 20,
     "Perception": 32,
 
     "Spells": "Priest",
@@ -234,7 +234,7 @@
     "Dexterity": 3,
     "Constitution": 1,
     "Charisma": -1,
-    "ExperiencePenalty": 0.0,
+    "ExperiencePenalty": 0,
     "Perception": 32,
 
     "Spells": "Mage",
@@ -307,7 +307,7 @@
     "Dexterity": 1,
     "Constitution": 1,
     "Charisma": 1,
-    "ExperiencePenalty": 0.4,
+    "ExperiencePenalty": 40,
     "Perception": 24,
 
     "Spells": "Mage",
@@ -380,7 +380,7 @@
     "Dexterity": 0,
     "Constitution": 2,
     "Charisma": 2,
-    "ExperiencePenalty": 0.35,
+    "ExperiencePenalty": 35,
     "Perception": 38,
 
     "Spells": "Priest",
