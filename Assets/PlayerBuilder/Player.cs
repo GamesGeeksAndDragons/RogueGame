@@ -8,6 +8,11 @@ public interface IPlayer
     PlayerClass Class { get;}
     PlayerStats Maximum { get; }
     PlayerStats Current { get; }
+    PlayerStats Used { get; }
+
+    PlayerTurn Turn { get; }
+    PlayerAbilities Abilities { get; }
+    PlayerMagic Magic { get; }
 }
 
 public enum Gender
@@ -15,6 +20,9 @@ public enum Gender
     Male,
     Female
 };
+
+// https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/player.h#L60
+// flags broken into PlayerTurn, PlayerAbilities and PlayerMagic
 
 internal class Player : IPlayer
 {
@@ -28,6 +36,7 @@ internal class Player : IPlayer
         Gender = gender;
         Height = height;
         Weight = weight;
+        Turn.SeeInfra = race.InfraVision;
 
         PlayerStats CloneMax()
         {
@@ -52,4 +61,8 @@ internal class Player : IPlayer
     public PlayerStats Maximum { get; }
     public PlayerStats Current { get; }
     public PlayerStats Used { get; }
+
+    public PlayerTurn Turn { get; } = new PlayerTurn();
+    public PlayerAbilities Abilities { get; } = new PlayerAbilities();
+    public PlayerMagic Magic { get; } = new PlayerMagic();
 }
