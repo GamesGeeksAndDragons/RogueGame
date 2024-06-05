@@ -8,7 +8,7 @@ namespace Assets.StartingPlayerStatistics;
 
 public class PlayerRace : PlayerStats
 {
-    public string Name { get; set; } = null!;
+    public string Title { get; set; } = null!;
     public PlayerClassEnum PlayerClasses { get; set; }
     public double ExperiencePenalty { get; set; }
     public int Disarm { get; set; }
