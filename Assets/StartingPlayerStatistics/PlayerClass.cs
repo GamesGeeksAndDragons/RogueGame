@@ -2,7 +2,8 @@
 
 namespace Assets.StartingPlayerStatistics;
 
-// https://beej.us/moria/mmspoilers/character.html#races
+// https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/character.h#L60
+// https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/data_player.cpp#L262
 
 public class PlayerClass : PlayerStats
 {
