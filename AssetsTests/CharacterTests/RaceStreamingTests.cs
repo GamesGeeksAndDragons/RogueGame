@@ -1,22 +1,20 @@
-﻿using Assets.StartingPlayerStatistics;
+﻿using Assets.PlayerBuilder;
+using AssetsTests.Fakes;
 
 namespace AssetsTests.CharacterTests;
 
 public class RaceStreamingTests
 {
     [Fact]
-    public void CanDeserializeRaces()
+    public void CanBuildAPlayer()
     {
-        var races = PlayerRaces.Get();
+        var dieBuilder = new FakeDieBuilder(3,
+            3, 3, 3, 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 2, 3,
+            1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 1, 1);
 
-        Assert.Fail("Must have a valid test here");
-    }
 
-    [Fact]
-    public void CanDeserializeClasses()
-    {
-        var classes = PlayerClasses.Get();
-
-        Assert.Fail("Must have a valid test here");
+        var builder = new PlayerBuilder(dieBuilder);
+        var player = builder.Build("Mage", "Elf");
+        Assert.NotNull(player);
     }
 }

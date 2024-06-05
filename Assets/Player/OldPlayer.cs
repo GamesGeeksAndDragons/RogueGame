@@ -12,7 +12,7 @@ interface IPlayer : IPlayerStrength, IPlayerDexterity
 
 }
 
-internal class Player : Character<Player>, IPlayer
+internal class OldPlayer : Character<OldPlayer>, IPlayer
 {
     //(int Intelligence, int ManaMultiplier, int FailAdjust, int DeviceUse, int SpellsPerLevel) Intelligence { get; }
     //(int Wisdom, int ManaMultiplier, int FailAdjust, int DeviceUse, int SpellsPerLevel) Wisdom { get; }
@@ -34,7 +34,7 @@ internal class Player : Character<Player>, IPlayer
         public (int Hit, int Armour, int Disarm) DexterityBonuses { get; private set; }
     }
 
-    public Player(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
+    public OldPlayer(IDispatchRegistry dispatchRegistry, IActionRegistry actionRegistry, string actor, string state)
     : base(dispatchRegistry, actionRegistry, actor, state)
     {
     }

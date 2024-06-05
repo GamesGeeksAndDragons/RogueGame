@@ -1,5 +1,4 @@
 ﻿using Assets.PlayerBuilder;
-using Assets.PlayerClass;
 
 namespace Assets.StartingPlayerStatistics;
 
