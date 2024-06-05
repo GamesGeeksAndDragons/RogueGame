@@ -17,6 +17,7 @@ public class PlayerRace : PlayerStats
     public int Perception { get; set; }
     public int Fight { get; set; }
     public int Bows { get; set; }
+    public int Saving { get; set; }
     public int Device { get; set; }
     public int InfraVision { get; set; }
     public int HitDie { get; set; }

@@ -15,7 +15,7 @@
     "Perception": 38,
     "Fight": 70,
     "Bows": 55,
-    "Save": 18,
+    "Saving": 18,
 
     "Spells": "None",
 
@@ -24,7 +24,7 @@
       "Bows": 4,
       "Device": 2,
       "Disarm": 2,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [
@@ -86,7 +86,7 @@
     "Perception": 20,
     "Fight": 34,
     "Bows": 20,
-    "Save": 36,
+    "Saving": 36,
 
     "Spells": "Mage",
 
@@ -95,7 +95,7 @@
       "Bows": 2,
       "Device": 4,
       "Disarm": 3,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [
@@ -157,7 +157,7 @@
     "Perception": 32,
     "Fight": 48,
     "Bows": 35,
-    "Save": 30,
+    "Saving": 30,
 
     "Spells": "Priest",
 
@@ -166,7 +166,7 @@
       "Bows": 2,
       "Device": 4,
       "Disarm": 3,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [
@@ -228,7 +228,7 @@
     "Perception": 32,
     "Fight": 48,
     "Bows": 35,
-    "Save": 30,
+    "Saving": 30,
 
     "Spells": "Mage",
 
@@ -237,7 +237,7 @@
       "Bows": 4,
       "Device": 3,
       "Disarm": 4,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [
@@ -299,7 +299,7 @@
     "Perception": 24,
     "Fight": 56,
     "Bows": 72,
-    "Save": 30,
+    "Saving": 30,
 
     "Spells": "Mage",
 
@@ -308,7 +308,7 @@
       "Bows": 4,
       "Device": 3,
       "Disarm": 3,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [
@@ -370,7 +370,7 @@
     "Perception": 38,
     "Fight": 68,
     "Bows": 40,
-    "Save": 24,
+    "Saving": 24,
 
     "Spells": "Priest",
 
@@ -379,7 +379,7 @@
       "Bows": 3,
       "Device": 3,
       "Disarm": 2,
-      "Save": 3
+      "Saving": 3
     },
 
     "Titles": [

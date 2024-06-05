@@ -15,6 +15,7 @@
     "Perception": 0,
     "Fight": 0,
     "Bows": 0,
+    "Saving": 0,
     "Device": 0,
     "InfraVision": 0,
     "HitDie": 10,
@@ -59,10 +60,11 @@
     "Perception": -1,
     "Fight": -1,
     "Bows": 5,
-    "Device": 3,
-    "InfraVision": 2,
+    "Saving": 3,
     "HitDie": 9,
+    "InfraVision": 2,
     "Experience": 110,
+    "Device": 3,
 
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue", "Paladin" ],
 
@@ -103,10 +105,11 @@
     "Perception": -1,
     "Fight": -1,
     "Bows": 15,
-    "Device": 6,
-    "InfraVision": 3,
+    "Saving": 6,
     "HitDie": 8,
+    "InfraVision": 3,
     "Experience": 120,
+    "Device": 6,
 
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Ranger", "Rogue" ],
 
@@ -147,10 +150,11 @@
     "Perception": -5,
     "Fight": -10,
     "Bows": 20,
-    "Device": 6,
-    "InfraVision": 4,
+    "Saving": 18,
     "HitDie": 6,
+    "InfraVision": 4,
     "Experience": 110,
+    "Device": 6,
 
     "PlayerClasses": [ "Warrior", "Mage", "Rogue" ],
 
@@ -191,10 +195,11 @@
     "Perception": -3,
     "Fight": -8,
     "Bows": 12,
-    "Device": 12,
-    "InfraVision": 4,
+    "Saving": 12,
     "HitDie": 7,
+    "InfraVision": 4,
     "Experience": 125,
+    "Device": 12,
 
     "PlayerClasses": [ "Warrior", "Mage", "Priest", "Rogue" ],
 
@@ -235,10 +240,11 @@
     "Perception": 0,
     "Fight": 15,
     "Bows": 0,
-    "Device": 9,
-    "InfraVision": 5,
+    "Saving": 9,
     "HitDie": 9,
+    "InfraVision": 5,
     "Experience": 120,
+    "Device": 9,
 
     "PlayerClasses": [ "Warrior", "Priest" ],
 
@@ -279,10 +285,11 @@
     "Perception": 3,
     "Fight": 10,
     "Bows": -5,
-    "Device": -3,
-    "InfraVision": 3,
+    "Saving": -3,
     "HitDie": 10,
+    "InfraVision": 3,
     "Experience": 110,
+    "Device": -3,
 
     "PlayerClasses": [ "Warrior", "Priest", "Rogue" ],
 
@@ -323,10 +330,11 @@
     "Perception": 5,
     "Fight": 20,
     "Bows": -10,
-    "Device": -8,
-    "InfraVision": 3,
+    "Saving": -8,
     "HitDie": 12,
+    "InfraVision": 3,
     "Experience": 120,
+    "Device": -8,
 
     "PlayerClasses": [ "Warrior", "Priest" ],
 
