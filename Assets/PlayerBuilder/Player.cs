@@ -12,7 +12,7 @@ public interface IPlayer
 
     PlayerTurn Turn { get; }
     PlayerAbilities Abilities { get; }
-    PlayerMagic Magic { get; }
+    PlayerSpells Magic { get; }
 }
 
 public enum Gender
@@ -22,7 +22,7 @@ public enum Gender
 };
 
 // https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/player.h#L60
-// flags broken into PlayerTurn, PlayerAbilities and PlayerMagic
+// flags broken into PlayerTurn, PlayerAbilities and PlayerSpells
 
 internal class Player : IPlayer
 {
@@ -64,5 +64,5 @@ internal class Player : IPlayer
 
     public PlayerTurn Turn { get; } = new PlayerTurn();
     public PlayerAbilities Abilities { get; } = new PlayerAbilities();
-    public PlayerMagic Magic { get; } = new PlayerMagic();
+    public PlayerSpells Magic { get; } = new PlayerSpells();
 }
