@@ -1,12 +1,12 @@
 ﻿namespace Assets.PlayerHelpers;
 
-internal static class PlayerBonuses
+internal static class PlayerAdjustments
 {
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L479
     // playerDamageAdjustment
-    public static int CalcDamageBonus(this PlayerBuilder.Player player)
+    public static int CalcDamageAdjustment(this PlayerBuilder.Player player)
     {
-        return player.Used.Strength switch
+        return player.TurnStats.Strength switch
         {
             < 4 => -2,
             < 5 => -1,
@@ -22,9 +22,9 @@ internal static class PlayerBonuses
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L444
     // playerDisarmAdjustment
-    public static int CalcDisarmBonus(this PlayerBuilder.Player player)
+    public static int CalcDisarmAdjustment(this PlayerBuilder.Player player)
     {
-        return player.Used.Dexterity switch
+        return player.TurnStats.Dexterity switch
         {
             < 4 => -8,
             4 => -6,
@@ -43,9 +43,9 @@ internal static class PlayerBonuses
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L413
     // playerArmorClassAdjustment
-    public static int CalcArmorClassBonus(this PlayerBuilder.Player player)
+    public static int CalcArmorClassAdjustment(this PlayerBuilder.Player player)
     {
-        return player.Used.Dexterity switch
+        return player.TurnStats.Dexterity switch
         {
             < 4 => -4,
             4 => -3,
@@ -62,7 +62,7 @@ internal static class PlayerBonuses
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L366
     // playerToHitAdjustment
-    public static int CalcHitBonus(this PlayerBuilder.Player player)
+    public static int CalcHitAdjustmentDexterityAndStrength(this PlayerBuilder.Player player)
     {
         int bonus = CalculateDexterityBonus() + CalculateStrengthBonus();
 
@@ -71,7 +71,7 @@ internal static class PlayerBonuses
 
         int CalculateDexterityBonus()
         {
-            return player.Used.Dexterity switch
+            return player.TurnStats.Dexterity switch
             {
                 < 4 => -3,
                 < 6 => -2,
@@ -87,7 +87,7 @@ internal static class PlayerBonuses
 
         int CalculateStrengthBonus()
         {
-            return player.Used.Strength switch
+            return player.TurnStats.Strength switch
             {
                 < 4 => -3,
                 < 5 => -2,
@@ -99,5 +99,21 @@ internal static class PlayerBonuses
                 _ => 4
             };
         }
+    }
+
+    // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L206
+    // playerStatAdjustmentConstitution
+
+    public static int CalcHitAdjustmentConstitution(this PlayerBuilder.Player player)
+    {
+        return player.TurnStats.Constitution switch
+        {
+            < 7 => (player.TurnStats.Constitution - 7),
+            < 17 => 0,
+            17 => 1,
+            < 94 => 2,
+            < 117 => 3,
+            _ => 4
+        };
     }
 }

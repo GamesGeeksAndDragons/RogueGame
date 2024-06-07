@@ -20,10 +20,16 @@ public class PlayerBuilder
         var race = PlayerRaces.Get()[playerRace];
         var pClass = PlayerClasses.Get()[playerClass];
 
-        var maxStatsBuilder = new MaxStatsBuilder(_dieBuilder);
-        var maxStats = maxStatsBuilder.GenerateMaxPlayerStats(race);
+        var d3 = _dieBuilder.Between(1, 3);
+        var starting = StartingStatsBuilder.Generate(race, d3);
 
-        return new Player(gender, race, pClass, maxStats, GetHeight(), GetWeight());
+        var hitPointsDie = _dieBuilder.Between(1, pClass.HitDie);
+        var hitPoints = new PlayerHitPoints(hitPointsDie, pClass.HitDie);
+
+        var height = GetHeight();
+        var weight = GetWeight();
+
+        return new Player(gender, race, pClass, starting, hitPoints, height, weight);
 
         int GetHeight()
         {
