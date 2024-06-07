@@ -36,7 +36,7 @@ public static class StartingStatsBuilder
         }
     }
 
-    public static PlayerStats Generate(PlayerRace race, IDice d3)
+    internal static IPlayerStats Generate(IPlayerRace race, IDice d3)
     {
         var baseStats = CalculateBaseStats(d3);
 

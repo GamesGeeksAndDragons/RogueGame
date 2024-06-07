@@ -1,3 +1,7 @@
 ﻿namespace Assets.StartingPlayerStatistics;
 
-public record StartingStatistic(int Base, int Modifier);
+public class StartingStatistic
+{
+    public int Base { get; set; }
+    public int Modifier { get; set; }
+}

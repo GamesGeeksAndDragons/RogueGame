@@ -6,7 +6,7 @@ namespace Assets.StartingPlayerStatistics;
 
 public class PlayerClasses
 {
-    private static readonly Lazy<ImmutableDictionary<string, PlayerClass>> Classes = new(() =>
+    private static readonly Lazy<ImmutableDictionary<string, IPlayerClass>> Classes = new(() =>
         {
             var directory = FileAndDirectoryHelpers.GetLoadDirectory(FileAndDirectoryHelpers.LoadFolder);
             var path = Path.Combine(directory, nameof(PlayerClasses)).ChangeExtension("json");
@@ -22,13 +22,14 @@ public class PlayerClasses
             };
 
             var classes = JsonSerializer.Deserialize<Dictionary<string, PlayerClass>>(json, options);
-            if (classes == null) return ImmutableDictionary<string, PlayerClass>.Empty;
+            if (classes == null) return ImmutableDictionary<string, IPlayerClass>.Empty;
 
-            return classes.ToImmutableDictionary();
+            return classes.Select(pClass => new KeyValuePair<string,IPlayerClass>(pClass.Key, pClass.Value))
+                .ToImmutableDictionary();
         }
     );
 
-    public static ImmutableDictionary<string, PlayerClass> Get()
+    public static ImmutableDictionary<string, IPlayerClass> Get()
     {
         return Classes.Value;
     }
