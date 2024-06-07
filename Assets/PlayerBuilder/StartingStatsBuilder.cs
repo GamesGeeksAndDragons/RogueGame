@@ -36,7 +36,7 @@ public static class StartingStatsBuilder
         }
     }
 
-    internal static IPlayerStats Generate(IPlayerRace race, IDice d3)
+    internal static IPlayerStats Generate(IPlayerRace race, IPlayerClass playerClass, IDice d3)
     {
         var baseStats = CalculateBaseStats(d3);
 
@@ -47,8 +47,16 @@ public static class StartingStatsBuilder
             Wisdom = baseStats[2] + race.Wisdom,
             Dexterity = baseStats[3] + race.Dexterity,
             Constitution = baseStats[4] + race.Constitution,
-            Charisma = baseStats[5] + race.Charisma
+            Charisma = baseStats[5] + race.Charisma,
+
+            Fight = playerClass.Fight,
+            Bows = playerClass.Bows,
+            Search = playerClass.Search,
+            Disarm = playerClass.Disarm,
+            SearchFrequency = playerClass.SearchFrequency,
+            Stealth = playerClass.Stealth,
+            Saving = playerClass.Saving,
+            ExperiencePenalty = playerClass.ExperiencePenalty
         };
     }
-
 }

@@ -15,37 +15,67 @@ public class PlayerBuilder
         _dieBuilder = dieBuilder;
     }
 
-    public IPlayer Build(string playerClass, string playerRace, Gender gender)
+    public IPlayer Build(string @class, string race, Gender gender)
     {
-        var race = PlayerRaces.Get()[playerRace];
-        var pClass = PlayerClasses.Get()[playerClass];
+        IPlayerRace playerRace = PlayerRaces.Get()[race];
+        IPlayerClass playerClass = PlayerClasses.Get()[@class];
 
-        var d3 = _dieBuilder.Between(1, 3);
-        var starting = StartingStatsBuilder.Generate(race, d3);
+        IDice d3 = _dieBuilder.Between(1, 3);
+        IPlayerStats starting = StartingStatsBuilder.Generate(playerRace, playerClass, d3);
 
-        var hitPointsDie = _dieBuilder.Between(1, pClass.HitDie);
-        var hitPoints = new PlayerHitPoints(hitPointsDie, pClass.HitDie);
+        IDice hitDie = _dieBuilder.Between(1, playerClass.HitDie);
+        var baseLevels = CalculateBaseLevels();
+        var hitPoints = new PlayerHitPoints(starting, playerClass.HitDie, hitDie, baseLevels);
 
         var height = GetHeight();
         var weight = GetWeight();
 
-        return new Player(gender, race, pClass, starting, hitPoints, height, weight);
+
+        return new Player(gender, playerRace, playerClass, starting, hitPoints, height, weight);
 
         int GetHeight()
         {
-            var startStatistic = Gender.Male == gender ? race!.MaleHeight : race!.FemaleHeight;
+            var startStatistic = Gender.Male == gender ? playerRace!.MaleHeight : playerRace!.FemaleHeight;
             return GetModifiedStatistic(startStatistic.Base, startStatistic.Modifier);
         }
 
         int GetWeight()
         {
-            var startStatistic = Gender.Male == gender ? race!.MaleHeight : race!.FemaleHeight;
+            var startStatistic = Gender.Male == gender ? playerRace!.MaleHeight : playerRace!.FemaleHeight;
             return GetModifiedStatistic(startStatistic.Base, startStatistic.Modifier);
         }
 
         int GetModifiedStatistic(int statBase, int modifier)
         {
             return RandomHelpers.NextGaussian(statBase, modifier);
+        }
+
+        int[] CalculateBaseLevels()
+        {
+            var (min, max) = CalcAllowedRange();
+
+            var levels = new List<int>(Player.MaxAchievableLevel)
+            {
+                [0] = playerClass.HitDie
+            };
+
+            do
+            {
+                for (var i = 1; i < Player.MaxAchievableLevel; i++)
+                {
+                    levels[i] = d3.Random + levels[i - 1];
+                }
+            } while (levels[Player.MaxAchievableLevel - 1] < min || levels[Player.MaxAchievableLevel - 1] > max);
+
+            return levels.ToArray();
+
+            (int min, int max) CalcAllowedRange()
+            {
+                var min = (Player.MaxAchievableLevel * 3 / 8 * (playerClass.HitDie - 1)) + Player.MaxAchievableLevel;
+                var max = (Player.MaxAchievableLevel * 5 / 8 * (playerClass.HitDie - 1)) + Player.MaxAchievableLevel;
+
+                return (min, max);
+            }
         }
     }
 }

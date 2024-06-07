@@ -1,13 +1,28 @@
-﻿namespace Assets.PlayerBuilder;
+﻿using Assets.PlayerHelpers;
+using System.Security.Claims;
+using Assets.StartingPlayerStatistics;
+
+namespace Assets.PlayerBuilder;
 
 // https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/player.h#L100
 // taken from flags in an attempt to give meaning
 
 public class PlayerSpells
 {
-    public int NumSpellsCanLearn;      // Number of spells can learn. new_spells_to_learn
-    public int SpellsLearned;           // bit mask of spells learned
-    public int SpellsWorked;           // bit mask of spells tried and worked
-    public int SpellsForgotten;        // bit mask of spells learned but forgotten
-    public int[] OrderSpellsLearnedIn = new int[32]; // order spells learned/remembered/forgotten
+    internal readonly IPlayerStats CurrentStats;
+    internal readonly IPlayerClass PlayerClass;
+    private readonly Func<int> _getLevel;
+
+    public PlayerSpells(IPlayerStats currentStats, IPlayerClass playerClass, Func<int> getLevel)
+    {
+        CurrentStats = currentStats;
+        PlayerClass = playerClass;
+        _getLevel = getLevel;
+    }
+
+    public int NumSpellsCanLearn => PlayerSpellHelpers.CalculateNumberOfAllowedSpells(CurrentStats, PlayerClass, _getLevel());
+    public Stack<int> SpellsLearned = new();
+    public Stack<int> SpellsForgotten = new();
+    public List<int> SpellsWhichWorked = new();
+    public List<int> OrderSpellsLearnedIn = new();
 }

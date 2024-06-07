@@ -1,42 +1,21 @@
-﻿using System;
+﻿using System.Collections.Immutable;
+using Assets.PlayerHelpers;
 using Utils.Random;
 
 namespace Assets.PlayerBuilder;
 
 public class PlayerHitPoints
 {
-    public int Die { get; set; }
+    public int HitDie { get; set; }
     public int Current { get; set; }
     public int Maximum { get; set; }
 
-    public int[] BaseLevels = new int[Player.MaxLevel];
+    public ImmutableList<int> BaseLevels { get; }
 
-    public PlayerHitPoints(IDice die, int hitDie)
+    public PlayerHitPoints(IPlayerStats stats, int hitDie, IDice die, int[] levels)
     {
-        Die = Current = hitDie;
-        BaseLevels[0] = hitDie;
-
-        PopulateBaseLevels();
-
-        void PopulateBaseLevels()
-        {
-            var (min, max) = CalcAllowedRange();
-
-            do
-            {
-                for (var i = 1; i < Player.MaxLevel; i++)
-                {
-                    BaseLevels[i] = die.Random + BaseLevels[i - 1];
-                }
-            } while (BaseLevels[Player.MaxLevel - 1] < min || BaseLevels[Player.MaxLevel - 1] > max);
-        }
-
-        (int min, int max) CalcAllowedRange()
-        {
-            var min = (Player.MaxLevel * 3 / 8 * (hitDie - 1)) + Player.MaxLevel;
-            var max = (Player.MaxLevel * 5 / 8 * (hitDie - 1)) + Player.MaxLevel;
-
-            return (min, max);
-        }
+        HitDie = hitDie;
+        Current = Maximum = stats.CalcHitAdjustmentConstitution() + hitDie;
+        BaseLevels = levels.ToImmutableList();
     }
 }

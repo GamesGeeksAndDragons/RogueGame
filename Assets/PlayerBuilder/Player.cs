@@ -1,4 +1,6 @@
-﻿using Assets.StartingPlayerStatistics;
+﻿using Assets.PlayerHelpers;
+using Assets.StartingPlayerStatistics;
+using System.Security.Claims;
 
 namespace Assets.PlayerBuilder;
 
@@ -30,7 +32,7 @@ public interface IPlayer
 
 internal class Player : IPlayer
 {
-    public const int MaxLevel = 40;
+    public const int MaxAchievableLevel = 40;
     internal Player(Gender gender, IPlayerRace race, IPlayerClass pClass, IPlayerStats startingStats, PlayerHitPoints hitPoints, int height, int weight)
     {
         Race = race;
@@ -44,12 +46,28 @@ internal class Player : IPlayer
         Height = height;
         Weight = weight;
 
-        Abilities.SeeInfra = race.InfraVision;
+        Abilities = new PlayerAbilities
+        {
+            SeeInfra = race.InfraVision
+        };
+
+        Level = 0;
+        int GetLevel() => Level;
+        Magic = new PlayerSpells(Current, Class, GetLevel);
     }
 
     public int Height { get; }
     public int Weight { get; }
     public Gender Gender { get; }
+
+    private int MaxDepth { get; set; }
+    private int Depth { get; set; }
+    private int Level { get; set; }
+
+    public int ArmourClass { get; set; }
+    public int MagicArmourClass => Current.CalcArmorClassAdjustment();
+    public int ToDamage => Current.CalcDamageAdjustment();
+    public int ToHit => Current.CalcToHitAdjustment();
 
     public IPlayerRace Race { get; }
     public IPlayerClass Class { get; }
@@ -58,9 +76,8 @@ internal class Player : IPlayer
     public IPlayerStats TurnStats { get; private set; }
 
     public PlayerHitPoints HitPoints { get; }
-
-    public PlayerAbilities Abilities { get; } = new PlayerAbilities();
-    public PlayerSpells Magic { get; } = new PlayerSpells();
+    public PlayerAbilities Abilities { get; }
+    public PlayerSpells Magic { get; }
 
     public void BeginTurn()
     {
