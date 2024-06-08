@@ -1,5 +1,4 @@
 ﻿using Assets.PlayerHelpers;
-using System.Security.Claims;
 using Assets.StartingPlayerStatistics;
 
 namespace Assets.PlayerBuilder;
@@ -7,13 +6,13 @@ namespace Assets.PlayerBuilder;
 // https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/player.h#L100
 // taken from flags in an attempt to give meaning
 
-public class PlayerSpells
+internal class PlayerSpells
 {
-    internal readonly IPlayerStats CurrentStats;
-    internal readonly IPlayerClass PlayerClass;
+    internal readonly PlayerStats CurrentStats;
+    internal readonly PlayerClass PlayerClass;
     private readonly Func<int> _getLevel;
 
-    public PlayerSpells(IPlayerStats currentStats, IPlayerClass playerClass, Func<int> getLevel)
+    internal PlayerSpells(PlayerStats currentStats, PlayerClass playerClass, Func<int> getLevel)
     {
         CurrentStats = currentStats;
         PlayerClass = playerClass;

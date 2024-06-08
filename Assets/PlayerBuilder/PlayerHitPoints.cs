@@ -4,7 +4,7 @@ using Utils.Random;
 
 namespace Assets.PlayerBuilder;
 
-public class PlayerHitPoints
+internal class PlayerHitPoints
 {
     public int HitDie { get; set; }
     public int Current { get; set; }
@@ -12,7 +12,7 @@ public class PlayerHitPoints
 
     public ImmutableList<int> BaseLevels { get; }
 
-    public PlayerHitPoints(IPlayerStats stats, int hitDie, IDice die, int[] levels)
+    internal PlayerHitPoints(PlayerStats stats, int hitDie, int[] levels)
     {
         HitDie = hitDie;
         Current = Maximum = stats.CalcHitAdjustmentConstitution() + hitDie;

@@ -8,7 +8,7 @@ public static class PlayerSpellHelpers
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player.cpp#L1607
     // playerCalculateAllowedSpellsCount
-    internal static int CalculateNumberOfAllowedSpells(IPlayerStats usedStats, IPlayerClass playerClass, int currentLevel)
+    internal static int CalculateNumberOfAllowedSpells(PlayerStats usedStats, PlayerClass playerClass, int currentLevel)
     {
         var stat = playerClass.Spells == SpellsEnum.Mage ? usedStats.Intelligence : usedStats.Wisdom;
         var minLevel = playerClass.SpellMinLevel;

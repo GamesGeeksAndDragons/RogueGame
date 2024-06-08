@@ -4,12 +4,12 @@ using System.Text.Json.Serialization;
 
 namespace Assets.StartingPlayerStatistics;
 
-public class PlayerClasses
+public class PlayerClassesLoader
 {
-    private static readonly Lazy<ImmutableDictionary<string, IPlayerClass>> Classes = new(() =>
+    private static readonly Lazy<ImmutableDictionary<string, PlayerClass>> Classes = new(() =>
         {
             var directory = FileAndDirectoryHelpers.GetLoadDirectory(FileAndDirectoryHelpers.LoadFolder);
-            var path = Path.Combine(directory, nameof(PlayerClasses)).ChangeExtension("json");
+            var path = Path.Combine(directory, "PlayerClasses.json");
             var json = File.ReadAllText(path);
 
             var options = new JsonSerializerOptions
@@ -22,14 +22,14 @@ public class PlayerClasses
             };
 
             var classes = JsonSerializer.Deserialize<Dictionary<string, PlayerClass>>(json, options);
-            if (classes == null) return ImmutableDictionary<string, IPlayerClass>.Empty;
-
-            return classes.Select(pClass => new KeyValuePair<string,IPlayerClass>(pClass.Key, pClass.Value))
-                .ToImmutableDictionary();
+            
+            return classes == null ? 
+                ImmutableDictionary<string, PlayerClass>.Empty : 
+                classes.ToImmutableDictionary();
         }
     );
 
-    public static ImmutableDictionary<string, IPlayerClass> Get()
+    internal static ImmutableDictionary<string, PlayerClass> Load()
     {
         return Classes.Value;
     }

@@ -6,7 +6,7 @@ internal static class PlayerAdjustments
 {
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L479
     // playerDamageAdjustment
-    public static int CalcDamageAdjustment(this IPlayerStats stats)
+    internal static int CalcDamageAdjustment(this PlayerStats stats)
     {
         return stats.Strength switch
         {
@@ -24,7 +24,7 @@ internal static class PlayerAdjustments
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L444
     // playerDisarmAdjustment
-    public static int CalcDisarmAdjustment(this IPlayerStats stats)
+    internal static int CalcDisarmAdjustment(this PlayerStats stats)
     {
         return stats.Dexterity switch
         {
@@ -45,7 +45,7 @@ internal static class PlayerAdjustments
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L413
     // playerArmorClassAdjustment
-    public static int CalcArmorClassAdjustment(this IPlayerStats stats)
+    internal static int CalcArmorClassAdjustment(this PlayerStats stats)
     {
         return stats.Dexterity switch
         {
@@ -64,7 +64,7 @@ internal static class PlayerAdjustments
 
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L366
     // playerToHitAdjustment
-    public static int CalcToHitAdjustment(this IPlayerStats stats)
+    internal static int CalcToHitAdjustment(this PlayerStats stats)
     {
         int bonus = CalculateDexterityBonus() + CalculateStrengthBonus();
 
@@ -106,7 +106,7 @@ internal static class PlayerAdjustments
     // https://github.com/jhirschberg70/browser-based-umoria/blob/master/src/player_stats.cpp#L206
     // playerStatAdjustmentConstitution
 
-    public static int CalcHitAdjustmentConstitution(this IPlayerStats stats)
+    internal static int CalcHitAdjustmentConstitution(this PlayerStats stats)
     {
         return stats.Constitution switch
         {

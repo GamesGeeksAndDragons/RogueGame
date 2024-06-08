@@ -20,6 +20,7 @@
 
     "Spells": "None",
     "SpellMinLevel": 0,
+    "MagicBook": null,
 
     "LevelIncrement": {
       "Fight": 4,
@@ -93,6 +94,225 @@
 
     "Spells": "Mage",
     "SpellMinLevel": 1,
+    "MagicBook": {
+      "0": {
+        "Id": 0,
+        "MinLevel": 1,
+        "Mana": 1,
+        "Failure": 22,
+        "ExperienceWhenLearn": 1
+      },
+      "1": {
+        "Id": 1,
+        "MinLevel": 1,
+        "Mana": 1,
+        "Failure": 23,
+        "ExperienceWhenLearn": 1
+      },
+      "2": {
+        "Id": 2,
+        "MinLevel": 1,
+        "Mana": 2,
+        "Failure": 24,
+        "ExperienceWhenLearn": 1
+      },
+      "3": {
+        "Id": 3,
+        "MinLevel": 1,
+        "Mana": 2,
+        "Failure": 26,
+        "ExperienceWhenLearn": 1
+      },
+      "4": {
+        "Id": 4,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 25,
+        "ExperienceWhenLearn": 2
+      },
+      "5": {
+        "Id": 5,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 25,
+        "ExperienceWhenLearn": 1
+      },
+      "6": {
+        "Id": 6,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 27,
+        "ExperienceWhenLearn": 2
+      },
+      "7": {
+        "Id": 7,
+        "MinLevel": 3,
+        "Mana": 4,
+        "Failure": 30,
+        "ExperienceWhenLearn": 1
+      },
+      "8": {
+        "Id": 8,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 30,
+        "ExperienceWhenLearn": 6
+      },
+      "9": {
+        "Id": 9,
+        "MinLevel": 5,
+        "Mana": 5,
+        "Failure": 30,
+        "ExperienceWhenLearn": 8
+      },
+      "10": {
+        "Id": 10,
+        "MinLevel": 5,
+        "Mana": 5,
+        "Failure": 30,
+        "ExperienceWhenLearn": 5
+      },
+      "11": {
+        "Id": 11,
+        "MinLevel": 5,
+        "Mana": 5,
+        "Failure": 35,
+        "ExperienceWhenLearn": 6
+      },
+      "12": {
+        "Id": 12,
+        "MinLevel": 7,
+        "Mana": 6,
+        "Failure": 35,
+        "ExperienceWhenLearn": 9
+      },
+      "13": {
+        "Id": 13,
+        "MinLevel": 7,
+        "Mana": 6,
+        "Failure": 50,
+        "ExperienceWhenLearn": 10
+      },
+      "14": {
+        "Id": 14,
+        "MinLevel": 7,
+        "Mana": 6,
+        "Failure": 40,
+        "ExperienceWhenLearn": 12
+      },
+      "15": {
+        "Id": 15,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 44,
+        "ExperienceWhenLearn": 19
+      },
+      "16": {
+        "Id": 17,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 44,
+        "ExperienceWhenLearn": 19
+      },
+      "17": {
+        "Id": 17,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 45,
+        "ExperienceWhenLearn": 19
+      },
+      "18": {
+        "Id": 18,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 75,
+        "ExperienceWhenLearn": 22
+      },
+      "19": {
+        "Id": 19,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 45,
+        "ExperienceWhenLearn": 19
+      },
+      "20": {
+        "Id": 20,
+        "MinLevel": 11,
+        "Mana": 7,
+        "Failure": 45,
+        "ExperienceWhenLearn": 25
+      },
+      "21": {
+        "Id": 21,
+        "MinLevel": 11,
+        "Mana": 7,
+        "Failure": 45,
+        "ExperienceWhenLearn": 25
+      },
+      "22": {
+        "Id": 22,
+        "MinLevel": 15,
+        "Mana": 9,
+        "Failure": 50,
+        "ExperienceWhenLearn": 25
+      },
+      "23": {
+        "Id": 23,
+        "MinLevel": 17,
+        "Mana": 9,
+        "Failure": 50,
+        "ExperienceWhenLearn": 31
+      },
+      "24": {
+        "Id": 24,
+        "MinLevel": 19,
+        "Mana": 12,
+        "Failure": 55,
+        "ExperienceWhenLearn": 38
+      },
+      "25": {
+        "Id": 25,
+        "MinLevel": 21,
+        "Mana": 12,
+        "Failure": 90,
+        "ExperienceWhenLearn": 44
+      },
+      "26": {
+        "Id": 26,
+        "MinLevel": 23,
+        "Mana": 12,
+        "Failure": 60,
+        "ExperienceWhenLearn": 50
+      },
+      "27": {
+        "Id": 27,
+        "MinLevel": 25,
+        "Mana": 12,
+        "Failure": 65,
+        "ExperienceWhenLearn": 63
+      },
+      "28": {
+        "Id": 28,
+        "MinLevel": -1,
+        "Mana": -1,
+        "Failure": -1,
+        "ExperienceWhenLearn": -1
+      },
+      "29": {
+        "Id": 29,
+        "MinLevel": -1,
+        "Mana": -1,
+        "Failure": -1,
+        "ExperienceWhenLearn": -1
+      },
+      "30": {
+        "Id": 30,
+        "MinLevel": -1,
+        "Mana": -1,
+        "Failure": -1,
+        "ExperienceWhenLearn": -1
+      }
+    },
 
     "LevelIncrement": {
       "Fight": 2,
@@ -166,6 +386,225 @@
 
     "Spells": "Priest",
     "SpellMinLevel": 1,
+    "MagicBook": {
+      "0": {
+        "Id": 0,
+        "MinLevel": 1,
+        "Mana": 1,
+        "Failure": 10,
+        "ExperienceWhenLearn": 1
+      },
+      "1": {
+        "Id": 1,
+        "MinLevel": 1,
+        "Mana": 1,
+        "Failure": 15,
+        "ExperienceWhenLearn": 1
+      },
+      "2": {
+        "Id": 2,
+        "MinLevel": 1,
+        "Mana": 2,
+        "Failure": 20,
+        "ExperienceWhenLearn": 1
+      },
+      "3": {
+        "Id": 3,
+        "MinLevel": 1,
+        "Mana": 2,
+        "Failure": 25,
+        "ExperienceWhenLearn": 1
+      },
+      "4": {
+        "Id": 4,
+        "MinLevel": 3,
+        "Mana": 2,
+        "Failure": 25,
+        "ExperienceWhenLearn": 1
+      },
+      "5": {
+        "Id": 5,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 27,
+        "ExperienceWhenLearn": 2
+      },
+      "6": {
+        "Id": 6,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 27,
+        "ExperienceWhenLearn": 2
+      },
+      "7": {
+        "Id": 7,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 28,
+        "ExperienceWhenLearn": 3
+      },
+      "8": {
+        "Id": 8,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 29,
+        "ExperienceWhenLearn": 6
+      },
+      "9": {
+        "Id": 9,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 30,
+        "ExperienceWhenLearn": 5
+      },
+      "10": {
+        "Id": 10,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 32,
+        "ExperienceWhenLearn": 5
+      },
+      "11": {
+        "Id": 11,
+        "MinLevel": 5,
+        "Mana": 5,
+        "Failure": 34,
+        "ExperienceWhenLearn": 5
+      },
+      "12": {
+        "Id": 12,
+        "MinLevel": 7,
+        "Mana": 5,
+        "Failure": 36,
+        "ExperienceWhenLearn": 6
+      },
+      "13": {
+        "Id": 13,
+        "MinLevel": 7,
+        "Mana": 5,
+        "Failure": 38,
+        "ExperienceWhenLearn": 7
+      },
+      "14": {
+        "Id": 14,
+        "MinLevel": 7,
+        "Mana": 6,
+        "Failure": 38,
+        "ExperienceWhenLearn": 9
+      },
+      "15": {
+        "Id": 15,
+        "MinLevel": 7,
+        "Mana": 7,
+        "Failure": 38,
+        "ExperienceWhenLearn": 9
+      },
+      "16": {
+        "Id": 16,
+        "MinLevel": 9,
+        "Mana": 6,
+        "Failure": 38,
+        "ExperienceWhenLearn": 10
+      },
+      "17": {
+        "Id": 17,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 38,
+        "ExperienceWhenLearn": 10
+      },
+      "18": {
+        "Id": 18,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 40,
+        "ExperienceWhenLearn": 10
+      },
+      "19": {
+        "Id": 19,
+        "MinLevel": 11,
+        "Mana": 8,
+        "Failure": 42,
+        "ExperienceWhenLearn": 10
+      },
+      "20": {
+        "Id": 20,
+        "MinLevel": 11,
+        "Mana": 8,
+        "Failure": 42,
+        "ExperienceWhenLearn": 12
+      },
+      "21": {
+        "Id": 21,
+        "MinLevel": 11,
+        "Mana": 9,
+        "Failure": 55,
+        "ExperienceWhenLearn": 15
+      },
+      "22": {
+        "Id": 22,
+        "MinLevel": 13,
+        "Mana": 10,
+        "Failure": 45,
+        "ExperienceWhenLearn": 15
+      },
+      "23": {
+        "Id": 23,
+        "MinLevel": 13,
+        "Mana": 11,
+        "Failure": 45,
+        "ExperienceWhenLearn": 16
+      },
+      "24": {
+        "Id": 24,
+        "MinLevel": 15,
+        "Mana": 12,
+        "Failure": 50,
+        "ExperienceWhenLearn": 20
+      },
+      "25": {
+        "Id": 25,
+        "MinLevel": 15,
+        "Mana": 14,
+        "Failure": 50,
+        "ExperienceWhenLearn": 22
+      },
+      "26": {
+        "Id": 26,
+        "MinLevel": 17,
+        "Mana": 14,
+        "Failure": 55,
+        "ExperienceWhenLearn": 32
+      },
+      "27": {
+        "Id": 27,
+        "MinLevel": 21,
+        "Mana": 16,
+        "Failure": 60,
+        "ExperienceWhenLearn": 38
+      },
+      "28": {
+        "Id": 28,
+        "MinLevel": 25,
+        "Mana": 20,
+        "Failure": 70,
+        "ExperienceWhenLearn": 75
+      },
+      "29": {
+        "Id": 29,
+        "MinLevel": 33,
+        "Mana": 24,
+        "Failure": 90,
+        "ExperienceWhenLearn": 125
+      },
+      "30": {
+        "Id": 30,
+        "MinLevel": 39,
+        "Mana": 32,
+        "Failure": 80,
+        "ExperienceWhenLearn": 200
+      }
+    },
 
     "LevelIncrement": {
       "Fight": 2,
@@ -239,6 +678,106 @@
 
     "Spells": "Mage",
     "SpellMinLevel": 5,
+    "MagicBook": {
+      "1": {
+        "Id": 1,
+        "MinLevel": 5,
+        "Mana": 1,
+        "Failure": 50,
+        "ExperienceWhenLearn": 1
+      },
+      "2": {
+        "Id": 2,
+        "MinLevel": 7,
+        "Mana": 2,
+        "Failure": 55,
+        "ExperienceWhenLearn": 1
+      },
+      "3": {
+        "Id": 3,
+        "MinLevel": 9,
+        "Mana": 3,
+        "Failure": 60,
+        "ExperienceWhenLearn": 2
+      },
+      "4": {
+        "Id": 4,
+        "MinLevel": 11,
+        "Mana": 4,
+        "Failure": 65,
+        "ExperienceWhenLearn": 2
+      },
+      "5": {
+        "Id": 5,
+        "MinLevel": 13,
+        "Mana": 5,
+        "Failure": 70,
+        "ExperienceWhenLearn": 3
+      },
+      "7": {
+        "Id": 7,
+        "MinLevel": 15,
+        "Mana": 6,
+        "Failure": 75,
+        "ExperienceWhenLearn": 3
+      },
+      "9": {
+        "Id": 9,
+        "MinLevel": 17,
+        "Mana": 7,
+        "Failure": 80,
+        "ExperienceWhenLearn": 4
+      },
+      "10": {
+        "Id": 10,
+        "MinLevel": 19,
+        "Mana": 8,
+        "Failure": 85,
+        "ExperienceWhenLearn": 5
+      },
+      "11": {
+        "Id": 11,
+        "MinLevel": 21,
+        "Mana": 9,
+        "Failure": 90,
+        "ExperienceWhenLearn": 3
+      },
+      "12": {
+        "Id": 12,
+        "MinLevel": 99,
+        "Mana": 99,
+        "Failure": 99,
+        "ExperienceWhenLearn": -99
+      },
+      "13": {
+        "Id": 13,
+        "MinLevel": 23,
+        "Mana": 10,
+        "Failure": 95,
+        "ExperienceWhenLearn": 7
+      },
+      "16": {
+        "Id": 16,
+        "MinLevel": 9,
+        "Mana": 6,
+        "Failure": 38,
+        "ExperienceWhenLearn": 10
+      },
+      "17": {
+        "Id": 17,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 38,
+        "ExperienceWhenLearn": 10
+      },
+      "20": {
+        "Id": 20,
+        "MinLevel": 29,
+        "Mana": 18,
+        "Failure": 99,
+        "ExperienceWhenLearn": 19
+      }
+    },
 
     "LevelIncrement": {
       "Fight": 3,
@@ -312,6 +851,218 @@
 
     "Spells": "Mage",
     "SpellMinLevel": 3,
+    "MagicBook": {
+      "0": {
+        "Id": 0,
+        "MinLevel": 3,
+        "Mana": 1,
+        "Failure": 30,
+        "ExperienceWhenLearn": 1
+      },
+      "1": {
+        "Id": 1,
+        "MinLevel": 3,
+        "Mana": 2,
+        "Failure": 35,
+        "ExperienceWhenLearn": 2
+      },
+      "2": {
+        "Id": 2,
+        "MinLevel": 3,
+        "Mana": 2,
+        "Failure": 35,
+        "ExperienceWhenLearn": 2
+      },
+      "3": {
+        "Id": 3,
+        "MinLevel": 5,
+        "Mana": 3,
+        "Failure": 35,
+        "ExperienceWhenLearn": 2
+      },
+      "4": {
+        "Id": 4,
+        "MinLevel": 5,
+        "Mana": 3,
+        "Failure": 40,
+        "ExperienceWhenLearn": 2
+      },
+      "5": {
+        "Id": 5,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 45,
+        "ExperienceWhenLearn": 3
+      },
+      "6": {
+        "Id": 6,
+        "MinLevel": 7,
+        "Mana": 5,
+        "Failure": 40,
+        "ExperienceWhenLearn": 6
+      },
+      "7": {
+        "Id": 7,
+        "MinLevel": 7,
+        "Mana": 6,
+        "Failure": 40,
+        "ExperienceWhenLearn": 5
+      },
+      "8": {
+        "Id": 8,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 40,
+        "ExperienceWhenLearn": 7
+      },
+      "9": {
+        "Id": 9,
+        "MinLevel": 9,
+        "Mana": 9,
+        "Failure": 45,
+        "ExperienceWhenLearn": 8
+      },
+      "10": {
+        "Id": 10,
+        "MinLevel": 11,
+        "Mana": 8,
+        "Failure": 45,
+        "ExperienceWhenLearn": 10
+      },
+      "11": {
+        "Id": 11,
+        "MinLevel": 11,
+        "Mana": 9,
+        "Failure": 45,
+        "ExperienceWhenLearn": 10
+      },
+      "12": {
+        "Id": 12,
+        "MinLevel": 13,
+        "Mana": 10,
+        "Failure": 45,
+        "ExperienceWhenLearn": 12
+      },
+      "13": {
+        "Id": 13,
+        "MinLevel": 13,
+        "Mana": 11,
+        "Failure": 55,
+        "ExperienceWhenLearn": 13
+      },
+      "14": {
+        "Id": 14,
+        "MinLevel": 15,
+        "Mana": 12,
+        "Failure": 50,
+        "ExperienceWhenLearn": 15
+      },
+      "15": {
+        "Id": 15,
+        "MinLevel": 15,
+        "Mana": 13,
+        "Failure": 50,
+        "ExperienceWhenLearn": 15
+      },
+      "16": {
+        "Id": 16,
+        "MinLevel": 17,
+        "Mana": 17,
+        "Failure": 55,
+        "ExperienceWhenLearn": 15
+      },
+      "17": {
+        "Id": 17,
+        "MinLevel": 17,
+        "Mana": 17,
+        "Failure": 90,
+        "ExperienceWhenLearn": 17
+      },
+      "18": {
+        "Id": 18,
+        "MinLevel": 21,
+        "Mana": 17,
+        "Failure": 55,
+        "ExperienceWhenLearn": 17
+      },
+      "19": {
+        "Id": 19,
+        "MinLevel": 21,
+        "Mana": 19,
+        "Failure": 60,
+        "ExperienceWhenLearn": 18
+      },
+      "20": {
+        "Id": 20,
+        "MinLevel": 23,
+        "Mana": 25,
+        "Failure": 95,
+        "ExperienceWhenLearn": 20
+      },
+      "21": {
+        "Id": 21,
+        "MinLevel": 23,
+        "Mana": 20,
+        "Failure": 60,
+        "ExperienceWhenLearn": 20
+      },
+      "22": {
+        "Id": 22,
+        "MinLevel": 25,
+        "Mana": 20,
+        "Failure": 60,
+        "ExperienceWhenLearn": 20
+      },
+      "23": {
+        "Id": 23,
+        "MinLevel": 25,
+        "Mana": 21,
+        "Failure": 65,
+        "ExperienceWhenLearn": 20
+      },
+      "24": {
+        "Id": 24,
+        "MinLevel": 27,
+        "Mana": 21,
+        "Failure": 65,
+        "ExperienceWhenLearn": 20
+      },
+      "25": {
+        "Id": 25,
+        "MinLevel": 29,
+        "Mana": 23,
+        "Failure": 95,
+        "ExperienceWhenLearn": 23
+      },
+      "26": {
+        "Id": 26,
+        "MinLevel": 31,
+        "Mana": 25,
+        "Failure": 70,
+        "ExperienceWhenLearn": 25
+      },
+      "27": {
+        "Id": 27,
+        "MinLevel": 33,
+        "Mana": 25,
+        "Failure": 75,
+        "ExperienceWhenLearn": 38
+      },
+      "28": {
+        "Id": 28,
+        "MinLevel": 33,
+        "Mana": 25,
+        "Failure": 75,
+        "ExperienceWhenLearn": 38
+      },
+      "29": {
+        "Id": 29,
+        "MinLevel": 37,
+        "Mana": 30,
+        "Failure": 95,
+        "ExperienceWhenLearn": 100
+      }
+    },
 
     "LevelIncrement": {
       "Fight": 3,
@@ -385,6 +1136,225 @@
 
     "Spells": "Priest",
     "SpellMinLevel": 1,
+    "MagicBook": {
+      "0": {
+        "Id": 0,
+        "MinLevel": 1,
+        "Mana": 1,
+        "Failure": 30,
+        "ExperienceWhenLearn": 1
+      },
+      "1": {
+        "Id": 1,
+        "MinLevel": 2,
+        "Mana": 2,
+        "Failure": 35,
+        "ExperienceWhenLearn": 2
+      },
+      "2": {
+        "Id": 2,
+        "MinLevel": 3,
+        "Mana": 3,
+        "Failure": 35,
+        "ExperienceWhenLearn": 3
+      },
+      "3": {
+        "Id": 3,
+        "MinLevel": 5,
+        "Mana": 3,
+        "Failure": 35,
+        "ExperienceWhenLearn": 5
+      },
+      "4": {
+        "Id": 4,
+        "MinLevel": 5,
+        "Mana": 4,
+        "Failure": 35,
+        "ExperienceWhenLearn": 5
+      },
+      "5": {
+        "Id": 5,
+        "MinLevel": 7,
+        "Mana": 5,
+        "Failure": 40,
+        "ExperienceWhenLearn": 6
+      },
+      "6": {
+        "Id": 6,
+        "MinLevel": 7,
+        "Mana": 5,
+        "Failure": 40,
+        "ExperienceWhenLearn": 6
+      },
+      "7": {
+        "Id": 7,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 40,
+        "ExperienceWhenLearn": 7
+      },
+      "8": {
+        "Id": 8,
+        "MinLevel": 9,
+        "Mana": 7,
+        "Failure": 40,
+        "ExperienceWhenLearn": 8
+      },
+      "9": {
+        "Id": 9,
+        "MinLevel": 9,
+        "Mana": 8,
+        "Failure": 40,
+        "ExperienceWhenLearn": 8
+      },
+      "10": {
+        "Id": 10,
+        "MinLevel": 11,
+        "Mana": 9,
+        "Failure": 40,
+        "ExperienceWhenLearn": 10
+      },
+      "11": {
+        "Id": 11,
+        "MinLevel": 11,
+        "Mana": 10,
+        "Failure": 45,
+        "ExperienceWhenLearn": 10
+      },
+      "12": {
+        "Id": 12,
+        "MinLevel": 11,
+        "Mana": 10,
+        "Failure": 45,
+        "ExperienceWhenLearn": 10
+      },
+      "13": {
+        "Id": 13,
+        "MinLevel": 13,
+        "Mana": 10,
+        "Failure": 45,
+        "ExperienceWhenLearn": 12
+      },
+      "14": {
+        "Id": 14,
+        "MinLevel": 13,
+        "Mana": 11,
+        "Failure": 45,
+        "ExperienceWhenLearn": 13
+      },
+      "15": {
+        "Id": 15,
+        "MinLevel": 15,
+        "Mana": 13,
+        "Failure": 45,
+        "ExperienceWhenLearn": 15
+      },
+      "16": {
+        "Id": 16,
+        "MinLevel": 15,
+        "Mana": 15,
+        "Failure": 50,
+        "ExperienceWhenLearn": 15
+      },
+      "17": {
+        "Id": 17,
+        "MinLevel": 17,
+        "Mana": 15,
+        "Failure": 50,
+        "ExperienceWhenLearn": 15
+      },
+      "18": {
+        "Id": 18,
+        "MinLevel": 17,
+        "Mana": 15,
+        "Failure": 50,
+        "ExperienceWhenLearn": 18
+      },
+      "19": {
+        "Id": 19,
+        "MinLevel": 19,
+        "Mana": 15,
+        "Failure": 50,
+        "ExperienceWhenLearn": 19
+      },
+      "20": {
+        "Id": 20,
+        "MinLevel": 19,
+        "Mana": 15,
+        "Failure": 50,
+        "ExperienceWhenLearn": 19
+      },
+      "21": {
+        "Id": 21,
+        "MinLevel": 21,
+        "Mana": 17,
+        "Failure": 50,
+        "ExperienceWhenLearn": 20
+      },
+      "22": {
+        "Id": 22,
+        "MinLevel": 23,
+        "Mana": 17,
+        "Failure": 50,
+        "ExperienceWhenLearn": 20
+      },
+      "23": {
+        "Id": 23,
+        "MinLevel": 23,
+        "Mana": 20,
+        "Failure": 50,
+        "ExperienceWhenLearn": 20
+      },
+      "24": {
+        "Id": 24,
+        "MinLevel": 27,
+        "Mana": 21,
+        "Failure": 50,
+        "ExperienceWhenLearn": 22
+      },
+      "25": {
+        "Id": 25,
+        "MinLevel": 29,
+        "Mana": 22,
+        "Failure": 50,
+        "ExperienceWhenLearn": 22
+      },
+      "26": {
+        "Id": 26,
+        "MinLevel": 31,
+        "Mana": 24,
+        "Failure": 60,
+        "ExperienceWhenLearn": 25
+      },
+      "27": {
+        "Id": 27,
+        "MinLevel": 33,
+        "Mana": 28,
+        "Failure": 60,
+        "ExperienceWhenLearn": 25
+      },
+      "28": {
+        "Id": 28,
+        "MinLevel": 35,
+        "Mana": 32,
+        "Failure": 70,
+        "ExperienceWhenLearn": 38
+      },
+      "29": {
+        "Id": 29,
+        "MinLevel": 37,
+        "Mana": 36,
+        "Failure": 70,
+        "ExperienceWhenLearn": 50
+      },
+      "30": {
+        "Id": 30,
+        "MinLevel": 39,
+        "Mana": 38,
+        "Failure": 90,
+        "ExperienceWhenLearn": 100
+      }
+    },
 
     "LevelIncrement": {
       "Fight": 3,

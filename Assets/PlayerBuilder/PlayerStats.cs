@@ -1,33 +1,12 @@
 ﻿namespace Assets.PlayerBuilder;
 
-public interface IPlayerStats
-{
-    string Title { get; set; }
-    int Strength { get; set; }
-    int Intelligence { get; set; }
-    int Wisdom { get; set; }
-    int Dexterity { get; set; }
-    int Constitution { get; set; }
-    int Charisma { get; set; }
-    int ExperiencePenalty { get; set; }
-    int HitDie { get; set; }
-    int Disarm { get; set; }
-    int Search { get; set; }
-    int Stealth { get; set; }
-    int SearchFrequency { get; set; }
-    int Perception { get; set; }
-    int Fight { get; set; }
-    int Bows { get; set; }
-    int Saving { get; set; }
-}
-
-internal class PlayerStats : IPlayerStats
+internal class PlayerStats
 {
     internal PlayerStats()
     {
     }
 
-    internal PlayerStats(IPlayerStats stats)
+    internal PlayerStats(PlayerStats stats)
     {
         Title = stats.Title;
         Strength = stats.Strength;

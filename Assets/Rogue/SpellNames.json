@@ -1,0 +1,316 @@
+{
+  "Mage": {
+    "0": {
+      "Id": 0,
+      "Name": "MagicMissile",
+      "Description": "Magic Missile"
+    },
+    "1": {
+      "Id": 1,
+      "Name": "DetectMonsters",
+      "Description": "Detect Monsters"
+    },
+    "2": {
+      "Id": 2,
+      "Name": "PhaseDoor",
+      "Description": "Phase Door"
+    },
+    "3": {
+      "Id": 3,
+      "Name": "LightArea",
+      "Description": "Light Area"
+    },
+    "4": {
+      "Id": 4,
+      "Name": "CureLightWounds",
+      "Description": "Cure Light Wounds"
+    },
+    "5": {
+      "Id": 5,
+      "Name": "FindHiddenTrapsDoors",
+      "Description": "Find Hidden Traps/Doors"
+    },
+    "6": {
+      "Id": 6,
+      "Name": "StinkingCloud",
+      "Description": "Stinking Cloud"
+    },
+    "7": {
+      "Id": 7,
+      "Name": "Confusion",
+      "Description": "Confusion"
+    },
+    "8": {
+      "Id": 8,
+      "Name": "LightningBolt",
+      "Description": "Lightning Bolt"
+    },
+    "9": {
+      "Id": 9,
+      "Name": "TrapDoorDestruction",
+      "Description": "Trap/Door Destruction"
+    },
+    "10": {
+      "Id": 10,
+      "Name": "Sleep1",
+      "Description": "Sleep I"
+    },
+    "11": {
+      "Id": 11,
+      "Name": "CurePoison",
+      "Description": "Cure Poison"
+    },
+    "12": {
+      "Id": 12,
+      "Name": "TeleportSelf",
+      "Description": "Teleport Self"
+    },
+    "13": {
+      "Id": 13,
+      "Name": "RemoveCurse",
+      "Description": "Remove Curse"
+    },
+    "14": {
+      "Id": 14,
+      "Name": "FrostBolt",
+      "Description": "Frost Bolt"
+    },
+    "15": {
+      "Id": 15,
+      "Name": "WallToMud",
+      "Description": "Turn Stone to Mud"
+    },
+    "16": {
+      "Id": 16,
+      "Name": "CreateFood",
+      "Description": "Create Food"
+    },
+    "17": {
+      "Id": 17,
+      "Name": "RechargeItem1",
+      "Description": "Recharge Item I"
+    },
+    "18": {
+      "Id": 18,
+      "Name": "Sleep2",
+      "Description": "Sleep II"
+    },
+    "19": {
+      "Id": 19,
+      "Name": "PolymorphOther",
+      "Description": "Polymorph Other"
+    },
+    "20": {
+      "Id": 20,
+      "Name": "IdentifyItem",
+      "Description": "Identify"
+    },
+    "21": {
+      "Id": 21,
+      "Name": "Sleep3",
+      "Description": "Sleep III"
+    },
+    "22": {
+      "Id": 22,
+      "Name": "FireBolt",
+      "Description": "Fire Bolt"
+    },
+    "23": {
+      "Id": 23,
+      "Name": "SpeedMonster",
+      "Description": "Slow Monster"
+    },
+    "24": {
+      "Id": 24,
+      "Name": "FrostBall",
+      "Description": "Frost Ball"
+    },
+    "25": {
+      "Id": 25,
+      "Name": "RechargeItem2",
+      "Description": "Recharge Item II"
+    },
+    "26": {
+      "Id": 26,
+      "Name": "TeleportOther",
+      "Description": "Teleport Other"
+    },
+    "27": {
+      "Id": 27,
+      "Name": "HasteSelf",
+      "Description": "Haste Self"
+    },
+    "28": {
+      "Id": 28,
+      "Name": "FireBall",
+      "Description": "Fire Ball"
+    },
+    "29": {
+      "Id": 29,
+      "Name": "WordOfDestruction",
+      "Description": "Word of Destruction"
+    },
+    "30": {
+      "Id": 30,
+      "Name": "Genocide",
+      "Description": "Genocide"
+    }
+  },
+  "Priest": {
+    "0": {
+      "Id": 0,
+      "Name": "DetectEvil",
+      "Description": "Detect Evil"
+    },
+    "1": {
+      "Id": 1,
+      "Name": "CureLightWounds",
+      "Description": "Cure Light Wounds"
+    },
+    "2": {
+      "Id": 2,
+      "Name": "Bless",
+      "Description": "Bless"
+    },
+    "3": {
+      "Id": 3,
+      "Name": "RemoveFear",
+      "Description": "Remove Fear"
+    },
+    "4": {
+      "Id": 4,
+      "Name": "CallLight",
+      "Description": "Call Light"
+    },
+    "5": {
+      "Id": 5,
+      "Name": "FindTraps",
+      "Description": "Find Traps"
+    },
+    "6": {
+      "Id": 6,
+      "Name": "DetectDoorsStairs",
+      "Description": "Detect Doors/Stairs"
+    },
+    "7": {
+      "Id": 7,
+      "Name": "SlowPoison",
+      "Description": "Slow Poison"
+    },
+    "8": {
+      "Id": 8,
+      "Name": "BlindCreature",
+      "Description": "Blind Creature"
+    },
+    "9": {
+      "Id": 9,
+      "Name": "Portal",
+      "Description": "Portal"
+    },
+    "10": {
+      "Id": 10,
+      "Name": "CureMediumWounds",
+      "Description": "Cure Medium Wounds"
+    },
+    "11": {
+      "Id": 11,
+      "Name": "Chant",
+      "Description": "Chant"
+    },
+    "12": {
+      "Id": 12,
+      "Name": "Sanctuary",
+      "Description": "Sanctuary"
+    },
+    "13": {
+      "Id": 13,
+      "Name": "CreateFood",
+      "Description": "Create Food"
+    },
+    "14": {
+      "Id": 14,
+      "Name": "RemoveCurse",
+      "Description": "Remove Curse"
+    },
+    "15": {
+      "Id": 15,
+      "Name": "ResistHeatCold",
+      "Description": "Resist Heat and Cold"
+    },
+    "16": {
+      "Id": 16,
+      "Name": "NeutralizePoison",
+      "Description": "Neutralize Poison"
+    },
+    "17": {
+      "Id": 17,
+      "Name": "OrbOfDraining",
+      "Description": "Orb of Draining"
+    },
+    "18": {
+      "Id": 18,
+      "Name": "CureSeriousWounds",
+      "Description": "Cure Serious Wounds"
+    },
+    "19": {
+      "Id": 19,
+      "Name": "SenseInvisible",
+      "Description": "Sense Invisible"
+    },
+    "20": {
+      "Id": 20,
+      "Name": "ProtectionFromEvil",
+      "Description": "Protection from Evil"
+    },
+    "21": {
+      "Id": 21,
+      "Name": "Earthquake",
+      "Description": "Earthquake"
+    },
+    "22": {
+      "Id": 22,
+      "Name": "SenseSurroundings",
+      "Description": "Sense Surroundings"
+    },
+    "23": {
+      "Id": 23,
+      "Name": "CureCriticalWounds",
+      "Description": "Cure Critical Wounds"
+    },
+    "24": {
+      "Id": 24,
+      "Name": "TurnUndead",
+      "Description": "Turn Undead"
+    },
+    "25": {
+      "Id": 25,
+      "Name": "Prayer",
+      "Description": "Prayer"
+    },
+    "26": {
+      "Id": 26,
+      "Name": "DispelUndead",
+      "Description": "Dispel Undead"
+    },
+    "27": {
+      "Id": 27,
+      "Name": "Heal",
+      "Description": "Heal"
+    },
+    "28": {
+      "Id": 28,
+      "Name": "DispelEvil",
+      "Description": "DispelEvil"
+    },
+    "29": {
+      "Id": 29,
+      "Name": "GlyphOfWarding",
+      "Description": "Glyph of Warding"
+    },
+    "30": {
+      "Id": 30,
+      "Name": "HolyWord",
+      "Description": "Holy Word"
+    }
+  }
+}

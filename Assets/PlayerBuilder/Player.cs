@@ -1,19 +1,7 @@
 ﻿using Assets.PlayerHelpers;
 using Assets.StartingPlayerStatistics;
-using System.Security.Claims;
 
 namespace Assets.PlayerBuilder;
-
-public interface IPlayer
-{
-    IPlayerRace Race { get; }
-    IPlayerClass Class { get;}
-    IPlayerStats Maximum { get; }
-    IPlayerStats Current { get; }
-    IPlayerStats TurnStats { get; }
-    PlayerAbilities Abilities { get; }
-    PlayerSpells Magic { get; }
-}
 
 // https://github.com/jhirschberg70/browser-based-umoria/blob/f9fcf9ce217922be4941c7397007f5635ff2f838/src/player.h#L60
 // flags broken into PlayerTurn, PlayerAbilities and PlayerSpells
@@ -30,10 +18,10 @@ public interface IPlayer
  * TurnStats will take Current and apply all bonuses/adjustments
  */
 
-internal class Player : IPlayer
+internal class Player
 {
     public const int MaxAchievableLevel = 40;
-    internal Player(Gender gender, IPlayerRace race, IPlayerClass pClass, IPlayerStats startingStats, PlayerHitPoints hitPoints, int height, int weight)
+    internal Player(Gender gender, PlayerRace race, PlayerClass pClass, PlayerStats startingStats, PlayerHitPoints hitPoints, int height, int weight)
     {
         Race = race;
         Class = pClass;
@@ -69,11 +57,11 @@ internal class Player : IPlayer
     public int ToDamage => Current.CalcDamageAdjustment();
     public int ToHit => Current.CalcToHitAdjustment();
 
-    public IPlayerRace Race { get; }
-    public IPlayerClass Class { get; }
-    public IPlayerStats Maximum { get; }
-    public IPlayerStats Current { get; }
-    public IPlayerStats TurnStats { get; private set; }
+    public PlayerRace Race { get; }
+    public PlayerClass Class { get; }
+    public PlayerStats Maximum { get; }
+    public PlayerStats Current { get; }
+    public PlayerStats TurnStats { get; private set; }
 
     public PlayerHitPoints HitPoints { get; }
     public PlayerAbilities Abilities { get; }
